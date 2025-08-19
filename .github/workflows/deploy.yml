@@ -1,4 +1,5 @@
 name: Deploy to GitHub Pages
+
 on:
   push:
     branches: [main]
@@ -20,23 +21,15 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 18   # ← CRA 5 请用 16/18，别用 20
           cache: npm
       - run: npm ci
-      # CRA build (use this)
       - run: npm run build
-      # make SPA refreshes work
+      # SPA 刷新 404 兼容
       - run: cp build/index.html build/404.html
       - uses: actions/upload-pages-artifact@v3
         with:
           path: build
-
-      # --- If you use Vite instead of CRA, replace the 3 lines above with: ---
-      # - run: npm run build
-      # - run: cp dist/index.html dist/404.html
-      # - uses: actions/upload-pages-artifact@v3
-      #   with:
-      #     path: dist
 
   deploy:
     environment:
