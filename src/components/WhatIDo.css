@@ -1,0 +1,71 @@
+.do.wrap { padding: 80px 0 60px; position: relative; }
+.do-grid {
+    display: grid;
+    grid-template-columns: 1.2fr 1.4fr;
+    gap: 36px;
+    align-items: center;
+}
+@media (max-width: 992px){ .do-grid { grid-template-columns: 1fr; } }
+
+.do-visual { display: grid; place-items: center; }
+.do-hero {
+    width: min(560px, 90%);
+    filter: drop-shadow(0 20px 60px rgba(0,0,0,.35));
+    animation: floatY 6s ease-in-out infinite;
+}
+@keyframes floatY { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
+
+.do-title {
+    font-size: clamp(48px, 6vw, 96px);
+    font-weight: 700;
+    letter-spacing: .4px;
+    margin: 0 0 12px;
+}
+.do-sub {
+    color: #c8c8c8;
+    font-size: clamp(12px, 1.6vw, 20px);
+    line-height: 1.5;
+    margin-bottom: 40px;
+    max-width: 60ch; /* matches the “headline” width in the screenshot */
+    text-transform: uppercase;
+    letter-spacing: .08em;
+}
+
+/* Icon grid to match rows like the screenshot */
+.tool-row {
+    display: grid;
+    grid-template-columns: repeat(8, minmax(70px, 1fr));
+    gap: 22px 28px;
+    margin: 12px 0 28px;
+}
+@media (max-width: 1200px){ .tool-row { grid-template-columns: repeat(6, minmax(70px, 1fr)); } }
+@media (max-width: 768px){ .tool-row { grid-template-columns: repeat(4, minmax(70px, 1fr)); } }
+
+.tool {
+    display: grid;
+    justify-items: center;
+    gap: 8px;
+    padding: 6px 4px 10px;
+}
+.tool-icon i {
+    font-size: 64px;                /* big and uniform like the screenshot */
+    color: #98a0aa;                  /* grey tone */
+    opacity: .95;
+    transition: transform .18s ease, color .18s ease, text-shadow .18s ease;
+    text-shadow: 0 0 0 rgba(154,151,255,0);
+}
+.tool:hover .tool-icon i {
+    color: #c7ccda;
+    transform: translateY(-2px);
+    text-shadow: 0 6px 18px rgba(154,151,255,.25);
+}
+.tool-label {
+    font-size: 16px;
+    color: #9aa3ad;
+}
+
+/* Bullets */
+.do-bullets { list-style: none; display: grid; gap: 14px; margin-top: 14px; }
+.do-bullets li { display: grid; grid-template-columns: 26px 1fr; column-gap: 10px; align-items: start; }
+.zap { filter: drop-shadow(0 0 12px rgba(170,54,124,.45)); }
+.do-bullets li span:last-child { color:#e6e6e6; line-height: 1.6; }
