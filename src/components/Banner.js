@@ -62,9 +62,21 @@ export const Banner = () => {
                     MSCS @ Northeastern (4.0). I build interactive, data‑driven apps across web, data,
                     and mobile—recently at UbiWell Lab, Audi, and Mars Inc.
                   </p>
-                  <button onClick={() => (window.location.hash = "#connect")}>
-                    Let’s Connect <ArrowRightCircle size={25} />
-                  </button>
+
+                  <div className="banner-cta">
+                    {/* 简历：新标签页打开/可下载 */}
+                    <a
+                        className="cta-btn"
+                        href={`${process.env.PUBLIC_URL}/resume/Coco_Cai_Resume.pdf`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label="Open my resume in a new tab"
+                    >
+                      SEE MY RESUME
+                    </a>
+
+                  </div>
+
                 </div>
               )}
             </TrackVisibility>

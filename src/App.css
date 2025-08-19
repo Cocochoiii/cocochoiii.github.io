@@ -437,6 +437,45 @@ nav.navbar .navbar-toggler[aria-expanded="true"] .navbar-toggler-icon{ border-co
   .work-items::before{ left:22px; }
   .work-node::before{ left:16px; }
 }
+
+
+/* CTA 容器：和截图一样两个紫色按钮并排 */
+.banner-cta {
+  display: flex;
+  gap: 28px;
+  flex-wrap: wrap;
+  margin-top: 24px;
+}
+
+/* 紫色圆角按钮（与截图一致：大写、字距稍大、粗体） */
+.cta-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px 28px;
+  border-radius: var(--radius);          /* 你的主题统一圆角，想更圆可换成 9999px */
+  background: var(--primary);            /* 统一用主题主色（紫） */
+  color: rgba(74, 47, 189, 0.87);
+  text-decoration: none;
+  font-weight: 900;
+  letter-spacing: 0.08em;                /* 大写字间距，和截图类似 */
+  text-transform: uppercase;
+  box-shadow: 0 12px 28px -14px var(--ring);
+  transition: transform .2s ease, box-shadow .2s ease, opacity .2s ease, background .2s ease;
+}
+.cta-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 18px 40px -16px var(--ring);
+  opacity: .95;
+}
+.cta-btn:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* 固定导航时避免锚点被遮挡（给 #connect 用） */
+section[id] { scroll-margin-top: 84px; }
+
 /* 强制项目卡片标题/副标题为白色（覆盖 Bootstrap 链接色） */
 .proj-imgbx a,
 .proj-txtx,
