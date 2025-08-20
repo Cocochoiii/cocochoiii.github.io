@@ -38,3 +38,19 @@ code {
   outline: none;
 }
 .contact-links .sep { opacity: .6; }
+
+@media (max-width: 600px) {
+  .banner-cta {
+    display: grid;                  /* 更稳的栅格布局 */
+    grid-template-columns: 1fr 1fr; /* 两个按钮各占一半 */
+    gap: 10px;
+    margin-top: 12px;
+    width: 100%;
+  }
+  .banner-cta .cta-btn {
+    width: 100%;
+    justify-content: center;
+    padding: 10px 12px;             /* 稍微紧凑些 */
+    font-size: 14px;
+  }
+}
