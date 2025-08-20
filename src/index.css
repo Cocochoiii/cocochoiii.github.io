@@ -38,19 +38,43 @@ code {
   outline: none;
 }
 .contact-links .sep { opacity: .6; }
-
-@media (max-width: 600px) {
-  .banner-cta {
-    display: grid;                  /* 更稳的栅格布局 */
-    grid-template-columns: 1fr 1fr; /* 两个按钮各占一半 */
-    gap: 10px;
-    margin-top: 12px;
-    width: 100%;
-  }
-  .banner-cta .cta-btn {
-    width: 100%;
-    justify-content: center;
-    padding: 10px 12px;             /* 稍微紧凑些 */
-    font-size: 14px;
-  }
+/* ==== Restore bordered CTA buttons in Banner ==== */
+.banner .banner-cta {
+  display:flex; gap:12px; flex-wrap:wrap; align-items:center;
 }
+
+.banner .cta-btn {
+  display:inline-flex; align-items:center; justify-content:center;
+  padding:10px 18px;
+  border-radius:14px;
+  border:2px solid #7c3aed;        /* 显眼的紫色边框 */
+  outline:3px solid transparent;    /* 用于 hover 的外圈效果 */
+  outline-offset:4px;
+  background:transparent;
+  color:#f8fafc;
+  text-decoration:none;
+  font-weight:700; letter-spacing:.25px;
+  transition: transform .18s ease, background .18s ease,
+  border-color .18s ease, outline-color .18s ease;
+}
+
+.banner .cta-btn:hover,
+.banner .cta-btn:focus-visible {
+  transform: translateY(-2px);
+  background: rgba(124,58,237,.12);
+  border-color:#a78bfa;
+  outline-color: rgba(124,58,237,.35); /* 形成双层描边的视觉 */
+  text-decoration:none;
+}
+
+.banner .cta-btn.ghost { background:transparent; }
+
+/* 手机端两按钮并排 */
+@media (max-width: 600px) {
+  .banner .banner-cta {
+    display:grid; grid-template-columns:1fr 1fr; gap:10px; width:100%;
+  }
+  .banner .cta-btn { width:100%; font-size:14px; padding:10px 12px; }
+  .banner .cta-btn:nth-child(3) { grid-column: 1 / -1; } /* 如果有第三个按钮就独占一行 */
+}
+
