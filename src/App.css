@@ -305,7 +305,7 @@ nav.navbar .navbar-toggler[aria-expanded="true"] .navbar-toggler-icon{ border-co
 .education h2{ font-size:45px; margin-bottom:20px; }
 .edu-grid{ display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap:20px; }
 .edu-card{
-  background: rgba(255, 255, 255, 0.4); border:1px solid rgba(255, 255, 255, 0.32);
+  background: rgba(216, 215, 215, 0.34); border:1px solid rgba(255, 255, 255, 0.32);
   border-radius:24px; padding:20px; transition: transform .2s ease, box-shadow .2s ease; cursor:pointer;
 }
 .edu-card:hover{ transform: translateY(-2px); box-shadow:0 12px 36px rgba(0,0,0,0.25); }

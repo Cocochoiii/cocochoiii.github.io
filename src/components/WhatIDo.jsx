@@ -17,7 +17,6 @@ export default function WhatIDo() {
         { cls: "devicon-postgresql-plain", label: "PostgreSQL" },
         { cls: "devicon-amazonwebservices-plain-wordmark", label: "AWS" },
         { cls: "devicon-ubuntu-plain", label: "Ubuntu" },
-        { cls: "devicon-kubernetes-plain", label: "Kubernetes" },
         { cls: "devicon-docker-plain", label: "Docker" },
         { cls: "devicon-github-original", label: "GitHub" },
     ];
