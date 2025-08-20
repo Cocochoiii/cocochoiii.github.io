@@ -15,16 +15,17 @@ const schools = [
     subtitle: "Boston/Seattle • Sep 2024 – Dec 2026 • GPA 4.0/4.0",
     logo: neuLogo,
     details: [
-      "Relevant coursework: OOP, Data Structures & Algorithms, Web + Mobile Development, Advanced Software Development, DBMS, Cloud Computing, NLP",
+      "Relevant coursework: Objected Oriented Programming, Data Structures & Algorithms, Web + Mobile Development, Advanced Software Development, Data Base Management, Cloud Computing, NLP",
     ],
   },
   {
     id: "fandm",
-    title: "Bachelor of Arts in Business, Administration & Management and Film and Media Double Major",
+    title: "Bachelor of Arts in Business, Administration & Management and Film & Media Double Major",
     subtitle: "Lancaster, PA • Aug 2018 – Dec 2021 • GPA 3.72/4.0",
     logo: fmLogo,
     details: [
       "Foundations in analytics, management, and communication supporting cross-functional engineering work."
+      + "Film studies background, user-centered storytelling and better UX."
     ],
   },
 ];

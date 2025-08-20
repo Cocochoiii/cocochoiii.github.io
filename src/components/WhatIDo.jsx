@@ -2,6 +2,7 @@ import React from "react";
 import "./WhatIDo.css";
 import headerImg from "../assets/img/header2-img.svg";
 
+
 export default function WhatIDo() {
     const tools = [
         { cls: "devicon-linux-plain", label: "Linux" },
