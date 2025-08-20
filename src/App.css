@@ -504,3 +504,146 @@ section[id] { scroll-margin-top: 84px; }
   z-index:1; pointer-events:none;
 }
 .proj-txtx{ z-index: 2; }   /* 确保文字在渐变之上 */
+
+/**************************
+ *  Section Spacing — fine tune
+ *  (Place at the very end to override previous rules)
+ **************************/
+
+/* 1) What I Do -> Education 变小 */
+.do.wrap{
+  /* 原来：padding: 80px 0 60px; */
+  padding-bottom: 44px; /* 60 -> 44，收紧 16px */
+}
+/* 让 Education 略微上提一丢丢（避免太贴） */
+.do.wrap + .education{ margin-top: -8px; }
+
+@media (max-width: 768px){
+  .do.wrap{ padding-bottom: 36px; }
+  .do.wrap + .education{ margin-top: -6px; }
+}
+
+/* 2) Education -> Technical Skills 变大 */
+.education{
+  /* 原来：padding: 80px 0; */
+  padding-top: 64px;     /* 顶部略收一点，让上游更紧凑 */
+  padding-bottom: 112px; /* 底部加大，拉开与 Skills 的距离 */
+}
+.skill{
+  /* 原来：padding: 30 0 50px 0;  (注意这行原来少了单位) */
+  padding: 70px 0 60px 0; /* 顶部加大，底部略加，视觉更松弛 */
+}
+@media (max-width: 768px){
+  .education{ padding-top: 52px; padding-bottom: 96px; }
+  .skill{ padding-top: 60px; }
+}
+
+/* 3) 其余段落微调（让全站节奏统一、自然） */
+
+/* Experience 卡片区：与上/下文保持 64/64 的节距 */
+.xp-wrap{ padding: 64px 0; }
+
+/* Projects 段前略松一点，段后维持 80px */
+.project{ padding: 96px 0 80px; }
+
+/* 可选：Contact 段稍微收尾，避免和 Footer 挤 */
+.contact{ padding: 56px 0 96px; }
+
+/* 大屏时标题和段落行距微调，避免“气口”过小 */
+@media (min-width: 1200px){
+  .education h2,
+  .project h2,
+  .skill h2{ margin-bottom: 24px; }
+
+  .project p,
+  .skill p{ line-height: 1.6; }
+}
+
+/* 避免相邻 section 因 margin 折叠导致的“忽大忽小” */
+section { overflow: visible; }
+
+/**************************
+ * Responsive polish
+ **************************/
+
+/* 移动端的锚点补偿略小一点（顶部固定导航更矮） */
+@media (max-width: 768px){
+  html { scroll-padding-top: 64px; }
+}
+
+/* Navbar — 收紧高度、放大触控区域 */
+@media (max-width: 768px){
+  nav.navbar { padding: 12px 0; }
+  nav.navbar a.navbar-brand { width:auto; }
+  nav.navbar a.navbar-brand img { height: 32px; width:auto; }
+  nav.navbar .navbar-nav .nav-link.navbar-link{
+    padding: 10px 12px;
+    font-size: 16px;
+  }
+  .social-icon a{ width:36px; height:36px; }
+  .navbar-text button{ padding:12px 18px; font-size:16px; margin-left:12px; }
+}
+
+/* Banner — 缩小上内边距与字号、可选择隐藏大图降低抖动 */
+@media (max-width: 992px){
+  .banner { padding: 160px 0 72px; }
+  .banner p { font-size: 16px; }
+  .banner button { margin-top: 32px; font-size: 18px; }
+}
+@media (max-width: 768px){
+  .banner { padding: 128px 0 56px; }
+  /* 如需保留插图，把这一行删掉 */
+  .banner img { display: none; }
+}
+
+/* What I Do — 单列、放大主图、图标网格更密 */
+@media (max-width: 992px){
+  .do-grid { grid-template-columns: 1fr; gap: 22px; }
+  .do-hero { width: min(92%, 640px); }
+  .tool-row { grid-template-columns: repeat(3, minmax(70px, 1fr)); gap: 18px; }
+  .tool-icon i { font-size: 48px; }
+}
+
+/* Education — 卡片更紧凑 */
+@media (max-width: 768px){
+  .edu-grid { gap: 14px; }
+  .edu-card { padding: 16px; border-radius: 18px; }
+  .edu-head h4 { font-size: 18px; }
+}
+
+/* Experience 卡片 — 触屏禁用 3D 倾斜，改为平面阴影，正文靠左更易读 */
+@media (hover: none), (pointer: coarse){
+  .xp-card { transform: none !important; box-shadow: 0 10px 24px rgba(2,6,23,.24); }
+  .xp-card:hover { transform: none; }
+  .xp-body { padding: 72px 14px 14px; text-align: left; }
+}
+
+/* Projects 标签条 — 100% 宽、降低玻璃模糊以提性能 */
+@media (max-width: 768px){
+  .project { padding: 72px 0 64px; }
+  .project .nav.nav-pills { width: 100%; padding: 4px; backdrop-filter: none; background: rgba(255,255,255,.08); }
+  .project .nav.nav-pills .nav-link { height: 42px; font-size: 15px; }
+}
+
+/* Skills / Contact — 更大的触控面积 */
+@media (max-width: 768px){
+  .skill p { font-size: 16px; }
+  .contact form input, .contact form textarea { font-size: 16px; padding: 16px 18px; }
+  .contact form button { padding: 12px 28px; font-size: 16px; }
+}
+
+/* Footer newsletter — 收紧内边距，避免挤 */
+@media (max-width: 768px){
+  .newsletter-bx { padding: 28px 20px; margin-top: -60px; }
+  .footer img { width: 42%; }
+}
+
+/* 全站节奏：小屏统一行距/间距，防止忽松忽紧 */
+@media (max-width: 768px){
+  .education{ padding-top: 52px; padding-bottom: 96px; }
+  .skill{ padding-top: 60px; }
+  .xp-wrap{ padding: 56px 0; }
+  .project{ padding: 72px 0 64px; }
+  .contact{ padding: 56px 0 96px; }
+}
+
