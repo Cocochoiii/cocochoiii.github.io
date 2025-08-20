@@ -1,5 +1,5 @@
 /* Section 基础 */
-.do.wrap { padding: 80px 0 60px; position: relative; }
+.do.wrap { padding: 80px 0 60px; position: relative;}
 
 /* 使用 grid-area 明确定义在不同断点的显示顺序 */
 .do-content { grid-area: content; }
@@ -57,7 +57,7 @@
     font-size: clamp(14px, 3.6vw, 18px);
     line-height: 1.5;
     margin-bottom: 32px;
-    max-width: 60ch;
+    max-width: 100ch;
     text-transform: uppercase;
     letter-spacing: .08em;
 }
@@ -86,14 +86,14 @@
     padding: 6px 4px 10px;
 }
 .tool-icon i {
-    font-size: 64px;
-    color: #98a0aa;
+    font-size: 60px;
+    color: rgba(195, 192, 192, 0.89);
     opacity: .95;
     transition: transform .18s ease, color .18s ease, text-shadow .18s ease;
     text-shadow: 0 0 0 rgba(154,151,255,0);
 }
 .tool:hover .tool-icon i {
-    color: #c7ccda;
+    color: rgba(184, 12, 251, 0.29);
     transform: translateY(-2px);
     text-shadow: 0 6px 18px rgba(154,151,255,.25);
 }
@@ -102,19 +102,19 @@
     color: #9aa3ad;
 }
 @media (max-width: 480px){
-    .tool-icon i { font-size: 44px; }
+    .tool-icon i { font-size: 30px; }
     .tool-label { font-size: 14px; }
 }
 
 /* Bullets */
 .do-bullets {
     list-style: none;
-    display: grid; gap: 14px;
+    display: grid; gap: 10px;
     margin-top: 10px;
 }
 .do-bullets li {
     display: grid;
-    grid-template-columns: 26px 1fr;
+    grid-template-columns: 10px 1fr;
     column-gap: 10px;
     align-items: start;
 }

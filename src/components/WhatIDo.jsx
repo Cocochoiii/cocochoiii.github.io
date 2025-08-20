@@ -5,17 +5,19 @@ import headerImg from "../assets/img/header2-img.svg"; // 程序员这张
 export default function WhatIDo() {
     const tools = [
         { cls: "devicon-linux-plain", label: "Linux" },
-        { cls: "devicon-ubuntu-plain", label: "Ubuntu" },
+        { cls: "devicon-python-plain", label: "Python" },
         { cls: "devicon-java-plain", label: "Java" },
         { cls: "devicon-javascript-plain", label: "JavaScript" },
+        { cls: "devicon-cplusplus-plain", label: "C++" },
         { cls: "devicon-react-original", label: "React" },
         { cls: "devicon-nodejs-plain", label: "Node.js" },
         { cls: "devicon-swift-plain", label: "Swift" },
         { cls: "devicon-npm-original-wordmark", label: "npm" },
+        { cls: "devicon-django-plain", label: "Django" },
         { cls: "devicon-postgresql-plain", label: "PostgreSQL" },
         { cls: "devicon-amazonwebservices-plain-wordmark", label: "AWS" },
-        { cls: "devicon-firebase-plain", label: "Firebase" },
-        { cls: "devicon-python-plain", label: "Python" },
+        { cls: "devicon-ubuntu-plain", label: "Ubuntu" },
+        { cls: "devicon-kubernetes-plain", label: "Kubernetes" },
         { cls: "devicon-docker-plain", label: "Docker" },
         { cls: "devicon-github-original", label: "GitHub" },
     ];
