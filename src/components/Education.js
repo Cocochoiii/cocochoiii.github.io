@@ -76,7 +76,7 @@ export const Education = () => {
       perspective: 1200,
     },
     card: (id) => ({
-      height: 300,
+      height: 350,
       transformStyle: "preserve-3d",
       cursor: "pointer",
       transition: "transform .18s ease",
@@ -105,7 +105,7 @@ export const Education = () => {
       background: "rgba(255,255,255,0.05)",
     },
     back: { transform: "rotateY(180deg)", alignItems: "flex-start" },
-    logo: { width: 350, height: 150, objectFit: "contain", marginBottom: 10, opacity: 0.9 },
+    logo: { width: 300, height: 150, objectFit: "contain", marginBottom: 10, opacity: 0.9 },
     sub: { fontSize: 16, opacity: 0.8 },
     list: { margin: "10px 0 0 16px" },
   };
