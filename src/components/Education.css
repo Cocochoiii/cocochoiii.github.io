@@ -1,0 +1,111 @@
+/* ===== Education (high-contrast, interactive) ===== */
+.education { padding: 80px 0; position: relative; }
+.edu2-title { font-size: clamp(32px, 4vw, 48px); margin: 0 0 18px; font-weight: 800; }
+
+/* Grid */
+.edu2-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+  perspective: 1000px;
+}
+
+/* Card */
+.edu2-card {
+  position: relative;
+  border-radius: 20px;
+  overflow: hidden;
+  transform-style: preserve-3d;
+  cursor: pointer;
+  /* Dark glass with subtle texture and pointer glow controlled by --mx/--my */
+  background: linear-gradient(180deg, rgba(9,14,24,.92), rgba(9,14,24,.82));
+  border: 1px solid rgba(148,163,184,.25);
+  box-shadow: 0 10px 26px rgba(2,6,23,.35);
+  transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease, background .25s ease;
+  background-image:
+    radial-gradient(520px 260px at calc(var(--mx, .5)*100%) calc(var(--my, .5)*100%),
+    rgba(159, 117, 253, 0.25), transparent 60%);
+  transform: perspective(1000px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
+}
+@media (hover: hover) and (pointer: fine) {
+  .edu2-card:hover {
+    box-shadow: 0 16px 42px rgba(139,92,246,.30);
+    border-color: rgba(139,92,246,.45);
+  }
+}
+
+/* Inner flip */
+.edu2-inner {
+  position: relative;
+  width: 100%;
+  height: 360px;
+  transform-style: preserve-3d;
+  transition: transform .5s ease;
+}
+.edu2-card.open .edu2-inner { transform: rotateY(180deg); }
+
+/* Faces */
+.edu2-face {
+  position: absolute;
+  inset: 0;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  border-radius: 20px;
+  backface-visibility: hidden;
+  color: #f8fafc;
+}
+.edu2-face.front .edu2-sub { margin-top: 6px; color: #cbd5e1; }
+.edu2-program { margin: 8px 0 0; font-size: 18px; font-weight: 700; }
+.edu2-sub { font-size: 14px; }
+
+.edu2-logo {
+  width: min(320px, 88%);
+  height: 140px;
+  object-fit: contain;
+  opacity: .95;
+  filter: drop-shadow(0 8px 16px rgba(0,0,0,.35));
+}
+
+/* Back */
+.edu2-face.back {
+  transform: rotateY(180deg);
+  align-items: flex-start;
+  padding: 20px 22px;
+}
+.edu2-head { margin: 2px 0 6px; color: #a78bfa; font-weight: 700; }
+.edu2-list { margin: 6px 0 0 18px; line-height: 1.55; color: #e5e7eb; }
+.edu2-list li { margin: 6px 0; }
+
+.edu2-close {
+  margin-top: auto;
+  align-self: center;
+  padding: 6px 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(148,163,184,.35);
+  background: rgba(255,255,255,.06);
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+}
+.edu2-close:hover,
+.edu2-close:focus-visible {
+  background: rgba(255,255,255,.12);
+  outline: none;
+}
+
+/* Accessibility & motion */
+.edu2-card:focus-visible { outline: 2px solid rgba(139,92,246,.6); outline-offset: 2px; }
+@media (prefers-reduced-motion: reduce) {
+  .edu2-card,
+  .edu2-inner { transition: none !important; transform: none !important; }
+}
+
+/* Responsive */
+@media (max-width: 520px) {
+  .edu2-inner { height: 320px; }
+  .edu2-logo { height: 120px; }
+}
