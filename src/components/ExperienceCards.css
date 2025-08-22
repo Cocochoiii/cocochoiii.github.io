@@ -10,47 +10,47 @@
 .container-narrow { max-width: 1200px; margin: 0 auto; padding: 0 clamp(18px, 4vw, 32px); }
 
 .exp-title {
-  font-size: clamp(30px, 4vw, 56px);
-  font-weight: 700;
-  letter-spacing: -0.02em;
-  color: var(--exp-text);
-  margin: 0 0 22px;
+    font-size: clamp(30px, 4vw, 56px);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--exp-text);
+    margin: 0 0 22px;
 }
 
 .exp-grid {
-  display: grid;
-  gap: 24px;
-  grid-template-columns: repeat(3, 1fr);
+    display: grid;
+    gap: 24px;
+    grid-template-columns: repeat(3, 1fr);
 }
 
 @media (max-width: 1080px) {
-  .exp-grid { grid-template-columns: repeat(2, 1fr); }
+    .exp-grid { grid-template-columns: repeat(2, 1fr); }
 }
 @media (max-width: 720px) {
-  .exp-grid { grid-template-columns: 1fr; gap: 18px; }
+    .exp-grid { grid-template-columns: 1fr; gap: 18px; }
 }
 
 
 /* Card */
 .exp-card {
-  position: relative;
-  border-radius: 18px;
-  background: var(--exp-panel);
-  border: 1px solid var(--exp-border);
-  box-shadow: 0 10px 24px rgba(0,0,0,0.25);
-  overflow: hidden;
-  transform: translateZ(0);
-  transition:
-          transform .28s cubic-bezier(.2,.8,.2,1),
-          box-shadow .28s ease,
-          border-color .28s ease;
-  outline: none;
+    position: relative;
+    border-radius: 18px;
+    background: var(--exp-panel);
+    border: 1px solid var(--exp-border);
+    box-shadow: 0 10px 24px rgba(0,0,0,0.25);
+    overflow: hidden;
+    transform: translateZ(0);
+    transition:
+            transform .28s cubic-bezier(.2,.8,.2,1),
+            box-shadow .28s ease,
+            border-color .28s ease;
+    outline: none;
 }
 .exp-card:hover,
 .exp-card:focus-visible {
-  transform: translateY(-6px);
-  box-shadow: 0 18px 36px rgba(0,0,0,0.35);
-  border-color: rgba(255,255,255,.12);
+    transform: translateY(-6px);
+    box-shadow: 0 18px 36px rgba(0,0,0,0.35);
+    border-color: rgba(255,255,255,.12);
 }
 
 /* Top band */
@@ -63,9 +63,9 @@
 }
 .exp-card:hover .exp-head,
 .exp-card:focus-visible .exp-head {
-  background-size: 100% 120%;
-  background-position: 50% 0%;
-  transition: background-position .6s ease, background-size .6s ease;
+    background-size: 100% 120%;
+    background-position: 50% 0%;
+    transition: background-position .6s ease, background-size .6s ease;
 }
 
 /* Logo circle that overlaps */
@@ -93,10 +93,10 @@
     text-align: center;
 }
 .exp-role {
-  font-size: clamp(18px, 2vw, 22px);
-  font-weight: 700;
-  color: var(--exp-text);
-  margin: 0 0 6px;
+    font-size: clamp(18px, 2vw, 22px);
+    font-weight: 700;
+    color: var(--exp-text);
+    margin: 0 0 6px;
 }
 .exp-dates {
     font-size: 16px;
@@ -112,7 +112,18 @@
 }
 
 @media (max-width: 420px) {
-  .exp-head { height: 160px; }
-  .exp-logo { top: 120px; width: 104px; height: 104px; }
-  .exp-body { padding-top: 78px; }
+    .exp-head { height: 160px; }
+    .exp-logo { top: 120px; width: 104px; height: 104px; }
+    .exp-body { padding-top: 78px; }
+}
+/* === Desktop: 4 cards per row === */
+@media (min-width: 1200px){
+    .exp-grid{
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+/* （可选）给超宽屏多一点横向空间，视觉不拥挤 */
+@media (min-width: 1400px){
+    .container-narrow{ max-width: 1360px; } /* 你也可以调成 1400/1440 */
 }

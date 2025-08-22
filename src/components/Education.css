@@ -1,4 +1,4 @@
-/* ===== Education (high-contrast, interactive) ===== */
+/* ===== Education (interactive, creative) ===== */
 .education { padding: 80px 0; position: relative; }
 .edu2-title { font-size: clamp(32px, 4vw, 48px); margin: 0 0 18px; font-weight: 800; }
 
@@ -17,16 +17,38 @@
   overflow: hidden;
   transform-style: preserve-3d;
   cursor: pointer;
-  /* Dark glass with subtle texture and pointer glow controlled by --mx/--my */
+
+  /* Dark glass + pointer glow */
   background: linear-gradient(180deg, rgba(9,14,24,.92), rgba(9,14,24,.82));
   border: 1px solid rgba(148,163,184,.25);
   box-shadow: 0 10px 26px rgba(2,6,23,.35);
-  transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease, background .25s ease;
+  transition:
+          transform .25s ease,
+          box-shadow .25s ease,
+          border-color .25s ease,
+          background .25s ease,
+          filter .25s ease;
+
+  /* 光晕随鼠标 */
   background-image:
-    radial-gradient(520px 260px at calc(var(--mx, .5)*100%) calc(var(--my, .5)*100%),
-    rgba(159, 117, 253, 0.25), transparent 60%);
+          radial-gradient(520px 260px at calc(var(--mx, .5)*100%) calc(var(--my, .5)*100%),
+          rgba(159, 117, 253, 0.22), transparent 60%);
   transform: perspective(1000px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
+  will-change: transform;
 }
+
+/* Sparkle 点状高光（更有质感） */
+.edu2-card::after{
+  content:"";
+  position:absolute; inset:0; pointer-events:none;
+  background:
+          radial-gradient(120px 80px at calc(var(--mx, .5)*100%) calc(var(--my, .5)*100%),
+          rgba(255,255,255,.08), transparent 55%);
+  mix-blend-mode: screen;
+  transition: opacity .2s ease;
+  opacity: .9;
+}
+
 @media (hover: hover) and (pointer: fine) {
   .edu2-card:hover {
     box-shadow: 0 16px 42px rgba(139,92,246,.30);
@@ -34,17 +56,59 @@
   }
 }
 
-/* Inner flip */
+/* Click 脉冲反馈 */
+.edu2-card.pulse::before{
+  content:"";
+  position:absolute; inset:-2px;
+  border-radius: 22px;
+  background: radial-gradient(circle at center, rgba(139,92,246,.25), transparent 60%);
+  animation: pulse .5s ease forwards;
+}
+@keyframes pulse{
+  from{ opacity: .9; transform: scale(.98); }
+  to  { opacity: 0;  transform: scale(1.08); }
+}
+
+/* 顶部渐变头带（配合每张卡自定义色） */
+.edu2-headband{
+  width: 100%; height: 140px; margin-bottom: 8px;
+  border-radius: 16px;
+  background: linear-gradient(180deg, var(--head-start), var(--head-end));
+  border: 1px solid rgba(148,163,184,.25);
+  position: relative;
+  overflow: hidden;
+}
+.edu2-headband::after{
+  content:"";
+  position:absolute; inset:-1px;
+  background:
+          radial-gradient(240px 120px at calc(var(--mx,.5)*100%) 0%,
+          rgba(34,211,238,.25), transparent 60%);
+  opacity:.25;
+  pointer-events:none;
+}
+.edu2-logo {
+  position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%);
+  width: min(320px, 88%); height: 100px; object-fit: contain;
+  opacity: .95;
+  filter: drop-shadow(0 8px 16px rgba(0,0,0,.35));
+}
+
+/* 内部翻转容器 */
 .edu2-inner {
   position: relative;
   width: 100%;
-  height: 360px;
+  height: 380px;
   transform-style: preserve-3d;
-  transition: transform .5s ease;
+  transition: transform .6s cubic-bezier(.2,.8,.2,1);
+}
+/* 悬停“偷看” */
+@media (hover:hover) and (pointer:fine){
+  .edu2-card:hover:not(.open) .edu2-inner{ transform: rotateY(10deg); }
 }
 .edu2-card.open .edu2-inner { transform: rotateY(180deg); }
 
-/* Faces */
+/* Front/Back 面 */
 .edu2-face {
   position: absolute;
   inset: 0;
@@ -52,34 +116,44 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   text-align: center;
   border-radius: 20px;
   backface-visibility: hidden;
   color: #f8fafc;
 }
 .edu2-face.front .edu2-sub { margin-top: 6px; color: #cbd5e1; }
-.edu2-program { margin: 8px 0 0; font-size: 18px; font-weight: 700; }
-.edu2-sub { font-size: 14px; }
+.edu2-program { margin: 12px 0 0; font-size: 18px; font-weight: 800; }
+.edu2-sub { font-size: 14px; opacity:.9; }
 
-.edu2-logo {
-  width: min(320px, 88%);
-  height: 140px;
-  object-fit: contain;
-  opacity: .95;
-  filter: drop-shadow(0 8px 16px rgba(0,0,0,.35));
-}
-
-/* Back */
 .edu2-face.back {
   transform: rotateY(180deg);
   align-items: flex-start;
   padding: 20px 22px;
 }
-.edu2-head { margin: 2px 0 6px; color: #a78bfa; font-weight: 700; }
+.edu2-head { margin: 2px 0 6px; color: #a78bfa; font-weight: 800; }
+.edu2-head.small{ margin-top: 12px; font-size: 13px; opacity:.9; letter-spacing:.3px; }
+
 .edu2-list { margin: 6px 0 0 18px; line-height: 1.55; color: #e5e7eb; }
 .edu2-list li { margin: 6px 0; }
 
+/* 课程 Chips（滚动容器） */
+.edu2-chips{
+  margin-top: 8px;
+  display: flex; flex-wrap: wrap; gap: 6px;
+  max-height: 92px; overflow: auto;
+  padding-right: 6px;
+}
+.edu2-chips .chip{
+  font-size: 12px;
+  padding: 4px 8px;
+  border-radius: 999px;
+  border: 1px solid rgba(148,163,184,.35);
+  background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+  color: #fff;
+}
+
+/* 关闭按钮 */
 .edu2-close {
   margin-top: auto;
   align-self: center;
@@ -88,7 +162,7 @@
   border: 1px solid rgba(148,163,184,.35);
   background: rgba(255,255,255,.06);
   color: #fff;
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
 }
 .edu2-close:hover,
@@ -97,15 +171,60 @@
   outline: none;
 }
 
-/* Accessibility & motion */
+/* GPA badge（角标） */
+.edu2-badge{
+  position:absolute; right: 12px; top: 12px;
+  width: 64px; height: 64px;
+  border-radius: 14px;
+  background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.03));
+  border: 1px solid rgba(148,163,184,.25);
+  box-shadow: 0 8px 18px rgba(2,6,23,.35);
+  display:grid; place-items:center;
+  transform: translateY(-8px); opacity: 0;
+  transition: transform .35s ease, opacity .35s ease, box-shadow .3s ease;
+}
+.edu2-card.open .edu2-badge{ transform: translateY(0); opacity: 1; }
+
+/* GPA 环样式 */
+.gpa-svg{ width: 54px; height: 54px; }
+.gpa-track{
+  fill: none; stroke: rgba(148,163,184,.35); stroke-width: 6;
+}
+.gpa-progress{
+  fill: none; stroke: url(#none);
+  stroke: url(#grad);
+  stroke-width: 6; stroke-linecap: round; transform: rotate(-90deg);
+  transform-origin: 32px 32px;
+  transition: stroke-dasharray .8s ease;
+  filter: drop-shadow(0 0 10px rgba(124,58,237,.6));
+}
+/* 用渐变描边（紫→玫红） */
+.gpa-svg defs, .gpa-svg #grad{ display: block; }
+.gpa-svg::before{ content:none; }
+.gpa-svg > text.gpa-text{
+  fill: #fff; font-weight: 800; font-size: 10px; text-anchor: middle;
+}
+
+/* 我们在每个 SVG 中内联一个渐变（用 mask 更复杂，这里直接渐变描边） */
+.gpa-svg defs + circle{ stroke: url(#grad); }
+
+/* Accessible focus */
 .edu2-card:focus-visible { outline: 2px solid rgba(139,92,246,.6); outline-offset: 2px; }
+
+/* 减少动画 */
 @media (prefers-reduced-motion: reduce) {
   .edu2-card,
   .edu2-inner { transition: none !important; transform: none !important; }
+  .edu2-card::after{ display:none; }
 }
 
 /* Responsive */
 @media (max-width: 520px) {
-  .edu2-inner { height: 320px; }
-  .edu2-logo { height: 120px; }
+  .edu2-inner { height: 340px; }
+  .edu2-logo  { height: 96px; }
+}
+
+/* SVG 渐变定义（通过 ::part 很复杂，这里直接全局定义一次供 <svg> 引用） */
+.gpa-svg {
+  /* 在每个 SVG 内嵌入渐变更保险，但多数浏览器允许外部 <defs>。为了兼容，我们在组件里直接画。 */
 }
