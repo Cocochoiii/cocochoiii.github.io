@@ -1,63 +1,67 @@
 import "./ExperienceCards.css";
 
-import ubiLogo    from "../assets/img/ubiwell-logo.svg";
-import audiLogo   from "../assets/img/audi-logo.png";
-import marsLogo   from "../assets/img/mars-logo.png";
-import groupmLogo from "../assets/img/groupm-logo.png"; // 新增：请放置该文件
+import ubiLogo  from "../assets/img/ubiwell-logo.svg";
+import audiLogo from "../assets/img/audi-logo.png";
+import marsLogo from "../assets/img/mars-logo.png";
 
 const CARDS = [
-  /* UbiWell */
   {
     company: "UbiWell Lab",
     role: "Software Engineering Intern",
     dates: "Boston, MA — May 2025 – Oct 2025",
     logo: ubiLogo,
     head: { start: "#515151", end: "#1f2937" },
-    desc:
-        "Designed Python/Django REST APIs on PostgreSQL & MongoDB processing 2.5M+ health datapoints with p95 < 200 ms and 99.9% uptime; " +
-        "built React/TypeScript dashboards (D3, Plotly) serving 1,000+ daily research users. " +
-        "Automated data collection (Python + BeautifulSoup) for 500+ hours of patient monitoring; integrated Kafka for streaming and shipped an iOS app (Swift/SwiftUI, Core Data) with 99.7% sync reliability. " +
-        "Led TDD/CI using pytest & Jest — ~92% coverage and 200+ unit tests — cutting production bugs by ~80%."
+    desc: (
+        <>
+          I built backends in <strong>Python</strong> (<strong>Django/FastAPI</strong>) on
+          {" "}<strong>PostgreSQL/MongoDB</strong>, exposing <strong>REST/JSON</strong> &
+          {" "}<strong>gRPC/Proto</strong> for 2.5M+ datapoints (p95 &lt; 200ms, 99.9% uptime).
+          {" "}I delivered 100+ real-time dashboards in <strong>React/TypeScript</strong> with
+          {" "}<strong>D3/Plotly</strong> for 1k+ users. I automated pipelines
+          {" "}(<strong>Python</strong>, <strong>BeautifulSoup/Selenium</strong>, <strong>Kafka</strong>)
+          {" "}and shipped an iOS client (<strong>Swift/SwiftUI</strong>, <strong>Core Data</strong>,
+          {" "}<strong>TFLite</strong>) with 99.7% reliability; led <strong>TDD</strong>
+          {" "}(<strong>pytest/Jest/XCTest</strong>, ~92% coverage, 200+ tests).
+        </>
+    ),
   },
 
-  /* Audi */
   {
     company: "Audi",
-    role: "Backend Software Engineer Intern",
-    dates: "Beijing — Aug 2023 – Aug 2024",
+    role: "Innovation Data Engineer",
+    dates: "Beijing, China — Jan 2023 – Aug 2024",
     logo: audiLogo,
     head: { start: "rgba(205,0,16,0.91)", end: "#0b1220" },
-    desc:
-        "Built Go/C++ video processing for connected-car media (500GB+/day), including H.264/H.265/VP9 transcoding that cut bandwidth ~45% for 2M+ vehicles. " +
-        "Designed Golang microservices + CDN for OTA media with adaptive bitrate streaming (99.9% uptime, sub-200ms) across 20+ edge locations. " +
-        "Delivered S3-backed storage with Redis caching; Docker/K8s CI/CD moved releases from weekly to daily with zero-downtime deploys."
+    desc: (
+        <>
+          I built a distributed platform with <strong>Java Spring Boot</strong> +
+          {" "}<strong>Python Flask</strong>, ingesting 500GB+/day via <strong>Kafka</strong> from
+          {" "}20k sensors (99.9% uptime). I orchestrated <strong>Airflow</strong> ETL with
+          {" "}<strong>Pandas/NumPy</strong> and <strong>Spark Structured Streaming</strong>
+          {" "}（sub-second, ~40% faster）. I designed <strong>Snowflake</strong> + <strong>dbt</strong>,
+          {" "}tuned <strong>SQL</strong> (~60% faster), and shipped 15+ <strong>PySpark/SQL</strong> models
+          {" "}improving retention +25%; I ran <strong>CI/CD</strong> on <strong>Docker/K8s</strong> with
+          {" "}<strong>GitHub Actions</strong> (~90% coverage).
+        </>
+    ),
   },
 
-  /* GroupM — 新增卡片 */
-  {
-    company: "GroupM",
-    role: "Frontend Software Engineer Intern",
-    dates: "Hong Kong — Jan 2023 – Jun 2023",
-    logo: groupmLogo,
-    head: { start: "#2563eb", end: "#0b1220" },
-    desc:
-        "Shipped large-scale customer platform in React/Vue with data-viz dashboards for 50k+ DAU; " +
-        "built Node.js/Express APIs and WebSocket chat delivering 95% CSAT. " +
-        "Implemented cross-platform features in React Native with Swift/Kotlin native modules (iOS/Android) — engagement +40%, retention +35%. " +
-        "Established a reusable component library and CI testing (Jest ~95% coverage), reducing deploy time by ~60%."
-  },
-
-  /* Mars */
   {
     company: "Mars Inc.",
     role: "Full-Stack Software Engineer Intern",
     dates: "Hong Kong — Feb 2022 – Dec 2022",
     logo: marsLogo,
     head: { start: "#0bf4da", end: "#0b1220" },
-    desc:
-        "Built an e-commerce app in React Native with Node.js/Express microservices and OAuth2/JWT RBAC for 5,000+ daily users. " +
-        "Launched realtime order updates via Socket.IO + Redis pub/sub + RabbitMQ event-sourcing. " +
-        "Optimized MongoDB (geospatial + compound indexes) to reduce search latency by ~65%; applied OOP patterns with Agile delivery."
+    desc: (
+        <>
+          I built a mobile commerce stack: <strong>React Native</strong> app +
+          {" "}<strong>Node.js/Express</strong>/<strong>GraphQL</strong> services with
+          {" "}<strong>OAuth2/JWT RBAC</strong> for 5k+ DAU. I launched event-driven messaging
+          {" "}with <strong>Socket.IO</strong>, <strong>Redis pub/sub</strong>, <strong>RabbitMQ</strong>,
+          {" "}plus rate-limiting & event sourcing. I optimized <strong>MongoDB</strong> (<strong>Mongoose</strong>,
+          {" "}geospatial/compound indexes) cutting search latency ~65%.
+        </>
+    ),
   }
 ];
 
