@@ -1,6 +1,6 @@
 :root {
     --exp-bg: #0e121a;
-    --exp-panel: #141a24;
+    --exp-panel: #1b1d2b;
     --exp-border: rgba(255,255,255,.06);
     --exp-text: #eef2ff;
     --exp-muted: #cbd5e1;
@@ -17,6 +17,7 @@
     margin: 0 0 22px;
 }
 
+/* ✅ 桌面默认 3 列 */
 .exp-grid {
     display: grid;
     gap: 24px;
@@ -29,7 +30,6 @@
 @media (max-width: 720px) {
     .exp-grid { grid-template-columns: 1fr; gap: 18px; }
 }
-
 
 /* Card */
 .exp-card {
@@ -116,14 +116,16 @@
     .exp-logo { top: 120px; width: 104px; height: 104px; }
     .exp-body { padding-top: 78px; }
 }
-/* === Desktop: 4 cards per row === */
-@media (min-width: 1200px){
-    .exp-grid{
-        grid-template-columns: repeat(4, 1fr);
-    }
-}
 
-/* （可选）给超宽屏多一点横向空间，视觉不拥挤 */
-@media (min-width: 1400px){
-    .container-narrow{ max-width: 1360px; } /* 你也可以调成 1400/1440 */
+/* 让 desc 里的关键词更显眼、但不突兀（跟站内配色一致） */
+.exp-desc strong{
+    font-weight: 800;
+    background: linear-gradient(90deg,
+    var(--brand-primary, rgba(221, 75, 164, 0.85)),
+    var(--brand-accent, rgba(74, 47, 189, 0.95)));
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-decoration: none;
+    white-space: nowrap; /* 避免关键短语被断开 */
 }
