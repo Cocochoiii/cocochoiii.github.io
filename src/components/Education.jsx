@@ -31,7 +31,7 @@ const schools = [
       "Focused on systems, cloud, and ML-backed products; projects spanned full-stack apps, streaming pipelines, and model-serving.",
       "TA for CS5001 and CS 5002, Member in Women in Tech"
     ],
-    head: { start: "rgba(255,0,0,0.65)", end: "#0b1020" },
+    head: { start: "rgba(229,0,0,0.73)", end: "#0b1020" },
   },
   {
     id: "fandm",
@@ -53,7 +53,7 @@ const schools = [
       "Foundations in analytics, management, and communication supporting cross-functional engineering work.",
       "Film background → media systems literacy (codecs/FFmpeg/HLS), user-centered storytelling, and better UX."
     ],
-    head: { start: "rgba(2,20,165,0.4)", end: "#0b1020" },
+    head: { start: "rgba(29,41,96,0.8)", end: "#0b1020" },
   },
 ];
 
@@ -83,7 +83,7 @@ function GpaRing({ value = 4, max = 4 }) {
 }
 
 export const Education = () => {
-  const [openId, setOpenId] = useState("neu");
+  const [openId, setOpenId] = useState("");
   const [pulseId, setPulseId] = useState("");
 
   const toggle = (id) => {

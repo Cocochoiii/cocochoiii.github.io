@@ -10,7 +10,7 @@ const CARDS = [
     role: "Software Engineering Intern",
     dates: "Boston, MA — May 2025 – Oct 2025",
     logo: ubiLogo,
-    head: { start: "#515151", end: "#1f2937" },
+    head: { start: "#08a29e", end: "#1f2937" },
     desc: (
         <>
           I built backends in <strong>Python</strong> (<strong>Django/FastAPI</strong>) on
@@ -31,7 +31,7 @@ const CARDS = [
     role: "Innovation Data Engineer",
     dates: "Beijing, China — Jan 2023 – Aug 2024",
     logo: audiLogo,
-    head: { start: "rgba(205,0,16,0.91)", end: "#0b1220" },
+    head: { start: "rgb(245,5,55)", end: "#0b1220" },
     desc: (
         <>
           I built a distributed platform with <strong>Java Spring Boot</strong> +
@@ -51,7 +51,7 @@ const CARDS = [
     role: "Full-Stack Software Engineer Intern",
     dates: "Hong Kong — Feb 2022 – Dec 2022",
     logo: marsLogo,
-    head: { start: "#0bf4da", end: "#0b1220" },
+    head: { start: "#0000a0", end: "#0b1220" },
     desc: (
         <>
           I built a mobile commerce stack: <strong>React Native</strong> app +
