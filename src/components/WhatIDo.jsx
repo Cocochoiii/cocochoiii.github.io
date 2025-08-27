@@ -3,14 +3,23 @@ import "./WhatIDo.css";
 import headerImg from "../assets/img/header2-img.svg";
 
 /* 小组件：视口可见时数字平滑计数 */
-function useCountUp(inViewRef, { from = 0, to = 100, duration = 1200 } = {}) {
+function useCountUp(inViewRef, {
+    from = 0,
+    to = 100,
+    duration = 1200,
+    enabled = true,        // ✅ 新增开关
+} = {}) {
     const [val, setVal] = useState(from);
+
     useEffect(() => {
+        // Tab 未开启或用户偏好减少动画 → 直接到目标值
         const prefersReduced = window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches;
+        if (!enabled) { setVal(from); return; }
         if (prefersReduced || !("IntersectionObserver" in window)) { setVal(to); return; }
 
         const el = inViewRef.current;
-        if (!el) return;
+        if (!el) return; // 元素尚未挂载，等下一次 enabled 变更再试
+
         let raf, start;
         const io = new IntersectionObserver(([e]) => {
             if (!e.isIntersecting) return;
@@ -22,10 +31,11 @@ function useCountUp(inViewRef, { from = 0, to = 100, duration = 1200 } = {}) {
                 if (p < 1) raf = requestAnimationFrame(step);
             };
             raf = requestAnimationFrame(step);
-        }, { threshold: 0.3 });
+        }, { threshold: 0.2, rootMargin: "0px 0px -10% 0px" });
+
         io.observe(el);
-        return () => { io.disconnect(); cancelAnimationFrame(raf); };
-    }, [inViewRef, from, to, duration]);
+        return () => { io.disconnect(); if (raf) cancelAnimationFrame(raf); };
+    }, [inViewRef, from, to, duration, enabled]);   // ✅ 把 enabled 放进依赖
     return val;
 }
 
@@ -56,13 +66,12 @@ export default function WhatIDo() {
         el.style.setProperty("--ry", "0deg");
     };
 
-    // 指标计数
-    // --- 指标计数（保持动画，但用了你的真实数） ---
-    const p95   = useCountUp(m1Ref, { from: 400, to: 200,  duration: 1100 }); // <200 ms
-    const users = useCountUp(m2Ref, { from:   0, to: 1000, duration: 1200 }); // 1.0k+
-    const data  = useCountUp(m3Ref, { from:   0, to: 2.5,  duration: 1200 }); // 2.5M+
-    const up    = useCountUp(m4Ref, { from:   0, to: 99.9, duration: 1200 }); // 99.9%
+    const enableMetrics = tab === "metrics";
 
+    const p95   = useCountUp(m1Ref, { from: 400, to: 200,  duration: 1100, enabled: enableMetrics });
+    const users = useCountUp(m2Ref, { from:   0, to: 1000, duration: 1200, enabled: enableMetrics });
+    const data  = useCountUp(m3Ref, { from:   0, to:   2.5, duration: 1200, enabled: enableMetrics });
+    const up    = useCountUp(m4Ref, { from:   0, to:  99.9, duration: 1200, enabled: enableMetrics });
 
     const stacks = [
         {
