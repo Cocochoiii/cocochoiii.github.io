@@ -497,6 +497,37 @@ nav.navbar.scrolled .navbar-brand img {
   .footer{ padding-top: 28px; }
 }
 
-@media (max-width: 768px){
-  .banner img{ margin-top: 24px; animation: floatYSm 5s ease-in-out infinite; }
+/* === Banner image: safer on mobile === */
+.banner .floaty-img{
+  display:block;
+  margin: clamp(12px, 2.2vw, 18px) auto 0; /* 顶部留空，水平居中 */
+  max-width: 560px;
+  width: 100%;
+  height: auto;
 }
+
+/* 平板以下：再小一点并下移 */
+@media (max-width: 992px){
+  .banner .floaty-img{
+    max-width: 480px;
+  }
+}
+
+/* 手机：明显下移，减小/改良动画，避免覆盖按钮 */
+@media (max-width: 768px){
+  .banner { padding: 128px 0 64px; } /* 你已有此条，可保留 */
+  .banner .floaty-img{
+    max-width: 84%;
+    margin-top: 24px;                 /* ← 关键：把插画整体往下挪 */
+    animation: updownMobile 6s ease-in-out infinite;
+  }
+  /* CTA 与下方插画拉开一点距离（可选） */
+  .banner-cta{ margin-bottom: 6px; }
+}
+
+/* 只向下轻微漂移的动画（不会向上顶） */
+@keyframes updownMobile{
+  0%,100%{ transform: translateY(4px); }
+  50%    { transform: translateY(16px); }
+}
+
