@@ -67,18 +67,36 @@ p.danger{ color:red; }
  *  Navbar
  **************************/
 nav.navbar {
-  padding:18px 0; position:fixed; width:100%; top:0; z-index:9999; transition:.32s ease-in-out;
+  padding:18px 0;
+  position:fixed;
+  width:100%;
+  top:0;
+  z-index:9999;
+  transition:.32s ease-in-out;
 }
 nav.navbar.scrolled { padding:0; background-color:#121212; }
-nav.navbar a.navbar-brand { width:9%; }
+
+/* 统一以图片高度控制品牌区尺寸，避免冲突 */
+nav.navbar a.navbar-brand { width: auto; padding: 0; }
+nav.navbar .navbar-brand img {
+  height: 80px;
+  width: auto !important;   /* 覆盖全局 img{width:100%} */
+  display: block;
+  transition: height .2s ease;
+}
+nav.navbar.scrolled .navbar-brand img { height: 40px; }
+
 nav.navbar .navbar-nav .nav-link.navbar-link{
   font-weight:400; color:#fff !important; letter-spacing:.8px; padding:0 25px; font-size:18px; opacity:.75;
 }
 nav.navbar .navbar-nav a.nav-link.navbar-link:hover,
 nav.navbar .navbar-nav a.nav-link.navbar-link.active { opacity:1; }
 span.navbar-text { display:flex; align-items:center; }
+
 .social-icon { display:inline-block; margin-left:14px; }
 .social-icon a{
+  position: relative;        /* 修正 ::before 定位参照 */
+  overflow: hidden;          /* 光圈不外溢 */
   width:42px; height:42px; background:rgba(217,217,217,.1); display:inline-flex; border-radius:50%;
   margin-right:6px; align-items:center; justify-content:center; line-height:1; border:1px solid rgba(255,255,255,.5);
 }
@@ -91,6 +109,7 @@ span.navbar-text { display:flex; align-items:center; }
 .social-icon a:hover img{
   filter:brightness(0) saturate(100%) invert(0%) sepia(7%) saturate(98%) hue-rotate(346deg) brightness(95%) contrast(86%);
 }
+
 .navbar-text button{
   font-weight:700; color:#fff; border:1px solid #fff; padding:18px 34px; font-size:18px; margin-left:18px;
   position:relative; background-color:transparent; transition:.3s ease-in-out;
@@ -133,13 +152,26 @@ nav.navbar .navbar-toggler[aria-expanded="true"] .navbar-toggler-icon{ border-co
 .banner button svg{ font-size:25px; margin-left:10px; transition:.3s ease-in-out; line-height:1; }
 .banner button:hover svg{ margin-left:25px; }
 .banner img{ animation:updown 3s linear infinite; }
-@keyframes updown{ 0%{transform:translateY(-20px)} 50%{transform:translateY(20px)} 100%{transform:translateY(-20px)} }
+
+@keyframes updown{
+  0%{ transform:translateY(-20px) }
+  50%{ transform:translateY(20px) }
+  100%{ transform:translateY(-20px) }
+}
+
+/* 小屏专用的更柔和漂浮动画（修复缺失） */
+@keyframes floatYSm {
+  0% { transform: translateY(-6px); }
+  50% { transform: translateY(6px); }
+  100% { transform: translateY(-6px); }
+}
+
 .txt-rotate > .wrap { border-right:.08em solid #666; }
 
 /**************************
  *  Skills
  **************************/
-.skill { padding:30 0 50px 0; position:relative; }
+.skill { padding: 70px 0 60px 0; position:relative; } /* 修正单位并采用你的“节奏微调”数值 */
 .skill-bx{
   background:#151515; border-radius:64px; text-align:center; padding:60px 50px; margin-top:-60px;
 }
@@ -152,7 +184,7 @@ nav.navbar .navbar-toggler[aria-expanded="true"] .navbar-toggler-icon{ border-co
 /**************************
  *  Projects
  **************************/
-.project { padding:80px 0; position:relative; background-color:black; }
+.project { padding:96px 0 80px; position:relative; background-color:black; } /* 采用微调后的节奏 */
 .project h2{ font-size:45px; font-weight:700; text-align:center; }
 .project p{
   color:#B8B8B8; font-size:18px; letter-spacing:.8px; line-height:1.5em;
@@ -198,9 +230,13 @@ nav.navbar .navbar-toggler[aria-expanded="true"] .navbar-toggler-icon{ border-co
   will-change: transform;
 }
 
-/* 根据 active 的位置滑动 */
+/* 根据 active 的位置滑动（支持 :has ）*/
 .project .nav.nav-pills:has(.nav-item:nth-child(1) .nav-link.active)::before { transform: translateX(0%); }
 .project .nav.nav-pills:has(.nav-item:nth-child(2) .nav-link.active)::before { transform: translateX(100%); }
+
+/* 可选兜底：若不支持 :has()，在容器上加 .pill-idx-1 / .pill-idx-2 */
+.project .nav.nav-pills.pill-idx-1::before { transform: translateX(0%); }
+.project .nav.nav-pills.pill-idx-2::before { transform: translateX(100%); }
 
 /* 按钮文本 */
 .project .nav.nav-pills .nav-item{ position: relative; z-index: 1; }
@@ -229,7 +265,7 @@ nav.navbar .navbar-toggler[aria-expanded="true"] .navbar-toggler-icon{ border-co
   .project .nav.nav-pills .nav-link{ height: 44px; font-size: 15px; }
 }
 
-/* === 项目卡片（保持不变） === */
+/* === 项目卡片 === */
 .proj-imgbx{ position:relative; border-radius:30px; overflow:hidden; margin-bottom:24px; }
 .proj-imgbx::before{
   content:""; background:linear-gradient(90.21deg, var(--brand-primary) -5.91%, var(--brand-accent) 111.58%);
@@ -245,13 +281,37 @@ nav.navbar .navbar-toggler[aria-expanded="true"] .navbar-toggler-icon{ border-co
 .proj-txtx span{ font-style:italic; font-weight:400; font-size:15px; letter-spacing:.8px; }
 .background-image-right{ top:20%; position:absolute; bottom:0; width:35%; right:0; z-index:-4; }
 
+/* 提升可读性：标题/副标题阴影 & 背景暗化层 */
+.proj-imgbx a,
+.proj-txtx,
+.proj-txtx h4,
+.proj-txtx span{
+  color: #fff !important;
+  text-decoration: none;
+}
+.proj-txtx h4{
+  text-shadow: 0 6px 20px rgba(0,0,0,.55), 0 2px 6px rgba(0,0,0,.45);
+}
+.proj-txtx span{
+  opacity: .95;
+  text-shadow: 0 2px 10px rgba(0,0,0,.4);
+}
+.proj-imgbx::after{
+  content:"";
+  position:absolute; inset:0;
+  background:
+          radial-gradient(60% 40% at 30% 30%, rgba(0,0,0,0) 0 40%, rgba(0,0,0,.35) 70%),
+          linear-gradient(180deg, rgba(0,0,0,0) 30%, rgba(0,0,0,.45) 80%);
+  z-index:1; pointer-events:none;
+}
+.proj-txtx{ z-index: 2; }
 
 /**************************
  *  Contact
  **************************/
 .contact{
   background: linear-gradient(90.21deg, var(--brand-primary) -5.91%, var(--brand-accent) 111.58%);
-  padding:60px 0 100px 0;
+  padding:56px 0 96px; /* 采用微调后的节奏 */
 }
 .contact img{ width:92%; }
 .contact h2{ font-size:45px; font-weight:700; margin-bottom:30px; }
@@ -276,7 +336,7 @@ nav.navbar .navbar-toggler[aria-expanded="true"] .navbar-toggler-icon{ border-co
  *  Footer
  **************************/
 .footer{
-  padding:0 0 50px 0;
+  padding: 36px 0 50px;   /* 统一用微调版本 */
   background-image:url('./assets/img/footer-bg.png');
   background-position:center center; background-size:cover; background-repeat:no-repeat;
 }
@@ -298,138 +358,66 @@ nav.navbar .navbar-toggler[aria-expanded="true"] .navbar-toggler-icon{ border-co
 .footer img{ width:20%; }
 .footer p{ font-weight:400; font-size:14px; color:#B8B8B8; letter-spacing:1.5px; margin-top:30px; }
 
-
-/* 固定导航时避免锚点被遮挡（给 #connect 用） */
-section[id] { scroll-margin-top: 84px; }
-
-/* 强制项目卡片标题/副标题为白色（覆盖 Bootstrap 链接色） */
-.proj-imgbx a,
-.proj-txtx,
-.proj-txtx h4,
-.proj-txtx span{
-  color: #fff !important;
-  text-decoration: none;
-}
-
-/* 提升可读性：给标题一点阴影 */
-.proj-txtx h4{
-  text-shadow: 0 6px 20px rgba(0,0,0,.55), 0 2px 6px rgba(0,0,0,.45);
-}
-.proj-txtx span{
-  opacity: .95;
-  text-shadow: 0 2px 10px rgba(0,0,0,.4);
-}
-
-/* （可选）在文字背后加一层暗渐变，提高对比度 */
-.proj-imgbx::after{
-  content:"";
-  position:absolute; inset:0;
-  background:
-          radial-gradient(60% 40% at 30% 30%, rgba(0,0,0,0) 0 40%, rgba(0,0,0,.35) 70%),
-          linear-gradient(180deg, rgba(0,0,0,0) 30%, rgba(0,0,0,.45) 80%);
-  z-index:1; pointer-events:none;
-}
-.proj-txtx{ z-index: 2; }   /* 确保文字在渐变之上 */
-
 /**************************
- *  Section Spacing — fine tune
- *  (Place at the very end to override previous rules)
+ *  Utilities
  **************************/
-
-/* 1) What I Do -> Education 变小 */
-.do.wrap{
-  /* 原来：padding: 80px 0 60px; */
-  padding-bottom: 44px; /* 60 -> 44，收紧 16px */
-}
-/* 让 Education 略微上提一丢丢（避免太贴） */
-.do.wrap + .education{ margin-top: -8px; }
-
-@media (max-width: 768px){
-  .do.wrap{ padding-bottom: 36px; }
-  .do.wrap + .education{ margin-top: -6px; }
-}
-
-/* 2) Education -> Technical Skills 变大 */
-.education{
-  /* 原来：padding: 80px 0; */
-  padding-top: 64px;     /* 顶部略收一点，让上游更紧凑 */
-  padding-bottom: 112px; /* 底部加大，拉开与 Skills 的距离 */
-}
-.skill{
-  /* 原来：padding: 30 0 50px 0;  (注意这行原来少了单位) */
-  padding: 70px 0 60px 0; /* 顶部加大，底部略加，视觉更松弛 */
-}
-@media (max-width: 768px){
-  .education{ padding-top: 52px; padding-bottom: 96px; }
-  .skill{ padding-top: 60px; }
-}
-
-/* 3) 其余段落微调（让全站节奏统一、自然） */
-
-/* Experience 卡片区：与上/下文保持 64/64 的节距 */
-.xp-wrap{ padding: 64px 0; }
-
-/* Projects 段前略松一点，段后维持 80px */
-.project{ padding: 96px 0 80px; }
-
-/* 可选：Contact 段稍微收尾，避免和 Footer 挤 */
-.contact{ padding: 56px 0 96px; }
-
-/* 大屏时标题和段落行距微调，避免“气口”过小 */
-@media (min-width: 1200px){
-  .education h2,
-  .project h2,
-  .skill h2{ margin-bottom: 24px; }
-
-  .project p,
-  .skill p{ line-height: 1.6; }
-}
+section[id] { scroll-margin-top: 84px; }   /* 固定导航时避免锚点被遮挡 */
 
 /* 避免相邻 section 因 margin 折叠导致的“忽大忽小” */
 section { overflow: visible; }
 
 /**************************
- * Responsive polish
+ *  Section Spacing — fine tune
  **************************/
+.do.wrap{ padding-bottom: 44px; }               /* What I Do -> Education 变小 */
+.do.wrap + .education{ margin-top: -8px; }      /* Education 略上提 */
 
-/* 移动端的锚点补偿略小一点（顶部固定导航更矮） */
-@media (max-width: 768px){
-  html { scroll-padding-top: 64px; }
+.education{
+  padding-top: 64px;
+  padding-bottom: 112px;                         /* Education -> Skills 拉开距离 */
 }
 
-/* Navbar — 收紧高度、放大触控区域 */
+.xp-wrap{ padding: 64px 0; }                    /* Experience 区节奏 */
+
+@media (min-width: 1200px){
+  .education h2, .project h2, .skill h2{ margin-bottom: 24px; }
+  .project p, .skill p{ line-height: 1.6; }
+}
+
+/**************************
+ *  Responsive polish
+ **************************/
 @media (max-width: 768px){
+  html { scroll-padding-top: 64px; }            /* 顶部固定导航更矮 */
   nav.navbar { padding: 12px 0; }
-  nav.navbar a.navbar-brand { width:auto; }
-  nav.navbar a.navbar-brand img { height: 32px; width:auto; }
-  nav.navbar .navbar-nav .nav-link.navbar-link{
-    padding: 10px 12px;
-    font-size: 16px;
-  }
+  nav.navbar .navbar-brand img { height: 32px; }
+  nav.navbar .navbar-nav .nav-link.navbar-link{ padding: 10px 12px; font-size: 16px; }
   .social-icon a{ width:36px; height:36px; }
   .navbar-text button{ padding:12px 18px; font-size:16px; margin-left:12px; }
+
+  .education{ padding-top: 52px; padding-bottom: 96px; }
+  .skill{ padding-top: 60px; }
+  .xp-wrap{ padding: 56px 0; }
+  .project{ padding: 72px 0 64px; }
+  .contact{ padding: 56px 0 96px; }
+
+  .newsletter-bx { padding: 28px 20px; margin-top: -60px; }
+  .footer img { width: 42%; }
 }
 
-/* Banner — 缩小上内边距与字号、可选择隐藏大图降低抖动 */
 @media (max-width: 992px){
   .banner { padding: 160px 0 72px; }
   .banner p { font-size: 16px; }
   .banner button { margin-top: 32px; font-size: 18px; }
-}
-@media (max-width: 768px){
-  .banner { padding: 128px 0 56px; }
-}
 
-/* What I Do — 单列、放大主图、图标网格更密 */
-@media (max-width: 992px){
   .do-grid { grid-template-columns: 1fr; gap: 22px; }
   .do-hero { width: min(92%, 640px); }
   .tool-row { grid-template-columns: repeat(3, minmax(70px, 1fr)); gap: 18px; }
   .tool-icon i { font-size: 48px; }
 }
-
-/* Education — 卡片更紧凑 */
 @media (max-width: 768px){
+  .banner { padding: 128px 0 56px; }
+  .banner img{ margin-top: 24px; animation: floatYSm 5s ease-in-out infinite; }
   .edu-grid { gap: 14px; }
   .edu-card { padding: 16px; border-radius: 18px; }
   .edu-head h4 { font-size: 18px; }
@@ -442,9 +430,8 @@ section { overflow: visible; }
   .xp-body { padding: 72px 14px 14px; text-align: left; }
 }
 
-/* Projects 标签条 — 100% 宽、降低玻璃模糊以提性能 */
+/* Projects 标签条 — 100% 宽、降低玻璃模糊以提性能（与上方宽度一致） */
 @media (max-width: 768px){
-  .project { padding: 72px 0 64px; }
   .project .nav.nav-pills { width: 100%; padding: 4px; backdrop-filter: none; background: rgba(255,255,255,.08); }
   .project .nav.nav-pills .nav-link { height: 42px; font-size: 15px; }
 }
@@ -456,78 +443,63 @@ section { overflow: visible; }
   .contact form button { padding: 12px 28px; font-size: 16px; }
 }
 
-/* Footer newsletter — 收紧内边距，避免挤 */
-@media (max-width: 768px){
-  .newsletter-bx { padding: 28px 20px; margin-top: -60px; }
-  .footer img { width: 42%; }
+/**************************
+ *  Reveal / Decorative Effects
+ **************************/
+.reveal {
+  opacity: 0;
+  transform: translateY(22px);
+  transition: opacity .6s ease, transform .6s ease;
+  will-change: opacity, transform;
+}
+.reveal.show {
+  opacity: 1;
+  transform: none;
 }
 
-/* 全站节奏：小屏统一行距/间距，防止忽松忽紧 */
-@media (max-width: 768px){
-  .education{ padding-top: 52px; padding-bottom: 96px; }
-  .skill{ padding-top: 60px; }
-  .xp-wrap{ padding: 56px 0; }
-  .project{ padding: 72px 0 64px; }
-  .contact{ padding: 56px 0 96px; }
+/* 浮动光斑（Banner 背景） */
+.blob,
+.blob2 {
+  position: absolute;
+  inset: auto;
+  width: 36vmax;
+  height: 36vmax;
+  pointer-events: none;
+  filter: blur(40px);
+  opacity: .35;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, #7c3aed 0%, #22d3ee 45%, transparent 60%);
+  animation: floatY 12s ease-in-out infinite alternate, slowSpin 32s linear infinite;
+}
+.blob2 {
+  width: 28vmax; height: 28vmax;
+  background: radial-gradient(circle at 70% 70%, #f472b6 0%, #60a5fa 45%, transparent 60%);
+  animation-duration: 14s, 40s;
+}
+@keyframes floatY { from { transform: translateY(-2%) } to { transform: translateY(4%) } }
+@keyframes slowSpin { from { rotate: 0deg } to { rotate: 360deg } }
+
+/* 项目卡片 3D 轻微倾斜/发光 */
+.tilt {
+  transform-style: preserve-3d;
+  transform: perspective(900px);
+  transition: transform 160ms ease, box-shadow 160ms ease;
+  will-change: transform;
+}
+.tilt:hover { box-shadow: 0 10px 30px rgba(0,0,0,.15); }
+.tilt .tilt-raise { transform: translateZ(18px); }
+
+/* 顶部滚动进度条（抬高层级，避免被 nav 覆盖） */
+.scroll-progress {
+  position: fixed; top: 0; left: 0; height: 3px; z-index: 10000;
+  background: linear-gradient(90deg, #22d3ee, #7c3aed);
+  width: var(--progress, 0%);
 }
 
-/* === Navbar logo 尺寸（放在样式文件最底部） === */
-nav.navbar a.navbar-brand {
-  width: auto !important;   /* 不用百分比宽度 */
-  padding: 0;
+/* 移动端与无动作偏好 */
+@media (max-width: 768px) {
+  .blob, .blob2 { filter: blur(50px); opacity: .28; }
 }
-
-nav.navbar .navbar-brand img {
-  height: 80px;             /* ← 想更小就改这里，如 20px */
-  width: auto !important;   /* 覆盖全局 img { width:100% } */
-  display: block;
+@media (prefers-reduced-motion: reduce) {
+  .reveal, .blob, .blob2, .tilt { transition: none !important; animation: none !important; }
 }
-
-/* 滚动时再微缩一点（可选） */
-nav.navbar.scrolled .navbar-brand img {
-  height: 40px;
-  transition: height .2s ease;
-}
-
-/* Footer 顶部留白 */
-.footer{
-  padding: 36px 0 50px;   /* 原先是 0 0 50px */
-}
-@media (max-width: 768px){
-  .footer{ padding-top: 28px; }
-}
-
-/* === Banner image: safer on mobile === */
-.banner .floaty-img{
-  display:block;
-  margin: clamp(12px, 2.2vw, 18px) auto 0; /* 顶部留空，水平居中 */
-  max-width: 560px;
-  width: 100%;
-  height: auto;
-}
-
-/* 平板以下：再小一点并下移 */
-@media (max-width: 992px){
-  .banner .floaty-img{
-    max-width: 480px;
-  }
-}
-
-/* 手机：明显下移，减小/改良动画，避免覆盖按钮 */
-@media (max-width: 768px){
-  .banner { padding: 128px 0 64px; } /* 你已有此条，可保留 */
-  .banner .floaty-img{
-    max-width: 84%;
-    margin-top: 24px;                 /* ← 关键：把插画整体往下挪 */
-    animation: updownMobile 6s ease-in-out infinite;
-  }
-  /* CTA 与下方插画拉开一点距离（可选） */
-  .banner-cta{ margin-bottom: 6px; }
-}
-
-/* 只向下轻微漂移的动画（不会向上顶） */
-@keyframes updownMobile{
-  0%,100%{ transform: translateY(4px); }
-  50%    { transform: translateY(16px); }
-}
-
