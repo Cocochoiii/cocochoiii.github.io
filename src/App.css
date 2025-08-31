@@ -496,3 +496,7 @@ nav.navbar.scrolled .navbar-brand img {
 @media (max-width: 768px){
   .footer{ padding-top: 28px; }
 }
+
+@media (max-width: 768px){
+  .banner img{ margin-top: 24px; animation: floatYSm 5s ease-in-out infinite; }
+}
