@@ -295,8 +295,8 @@ nav.navbar .navbar-toggler[aria-expanded="true"] .navbar-toggler-icon{ border-co
   background: linear-gradient(90.21deg, var(--brand-primary) -5.91%, var(--brand-accent) 111.58%);
   padding:20px 65px; color:#fff; font-weight:500; letter-spacing:.5px; border-radius:18px;
 }
-.footer img{ width:26%; }
-.footer p{ font-weight:400; font-size:14px; color:#B8B8B8; letter-spacing:.5px; margin-top:20px; }
+.footer img{ width:20%; }
+.footer p{ font-weight:400; font-size:14px; color:#B8B8B8; letter-spacing:1.5px; margin-top:30px; }
 
 
 /* 固定导航时避免锚点被遮挡（给 #connect 用） */
@@ -469,4 +469,30 @@ section { overflow: visible; }
   .xp-wrap{ padding: 56px 0; }
   .project{ padding: 72px 0 64px; }
   .contact{ padding: 56px 0 96px; }
+}
+
+/* === Navbar logo 尺寸（放在样式文件最底部） === */
+nav.navbar a.navbar-brand {
+  width: auto !important;   /* 不用百分比宽度 */
+  padding: 0;
+}
+
+nav.navbar .navbar-brand img {
+  height: 80px;             /* ← 想更小就改这里，如 20px */
+  width: auto !important;   /* 覆盖全局 img { width:100% } */
+  display: block;
+}
+
+/* 滚动时再微缩一点（可选） */
+nav.navbar.scrolled .navbar-brand img {
+  height: 40px;
+  transition: height .2s ease;
+}
+
+/* Footer 顶部留白 */
+.footer{
+  padding: 36px 0 50px;   /* 原先是 0 0 50px */
+}
+@media (max-width: 768px){
+  .footer{ padding-top: 28px; }
 }

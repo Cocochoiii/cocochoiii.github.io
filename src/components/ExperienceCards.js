@@ -4,6 +4,8 @@ import ubiLogo  from "../assets/img/ubiwell-logo.svg";
 import audiLogo from "../assets/img/audi-logo.png";
 import marsLogo from "../assets/img/mars-logo.png";
 
+
+
 const CARDS = [
   {
     company: "UbiWell Lab",

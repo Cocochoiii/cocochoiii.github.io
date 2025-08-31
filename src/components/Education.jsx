@@ -4,6 +4,7 @@ import "animate.css";
 import TrackVisibility from "react-on-screen";
 import "./Education.css";
 
+
 // Public assets (ensure files exist under public/logos/)
 const neuLogo = "/logos/Northeastern_Wordmark.svg";
 const fmLogo  = "/logos/Franklin_marshall_college_logo.svg";

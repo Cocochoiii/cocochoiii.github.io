@@ -2,6 +2,7 @@ import React, { useRef, useState, useEffect } from "react";
 import "./WhatIDo.css";
 import headerImg from "../assets/img/header2-img.svg";
 
+
 /* 小组件：视口可见时数字平滑计数 */
 function useCountUp(inViewRef, {
     from = 0,
