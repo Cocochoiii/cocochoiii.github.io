@@ -22,10 +22,14 @@ jobs:
         with:
           node-version: 20
           cache: npm
-      - run: npm ci
-      - run: npm run build
-      # SPA 刷新 404 修复
-      - run: cp build/index.html build/404.html
+      - name: Install deps
+        run: npm ci
+      - name: Build
+        run: npm run build
+        env:
+          CI: false                 # 关键：避免 CRA 在 CI 把警告当错误
+      - name: SPA 404 fix
+        run: cp build/index.html build/404.html
       - uses: actions/upload-pages-artifact@v3
         with:
           path: build
