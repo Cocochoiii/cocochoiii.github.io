@@ -143,7 +143,7 @@ nav.navbar .navbar-toggler[aria-expanded="true"] .navbar-toggler-icon{ border-co
 }
 .banner .tagline{
   font-weight:700; letter-spacing:.8px; padding:8px 10px;
-  background:linear-gradient(90.21deg, rgba(170,54,124,.5) -5.91%, rgba(74,47,189,.5) 111.58%);
+  background:linear-gradient(90.21deg, rgba(170, 54, 124, 0.74) -5.91%, rgba(74, 47, 189, 0.75) 111.58%);
   border:1px solid rgba(255,255,255,.5); font-size:20px; margin-bottom:16px; display:inline-block;
 }
 .banner h1{ font-size:65px; font-weight:700; letter-spacing:.8px; line-height:1; margin-bottom:20px; display:block; }
@@ -503,3 +503,184 @@ section { overflow: visible; }
 @media (prefers-reduced-motion: reduce) {
   .reveal, .blob, .blob2, .tilt { transition: none !important; animation: none !important; }
 }
+
+/* === Hero 渐变标题 + 副标题扫光 === */
+.gradient-text{
+  background: linear-gradient(90deg,#22d3ee,#7c3aed,#f472b6);
+  background-size: 200% 100%;
+  -webkit-background-clip: text; background-clip: text;
+  color: transparent; animation: gradientShift 8s ease-in-out infinite;
+}
+@keyframes gradientShift{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+.shimmer{ position:relative; overflow:hidden; isolation:isolate; }
+.shimmer::after{
+  content:""; position:absolute; inset:-20%;
+  background:linear-gradient(120deg,transparent 0%,rgba(255,255,255,.25) 35%,rgba(255,255,255,.06) 50%,transparent 65%);
+  transform:translateX(-120%) skewX(-12deg); animation:shimmerSweep 2.4s ease-in-out infinite;
+}
+@keyframes shimmerSweep{0%{transform:translateX(-120%) skewX(-12deg)}60%{transform:translateX(0) skewX(-12deg)}100%{transform:translateX(120%) skewX(-12deg)}}
+
+/* === CTA 磁吸按钮（无库） === */
+.cta-btn{
+  position:relative; display:inline-block; margin-right:12px; margin-top:18px;
+  padding:12px 18px; border-radius:14px; font-weight:700; color:#fff; background:#111;
+  transition: transform .18s ease, box-shadow .18s ease;
+  box-shadow: 0 0 0 rgba(154,151,255,0);
+}
+.cta-btn:hover{ transform: translateY(-2px) scale(1.02); box-shadow: 0 10px 24px rgba(154,151,255,.35), 0 0 0 1px rgba(154,151,255,.2) inset; }
+.cta-btn::after{
+  content:""; position:absolute; inset:-1px; border-radius:inherit;
+  background: conic-gradient(from 0deg,var(--brand-primary),var(--brand-accent),var(--brand-primary));
+  -webkit-mask: linear-gradient(#000 0 0) padding-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor; mask-composite: exclude; animation: spin 6s linear infinite; opacity:.75;
+}
+@keyframes spin{to{rotate:360deg}}
+
+/* 鼠标位置光圈（由 JS 设置 --x/--y） */
+.cta-btn::before{
+  content:""; position:absolute; width:200px; height:200px; border-radius:50%;
+  left:calc(var(--x,50%) - 100px); top:calc(var(--y,50%) - 100px);
+  background: radial-gradient(circle, rgba(154,151,255,.22), transparent 60%);
+  filter: blur(18px); opacity:0; transition:opacity .15s ease;
+  pointer-events:none;
+}
+.cta-btn:hover::before{ opacity:1; }
+
+/* === Banner 右侧图：轻微视差 + 漂浮 === */
+.floaty-img{ will-change: transform; animation: updown 6s ease-in-out infinite; }
+.banner-parallax{ perspective: 1000px; }
+.banner-parallax .floaty-img{ transform-style: preserve-3d; }
+
+/* === Projects：Ken Burns + 扫光 + 3D 微倾 === */
+
+
+.proj-imgbx.sheen::before{
+  content:""; position:absolute; inset:-20% -100% -20% -100%;
+  background: linear-gradient(75deg, transparent 30%, rgba(255,255,255,.18) 50%, transparent 70%);
+  transform: translateX(-30%); transition: transform .6s ease; pointer-events:none; z-index:2;
+}
+.proj-imgbx.sheen:hover::before{ transform: translateX(30%); }
+
+/* 固定 4:3 比例 + 让图片绝对定位填充 */
+.proj-imgbx{
+  position: relative;
+  aspect-ratio: 1 / 1;      /* 关键：卡片先有高度 */
+  background: #0f0f10;      /* 图片未加载时也看得到底色 */
+}
+.proj-imgbx > img{
+  position: absolute; inset: 0;
+  width: 100%; height: 100%; object-fit: cover;
+}
+
+.tilt{ transform-style: preserve-3d; transform: perspective(900px); transition: transform 160ms ease, box-shadow 160ms ease; }
+.tilt:hover{ box-shadow: 0 10px 30px rgba(0,0,0,.18); }
+.tilt .tilt-raise{ transform: translateZ(18px); }
+
+/* === reveal 的交错延迟工具类 === */
+.d0{transition-delay:0ms}.d1{transition-delay:100ms}.d2{transition-delay:200ms}.d3{transition-delay:300ms}.d4{transition-delay:400ms}.d5{transition-delay:500ms}
+
+/* === A) Banner 动态渐变 + 轻噪点 + 环形光斑 === */
+.hero {
+  position: relative;
+  overflow: hidden;
+  border-radius: 0;
+  isolation: isolate;
+}
+.hero::before{
+  content:"";
+  position:absolute; inset:-20%;
+  background: radial-gradient(120% 120% at 0% 0%, rgba(154,151,255,.20), transparent 60%),
+  radial-gradient(120% 120% at 100% 100%, rgba(34,211,238,.20), transparent 60%),
+  linear-gradient(120deg, rgba(170,54,124,.18), rgba(74,47,189,.18));
+  filter: blur(14px);
+  animation: heroMove 18s ease-in-out infinite alternate;
+  z-index:-1;
+}
+@keyframes heroMove{
+  from { transform: translate3d(-2%, -1%, 0) }
+  to   { transform: translate3d( 2%,  1%, 0) }
+}
+/* 微弱“胶片噪点”叠层 */
+.hero::after{
+  content:""; position:absolute; inset:0; pointer-events:none; mix-blend-mode: soft-light; opacity:.18;
+  background-image:
+          radial-gradient(rgba(255,255,255,.06) 1px, transparent 1px),
+          radial-gradient(rgba(0,0,0,.08) 1px, transparent 1px);
+  background-size: 3px 3px, 5px 5px;
+  background-position: 0 0, 10px 10px;
+  z-index:-1;
+}
+
+/* === B) 标题渐变 + 打字光标发光 === */
+.headline { line-height: 1.04; margin: 8px 0 12px; }
+.headline .gradient-text{
+  background: linear-gradient(90deg,#22d3ee,#7c3aed,#f472b6);
+  background-size: 200% 100%;
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  animation: gradientShift 8s ease-in-out infinite;
+}
+@keyframes gradientShift{ 0%,100%{background-position:0% 50%} 50%{background-position:100% 50%} }
+
+/* 让打字的“|”更像霓虹光标 */
+.txt-rotate > .wrap{
+  border-right: .12em solid rgba(154,151,255,.85);
+  box-shadow: none;
+  background: transparent;
+  animation: caretBlink 1s steps(1,end) infinite;
+}
+@keyframes caretBlink { 50%{ border-color: transparent; box-shadow: none; } }
+
+/* 副标题的柔和扫光（给 <span class="shimmer">...） */
+.shimmer{ position:relative; overflow:hidden; isolation:isolate; }
+.shimmer::after{
+  content:""; position:absolute; inset:-20%;
+  background:linear-gradient(120deg,transparent 0%,rgba(255,255,255,.24) 35%,rgba(255,255,255,.06) 55%,transparent 70%);
+  transform:translateX(-120%) skewX(-12deg);
+  animation: shimmerSweep 2400ms ease-in-out infinite;
+}
+@keyframes shimmerSweep{ 0%{transform:translateX(-120%) skewX(-12deg)} 60%{transform:translateX(0) skewX(-12deg)} 100%{transform:translateX(120%) skewX(-12deg)} }
+
+/* === C) 鼠标视差/倾斜容器 === */
+.parallax-wrap{
+  perspective: 1200px;
+  --rx: 0deg; --ry: 0deg;            /* JS 写入 */
+  --tx: 0px; --ty: 0px;
+}
+.parallax-item{
+  transform: rotateX(var(--rx)) rotateY(var(--ry)) translate3d(var(--tx), var(--ty), 0);
+  transform-style: preserve-3d;
+  transition: transform .14s ease-out;
+  will-change: transform;
+}
+
+/* === D) 交错入场工具 + CTA 磁吸光圈（沿用你的 .cta-btn） === */
+.stagger > * { opacity:0; transform: translateY(18px); animation: rise .6s ease forwards; }
+.stagger > *:nth-child(1){ animation-delay: .05s }
+.stagger > *:nth-child(2){ animation-delay: .15s }
+.stagger > *:nth-child(3){ animation-delay: .25s }
+.stagger > *:nth-child(4){ animation-delay: .35s }
+@keyframes rise{ to { opacity:1; transform:none } }
+
+/* CTA 里的光圈随鼠标移动（你已有 .cta-btn，补这个即可） */
+.cta-field{ position:relative; display:inline-flex; gap:12px; flex-wrap:wrap; }
+.cta-field .cta-btn::before{
+  content:""; position:absolute; width:220px; height:220px; border-radius:50%; pointer-events:none;
+  left:calc(var(--mx,50%) - 110px); top:calc(var(--my,50%) - 110px);
+  background: radial-gradient(circle, rgba(154,151,255,.26), transparent 60%);
+  filter: blur(18px); opacity:0; transition: opacity .15s ease;
+}
+.cta-field .cta-btn:hover::before{ opacity:1 }
+
+/* 向下滚动提示箭头 */
+.scroll-cue{
+  position:absolute; left:50%; bottom:18px; transform:translateX(-50%); opacity:.7; user-select:none;
+  animation: bob 1.8s ease-in-out infinite;
+}
+@keyframes bob{ 0%,100%{ transform:translate(-50%,0) } 50%{ transform:translate(-50%,-8px) } }
+
+@media (prefers-reduced-motion: reduce){
+  .parallax-item, .hero::before, .hero::after, .shimmer::after, .scroll-cue,
+  .stagger > *, .floaty-img { animation: none !important; transition: none !important; }
+}
+
+
