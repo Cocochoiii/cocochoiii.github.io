@@ -11,9 +11,9 @@ import TrackVisibility from 'react-on-screen';
 
 export const Projects = () => {
   const featured = [
-    { title: "Audi e‑Charging App", description: "EV charging companion app: React Native + Spring Boot backend", imgUrl: projImg1, linkUrl: "https://github.com/Cocochoiii/audi-e-charging-app" },
-    { title: "Media Recs Sample", description: "LLM + BERT embeddings; contrastive training on interactions", imgUrl: projImg2, linkUrl: "https://github.com/Cocochoiii/media-recs-sample" },
-    { title: "Mars Commerce", description: "E‑commerce demo: Node/Express microservices + MongoDB", imgUrl: projImg3, linkUrl: "https://github.com/Cocochoiii/mars-commerce" },
+    { title: "Audi e‑Charging App", description: "EV charging companion app: React Native + Spring Boot backend", imgUrl: projImg1, linkUrl: "https://github.com/Cocochoiii/audi-e-charging-app.git" },
+    { title: "Media Recs Sample", description: "LLM + BERT embeddings; contrastive training on interactions", imgUrl: projImg2, linkUrl: "https://github.com/Cocochoiii/media-recs_platform.git" },
+    { title: "Mars Commerce", description: "E‑commerce demo: Node/Express microservices + MongoDB", imgUrl: projImg3, linkUrl: "https://github.com/Cocochoiii/mars-ecommerce.git" },
   ];
 
   const research = [
