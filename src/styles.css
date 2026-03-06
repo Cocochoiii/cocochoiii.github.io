@@ -16,7 +16,7 @@ html, body, #root {
 
 .pill-btn {
   background: white; color: var(--dark);
-  padding: 7px 15px; border-radius: 20px;
+  padding: 6px 15px; border-radius: 20px;
   font-family: 'DM Sans', sans-serif; font-size: 7px; font-weight: 700;
   letter-spacing: 1px; text-transform: uppercase;
   box-shadow: 0 3px 12px rgba(0,0,0,0.12);
@@ -27,7 +27,7 @@ html, body, #root {
 
 .ham-btn {
   position: fixed; top: 12px; right: 12px;
-  width: 28px; height: 28px; border-radius: 50%;
+  width: 26px; height: 26px; border-radius: 50%;
   background: white; border: none; cursor: pointer;
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
   display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px;
@@ -38,7 +38,7 @@ html, body, #root {
 .ham-btn:not(.open):hover .bar:nth-child(2) { transform: translateX(2px); }
 .ham-btn:not(.open):hover .bar:last-child { transform: translateX(-1px); }
 .ham-btn.open { background: transparent; box-shadow: none; gap: 0; }
-.ham-btn .bar { width: 11px; height: 1.5px; background: var(--dark); border-radius: 1px; transition: all 0.4s cubic-bezier(0.25,0,0,1); }
+.ham-btn .bar { width: 10px; height: 1.25px; background: var(--dark); border-radius: 1px; transition: all 0.4s cubic-bezier(0.25,0,0,1); }
 .ham-btn.open .bar { background: white; position: absolute; }
 .ham-btn.open .bar:first-child { transform: rotate(45deg); }
 .ham-btn.open .bar:nth-child(2) { opacity: 0; }

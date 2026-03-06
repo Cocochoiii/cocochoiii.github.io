@@ -43,7 +43,7 @@ export default function AboutPage({ go }) {
     let r = null
     import('@rive-app/canvas').then((rive) => {
       const dpr = window.devicePixelRatio || 1
-      const size = m ? Math.min(window.innerWidth * 0.7, 350) : Math.min(window.innerWidth * 1.0, window.innerHeight * 1.0, 1100)
+      const size = m ? Math.min(window.innerWidth * 0.6, 300) : Math.min(window.innerWidth * 1.0, window.innerHeight * 1.0, 1100)
       canvas.width = size * dpr; canvas.height = size * dpr
       canvas.style.width = size + 'px'; canvas.style.height = size + 'px'
       r = new rive.Rive({
@@ -52,7 +52,7 @@ export default function AboutPage({ go }) {
         onLoad: () => r.resizeDrawingSurfaceToCanvas(),
       })
       const onResize = () => {
-        const s = m ? Math.min(window.innerWidth * 0.7, 350) : Math.min(window.innerWidth * 0.6, window.innerHeight * 0.6, 900)
+        const s = m ? Math.min(window.innerWidth * 0.6, 300) : Math.min(window.innerWidth * 0.6, window.innerHeight * 0.6, 900)
         canvas.width = s * dpr; canvas.height = s * dpr
         canvas.style.width = s + 'px'; canvas.style.height = s + 'px'
         r.layout = new rive.Layout({ fit: rive.Fit.Contain, alignment: rive.Alignment.Center })
@@ -136,7 +136,7 @@ export default function AboutPage({ go }) {
         </div>
 
         {/* Scroll hint */}
-        <div className="ab-scroll-hint" style={{ position: m ? 'relative' : 'absolute', bottom: m ? undefined : 36, left: m ? undefined : '50%', transform: m ? undefined : 'translateX(-50%)', zIndex: 10, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8, opacity: 0, marginTop: m ? 12 : 0 }}>
+        <div className="ab-scroll-hint" style={{ position: m ? 'relative' : 'absolute', bottom: m ? undefined : 18, left: m ? undefined : '50%', transform: m ? undefined : 'translateX(-50%)', zIndex: 10, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4, opacity: 0, marginTop: m ? 12 : 0 }}>
           <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 6, letterSpacing: 1.5, textTransform: 'uppercase', color: '#bbb' }}>Scroll</div>
           <svg width="10" height="14" viewBox="0 0 16 24" fill="none" stroke="#ccc" strokeWidth="1.5" strokeLinecap="round"><rect x="1" y="1" width="14" height="22" rx="7"/><line x1="8" y1="6" x2="8" y2="10"/></svg>
         </div>
@@ -145,7 +145,7 @@ export default function AboutPage({ go }) {
       {/* ===== STORY ===== */}
       <div style={{ width: '100%', background: '#faf5f0', padding: m ? '30px 0' : 'clamp(40px, 10vw, 80px) 0', overflow: 'hidden' }}>
         {/* Pull quote */}
-        <div className="ab-reveal" style={{ maxWidth: 600, margin: '0 auto', padding: pad, opacity: 0 }}>
+        <div className="ab-reveal" style={{ maxWidth: 550, margin: '0 auto', padding: pad, opacity: 0 }}>
           <div style={{ display: 'flex', alignItems: 'flex-start', gap: m ? 6 : 10, marginBottom: m ? 18 : 30 }}>
             <span style={{ fontFamily: "'Playfair Display', serif", fontSize: m ? 20 : 'clamp(40px, 10vw, 70px)', fontWeight: 900, color: EYE.rose, lineHeight: 0.8, opacity: 0.2 }}>"</span>
             <h3 style={{ fontFamily: "'Playfair Display', serif", fontSize: m ? 14 : 'clamp(14px, 3.5vw, 23px)', fontWeight: 700, fontStyle: 'italic', color: EYE.shadow, lineHeight: 1.3, letterSpacing: -1, marginTop: m ? 4 : 8 }}>
@@ -155,7 +155,7 @@ export default function AboutPage({ go }) {
         </div>
 
         {/* Two-column editorial (single col on mobile) */}
-        <div className="ab-reveal" style={{ maxWidth: 600, margin: '0 auto', padding: pad, opacity: 0 }}>
+        <div className="ab-reveal" style={{ maxWidth: 550, margin: '0 auto', padding: pad, opacity: 0 }}>
           <div style={{ display: 'grid', gridTemplateColumns: m ? '1fr' : '1fr 1fr', gap: m ? 12 : 'clamp(20px, 5vw, 40px)' }}>
             <div>
               <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: m ? 7 : 9, lineHeight: 2, color: '#666' }}>I hold a BA in Business and Film from Franklin & Marshall College and I'm currently pursuing my MS in Computer Science at Northeastern University. This blend of technical and creative backgrounds shapes how I approach every project.</p>
@@ -171,7 +171,7 @@ export default function AboutPage({ go }) {
         </div>
 
         {/* Big stats */}
-        <div className="ab-reveal" style={{ maxWidth: 600, margin: m ? '20px auto 0' : '40px auto 0', padding: pad, opacity: 0 }}>
+        <div className="ab-reveal" style={{ maxWidth: 550, margin: m ? '20px auto 0' : '40px auto 0', padding: pad, opacity: 0 }}>
           <div style={{ display: m ? 'grid' : 'flex', gridTemplateColumns: '1fr 1fr', gap: m ? 10 : 0, justifyContent: m ? undefined : 'space-between', borderTop: m ? 'none' : `2px solid ${EYE.shadow}10`, paddingTop: m ? 0 : 20 }}>
             {ABOUT_BIG_STATS.map((s, i) => (
               <div key={i} style={{ textAlign: 'center', flex: m ? undefined : 1 }}>
@@ -200,7 +200,7 @@ export default function AboutPage({ go }) {
 
       {/* ===== CONTACT ===== */}
       <div style={{ width: '100%', background: EYE.shadow, padding: m ? '30px 12px' : 'clamp(40px, 10vw, 80px) clamp(20px, 8vw, 80px)', textAlign: 'center' }}>
-        <div className="ab-reveal" style={{ maxWidth: 440, margin: '0 auto', opacity: 0 }}>
+        <div className="ab-reveal" style={{ maxWidth: 400, margin: '0 auto', opacity: 0 }}>
           <p style={{ fontFamily: "'Playfair Display', serif", fontStyle: 'italic', fontSize: m ? 5 : 7, color: EYE.skin, letterSpacing: 2, textTransform: 'uppercase', marginBottom: m ? 6 : 10 }}>Get In Touch</p>
           <h3 style={{ fontFamily: "'Playfair Display', serif", fontSize: m ? 18 : 'clamp(18px, 5vw, 32px)', fontWeight: 800, color: EYE.cream, marginBottom: m ? 6 : 10, lineHeight: 1.1, letterSpacing: -2 }}>
             Let's create something<br/>beautiful together
@@ -208,7 +208,7 @@ export default function AboutPage({ go }) {
           <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: m ? 7 : 9, color: 'rgba(255,255,255,0.4)', marginBottom: m ? 14 : 24, lineHeight: 1.7 }}>
             Whether it's a project, a job opportunity, or just to say hi — I'd love to hear from you.
           </p>
-          <a href="mailto:choi.coco@northeastern.edu" onMouseEnter={handleCtaEnter} onMouseLeave={handleCtaLeave} style={{ display: 'inline-flex', alignItems: 'center', gap: m ? 5 : 8, padding: m ? '10px 20px' : '12px 28px', borderRadius: 30, background: EYE.rose, color: 'white', fontFamily: "'DM Sans', sans-serif", fontSize: m ? 7 : 9, fontWeight: 700, letterSpacing: 0.75, textDecoration: 'none', transition: 'all 0.4s cubic-bezier(0.25,0,0,1)', boxShadow: `0 4px 15px ${EYE.rose}40` }}>
+          <a href="mailto:choi.coco@northeastern.edu" onMouseEnter={handleCtaEnter} onMouseLeave={handleCtaLeave} style={{ display: 'inline-flex', alignItems: 'center', gap: m ? 5 : 8, padding: m ? '8px 16px' : '11px 24px', borderRadius: 30, background: EYE.rose, color: 'white', fontFamily: "'DM Sans', sans-serif", fontSize: m ? 7 : 9, fontWeight: 700, letterSpacing: 0.75, textDecoration: 'none', transition: 'all 0.4s cubic-bezier(0.25,0,0,1)', boxShadow: `0 4px 15px ${EYE.rose}40` }}>
             <MailIcon /> Say Hello
           </a>
 
@@ -228,7 +228,7 @@ export default function AboutPage({ go }) {
 
           <div style={{ display: 'flex', justifyContent: 'center', gap: 8, marginTop: m ? 16 : 24 }}>
             {ABOUT_SOCIALS.map((s, i) => (
-              <a key={i} href={s.href} target="_blank" rel="noopener noreferrer" title={s.label} style={{ width: m ? 22 : 26, height: m ? 22 : 26, borderRadius: '50%', background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'rgba(255,255,255,0.35)', textDecoration: 'none', transition: 'all 0.4s cubic-bezier(0.25,0,0,1)' }}
+              <a key={i} href={s.href} target="_blank" rel="noopener noreferrer" title={s.label} style={{ width: m ? 20 : 26, height: m ? 20 : 26, borderRadius: '50%', background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'rgba(255,255,255,0.35)', textDecoration: 'none', transition: 'all 0.4s cubic-bezier(0.25,0,0,1)' }}
                 onMouseEnter={(e) => { e.currentTarget.style.background = EYE.rose; e.currentTarget.style.color = 'white'; e.currentTarget.style.borderColor = EYE.rose; e.currentTarget.style.transform = 'translateY(-4px) scale(1.08)' }}
                 onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.06)'; e.currentTarget.style.color = 'rgba(255,255,255,0.35)'; e.currentTarget.style.borderColor = 'rgba(255,255,255,0.1)'; e.currentTarget.style.transform = '' }}>
                 {SOCIAL_ICONS[i]}
@@ -237,7 +237,7 @@ export default function AboutPage({ go }) {
           </div>
         </div>
 
-        <div style={{ maxWidth: 500, margin: m ? '20px auto 0' : '40px auto 0', paddingTop: m ? 10 : 20, borderTop: '1px solid rgba(255,255,255,0.06)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexDirection: m ? 'column' : 'row', gap: m ? 4 : 0 }}>
+        <div style={{ maxWidth: 450, margin: m ? '20px auto 0' : '40px auto 0', paddingTop: m ? 10 : 20, borderTop: '1px solid rgba(255,255,255,0.06)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexDirection: m ? 'column' : 'row', gap: m ? 4 : 0 }}>
           <div style={{ fontFamily: "'Playfair Display', serif", fontSize: m ? 8 : 10, fontWeight: 700, color: EYE.cream }}>Coco Choi</div>
           <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: m ? 5 : 6, color: 'rgba(255,255,255,0.2)', letterSpacing: 2 }}>© 2025 · Built with React, Rive & GSAP</div>
         </div>

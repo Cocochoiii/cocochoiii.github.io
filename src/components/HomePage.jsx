@@ -7,9 +7,9 @@ import useIsMobile from '../hooks/useIsMobile'
 import { playNote, bgMusic } from '../utils/audio'
 import { TYPEWRITER_TITLES, HOME_ZONES, SOCIALS } from '../constants/data'
 
-const GitHubIcon = () => (<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>)
-const LinkedInIcon = () => (<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>)
-const EmailIcon = () => (<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>)
+const GitHubIcon = () => (<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>)
+const LinkedInIcon = () => (<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>)
+const EmailIcon = () => (<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>)
 const SOCIAL_ICONS = [<GitHubIcon />, <LinkedInIcon />, <EmailIcon />]
 
 const DEFAULT_DIALOGUE = 'Click on the objects\non my piano to explore'
@@ -107,12 +107,12 @@ export default function HomePage({ go }) {
           <div key={z.id} className="hot" style={{ position: 'absolute', top: z.top, left: z.left, transform: 'translate(-50%, -50%)', width: m ? z.w * 0.7 : z.w, height: m ? z.h * 0.7 : z.h, borderRadius: z.r, cursor: 'pointer', zIndex: 10, opacity: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
             onMouseEnter={() => handleZoneEnter(z)} onMouseLeave={handleZoneLeave} onClick={() => handleZoneClick(z)} onTouchEnd={() => handleZoneClick(z)}>
             <div style={{ position: 'absolute', inset: -20, borderRadius: '50%', background: 'radial-gradient(circle, rgba(255,255,255,0.2) 0%, transparent 70%)', opacity: hovered === z.id ? 1 : 0, transition: 'all 0.5s ease' }} />
-            {!m && <div style={{ position: 'absolute', bottom: -32, left: '50%', transform: 'translateX(-50%)', fontFamily: "'Playfair Display', serif", fontStyle: 'italic', fontSize: 12, color: 'white', opacity: hovered === z.id ? 1 : 0, transition: '0.3s', whiteSpace: 'nowrap' }}>{z.label}</div>}
+            {!m && <div style={{ position: 'absolute', bottom: -26, left: '50%', transform: 'translateX(-50%)', fontFamily: "'Playfair Display', serif", fontStyle: 'italic', fontSize: 12, color: 'white', opacity: hovered === z.id ? 1 : 0, transition: '0.3s', whiteSpace: 'nowrap' }}>{z.label}</div>}
           </div>
         ))}
         <div className="dial" style={{ position: 'absolute', bottom: m ? '12%' : '18%', right: m ? '10%' : '35%', background: 'rgba(255,255,255,0.96)', backdropFilter: 'blur(10px)', borderRadius: m ? 7 : 11, padding: m ? '6px 9px' : '10px 15px', zIndex: 20, opacity: 0, transform: 'scale(0.9)', boxShadow: '0 5px 15px rgba(0,0,0,0.1)' }}>
           <div style={{ fontFamily: "'Playfair Display', serif", fontStyle: 'italic', fontSize: m ? 10 : 11, color: '#2a2020', textAlign: 'center', whiteSpace: 'pre-line' }}>{dialogue}</div>
-          <div style={{ position: 'absolute', bottom: -8, left: 20, width: 0, height: 0, borderLeft: '8px solid transparent', borderRight: '8px solid transparent', borderTop: '8px solid rgba(255,255,255,0.96)' }} />
+          <div style={{ position: 'absolute', bottom: -5, left: 15, width: 0, height: 0, borderLeft: '5px solid transparent', borderRight: '5px solid transparent', borderTop: '5px solid rgba(255,255,255,0.96)' }} />
         </div>
       </div>
 

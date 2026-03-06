@@ -63,13 +63,13 @@ function NavOverlay({ go, current = 'home', dark = false, light = false }) {
           </div>
 
           <div style={{ position: 'absolute', bottom: m ? 12 : 24, left: m ? 12 : 30, display: 'flex', alignItems: 'center', gap: 10 }}>
-            <div ref={counterRef} style={{ fontFamily: "'Playfair Display', serif", fontSize: m ? 8 : 9, color: 'rgba(255,255,255,0.25)', letterSpacing: 1.5, opacity: 0 }}>
+            <div ref={counterRef} style={{ fontFamily: "'Playfair Display', serif", fontSize: m ? 5 : 7, color: 'rgba(255,255,255,0.25)', letterSpacing: 1.5, opacity: 0 }}>
               {String(currentIndex + 1).padStart(2, '0')} / {String(NAV_PAGES.length).padStart(2, '0')}
             </div>
             <div ref={lineRef} style={{ width: m ? 20 : 40, height: 1, background: 'rgba(255,255,255,0.12)', transformOrigin: 'left center' }} />
           </div>
 
-          {!m && <div style={{ position: 'absolute', left: 28, top: '50%', transform: 'translateY(-50%) rotate(-90deg)', fontFamily: "'DM Sans', sans-serif", fontSize: 5, letterSpacing: 2, color: 'rgba(255,255,255,0.1)', textTransform: 'uppercase' }}>Navigation</div>}
+          {!m && <div style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%) rotate(-90deg)', fontFamily: "'DM Sans', sans-serif", fontSize: 5, letterSpacing: 2, color: 'rgba(255,255,255,0.1)', textTransform: 'uppercase' }}>Navigation</div>}
 
           <div style={{ marginLeft: 'auto', display: 'flex', flexDirection: 'column', justifyContent: 'center', paddingRight: m ? 12 : 'clamp(30px, 8vw, 70px)', gap: m ? 1 : 3 }}>
             {NAV_PAGES.map((p, i) => {
@@ -80,7 +80,7 @@ function NavOverlay({ go, current = 'home', dark = false, light = false }) {
             })}
           </div>
 
-          <div style={{ position: 'absolute', bottom: m ? 12 : 24, right: m ? 12 : 30, fontFamily: "'DM Sans', sans-serif", fontSize: m ? 7 : 7, color: 'rgba(255,255,255,0.15)', letterSpacing: 1.25, textTransform: 'uppercase' }}>Coco Choi · 2025</div>
+          <div style={{ position: 'absolute', bottom: m ? 12 : 24, right: m ? 12 : 30, fontFamily: "'DM Sans', sans-serif", fontSize: m ? 5 : 6, color: 'rgba(255,255,255,0.15)', letterSpacing: 1.25, textTransform: 'uppercase' }}>Coco Choi · 2025</div>
         </div>
       )}
     </>
@@ -92,24 +92,24 @@ const NavItem = memo(
     const handleClick = (e) => { e.stopPropagation(); onNav(page.key) }
     const handleEnter = (e) => {
       if (isActive) return
-      gsap.to(e.currentTarget.querySelector('.nav-label'), { letterSpacing: isMobile ? 5 : 10, color: page.accent, duration: 0.4, ease: 'power2.out' })
+      gsap.to(e.currentTarget.querySelector('.nav-label'), { letterSpacing: isMobile ? 3 : 5, color: page.accent, duration: 0.4, ease: 'power2.out' })
       gsap.to(e.currentTarget.querySelector('.nav-sub'), { opacity: 1, x: 0, duration: 0.35 })
       gsap.to(e.currentTarget.querySelector('.nav-line'), { scaleX: 1, opacity: 1, duration: 0.4 })
     }
     const handleLeave = (e) => {
       if (isActive) return
-      gsap.to(e.currentTarget.querySelector('.nav-label'), { letterSpacing: 3, color: 'rgba(255,255,255,0.8)', duration: 0.4 })
+      gsap.to(e.currentTarget.querySelector('.nav-label'), { letterSpacing: 1.5, color: 'rgba(255,255,255,0.8)', duration: 0.4 })
       gsap.to(e.currentTarget.querySelector('.nav-sub'), { opacity: 0, x: 15, duration: 0.3 })
       gsap.to(e.currentTarget.querySelector('.nav-line'), { scaleX: 0, opacity: 0, duration: 0.3 })
     }
 
     return (
       <button ref={ref} onClick={handleClick} onMouseEnter={handleEnter} onMouseLeave={handleLeave} style={{ background: 'none', border: 'none', cursor: 'pointer', textAlign: 'right', padding: isMobile ? '5px 0' : '7px 0', position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'flex-end', opacity: 0 }}>
-        <div className="nav-line" style={{ position: 'absolute', bottom: 8, right: 0, width: '100%', height: 1, background: page.accent, opacity: isActive ? 0.3 : 0, transformOrigin: 'right center', transform: isActive ? 'scaleX(0.3)' : 'scaleX(0)' }} />
-        <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: isMobile ? 8 : 8, fontWeight: 500, color: isActive ? page.accent : 'rgba(255,255,255,0.15)', letterSpacing: 3, marginBottom: isMobile ? 2 : 3 }}>{String(index + 1).padStart(2, '0')}</span>
+        <div className="nav-line" style={{ position: 'absolute', bottom: 4, right: 0, width: '100%', height: 1, background: page.accent, opacity: isActive ? 0.3 : 0, transformOrigin: 'right center', transform: isActive ? 'scaleX(0.3)' : 'scaleX(0)' }} />
+        <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: isMobile ? 5 : 6, fontWeight: 500, color: isActive ? page.accent : 'rgba(255,255,255,0.15)', letterSpacing: 1.5, marginBottom: isMobile ? 2 : 3 }}>{String(index + 1).padStart(2, '0')}</span>
         <span className="nav-label" style={{ fontFamily: "'Playfair Display', serif", fontSize: isMobile ? 'clamp(14px, 5.5vw, 24px)' : 'clamp(19px, 5.5vw, 34px)', fontWeight: 800, color: isActive ? page.accent : 'rgba(255,255,255,0.8)', letterSpacing: isActive ? (isMobile ? 2 : 4) : 1.5, lineHeight: 1.1, transition: 'letter-spacing 0.4s, color 0.4s' }}>{page.label}</span>
-        <span className="nav-sub" style={{ fontFamily: "'DM Sans', sans-serif", fontSize: isMobile ? 8 : 8, fontWeight: 500, color: 'rgba(255,255,255,0.3)', letterSpacing: 1.25, textTransform: 'uppercase', marginTop: isMobile ? 2 : 3, opacity: isActive ? 0.7 : 0, transform: isActive ? 'translateX(0)' : 'translateX(15px)' }}>{page.subtitle}</span>
-        {isActive && <div style={{ position: 'absolute', right: isMobile ? -8 : -14, top: '50%', transform: 'translateY(-50%)', width: isMobile ? 3 : 4, height: isMobile ? 3 : 4, borderRadius: '50%', background: page.accent, boxShadow: `0 0 16px ${page.accent}80` }} />}
+        <span className="nav-sub" style={{ fontFamily: "'DM Sans', sans-serif", fontSize: isMobile ? 5 : 6, fontWeight: 500, color: 'rgba(255,255,255,0.3)', letterSpacing: 1.25, textTransform: 'uppercase', marginTop: isMobile ? 2 : 3, opacity: isActive ? 0.7 : 0, transform: isActive ? 'translateX(0)' : 'translateX(8px)' }}>{page.subtitle}</span>
+        {isActive && <div style={{ position: 'absolute', right: isMobile ? -8 : -14, top: '50%', transform: 'translateY(-50%)', width: isMobile ? 3 : 3.5, height: isMobile ? 3 : 3.5, borderRadius: '50%', background: page.accent, boxShadow: `0 0 8px ${page.accent}80` }} />}
       </button>
     )
   }),
