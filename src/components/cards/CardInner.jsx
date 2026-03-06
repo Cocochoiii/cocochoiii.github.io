@@ -20,15 +20,15 @@ function CardInner({ exp, isHover, hovered }) {
       position: 'absolute', inset: 0, zIndex: isHover ? 2 : 0,
       display: 'flex', flexDirection: 'column',
       justifyContent: 'center', alignItems: 'center', textAlign: 'center',
-      padding: m ? '6px 6px' : '11px 12px',
+      padding: m ? '4px 4px' : '11px 12px',
       pointerEvents: 'none',
     }}>
       {/* Period */}
       <div style={{
         fontFamily: "'DM Sans', sans-serif",
-        fontSize: m ? 6 : 8, fontWeight: 700,
+        fontSize: m ? 4 : 8, fontWeight: 700,
         letterSpacing: m ? 0.8 : 1.5, textTransform: 'uppercase',
-        color: periodCol, marginBottom: m ? 2 : 6,
+        color: periodCol, marginBottom: m ? 1 : 6,
       }}>
         {exp.period}
       </div>
@@ -36,7 +36,7 @@ function CardInner({ exp, isHover, hovered }) {
       {/* Title */}
       <h3 style={{
         fontFamily: "'Playfair Display', serif",
-        fontSize: m ? 16 : 'clamp(20px, 3vw, 40px)',
+        fontSize: m ? 11 : 'clamp(20px, 3vw, 40px)',
         fontWeight: 800, color: titleCol,
         lineHeight: 1.05, letterSpacing: -0.25,
         margin: 0, marginBottom: m ? 1 : 3,
@@ -49,8 +49,8 @@ function CardInner({ exp, isHover, hovered }) {
       {/* Role */}
       <div style={{
         fontFamily: "'DM Sans', sans-serif",
-        fontSize: m ? 8 : 20, fontWeight: 500,
-        color: subCol, marginBottom: m ? 3 : 8,
+        fontSize: m ? 6 : 20, fontWeight: 500,
+        color: subCol, marginBottom: m ? 2 : 8,
       }}>
         {exp.role}
       </div>
@@ -60,7 +60,7 @@ function CardInner({ exp, isHover, hovered }) {
         {exp.highlights.map((h, i) => (
           <div key={i} style={{
             fontFamily: "'DM Sans', sans-serif",
-            fontSize: m ? 5 : 13, color: hlCol,
+            fontSize: m ? 4 : 13, color: hlCol,
             lineHeight: 1.45,
             display: 'flex', alignItems: 'center', gap: m ? 2 : 4,
           }}>

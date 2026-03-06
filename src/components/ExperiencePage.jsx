@@ -19,7 +19,7 @@ export default function ExperiencePage({ go }) {
     let r = null
     import('@rive-app/canvas').then((rive) => {
       const dpr = window.devicePixelRatio || 1
-      const size = m ? Math.min(window.innerWidth * 0.85, 360) : 450
+      const size = m ? Math.min(window.innerWidth * 0.42, 180) : 450
       canvas.width = size * dpr
       canvas.height = size * dpr
       canvas.style.width = size + 'px'
@@ -80,7 +80,7 @@ export default function ExperiencePage({ go }) {
             </div>
             <div className="exp-center" style={{ opacity: 0 }}>
               <p style={{ fontFamily: "'Playfair Display', serif", fontStyle: 'italic', fontSize: 5, color: EYE.skin, letterSpacing: 1.5, textTransform: 'uppercase', marginBottom: 2 }}>Experience</p>
-              <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: 14, fontWeight: 800, color: EYE.cream, letterSpacing: -0.5, lineHeight: 1.1 }}>Where I've<br/>Worked</h2>
+              <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: 12, fontWeight: 800, color: EYE.cream, letterSpacing: -0.3, lineHeight: 1.1 }}>Where I've<br/>Worked</h2>
             </div>
           </div>
 

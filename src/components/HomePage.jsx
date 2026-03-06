@@ -204,21 +204,34 @@ export default function HomePage({ go }) {
           </div>
         ))}
 
-        {/* Dialogue bubble */}
-        <div className="dial" style={{
-          position: 'absolute',
-          bottom: m ? '12%' : '18%',
-          right: m ? '20%' : '35%',
-          background: 'rgba(255,255,255,0.96)', backdropFilter: 'blur(10px)',
-          borderRadius: m ? 8 : 11,
-          padding: m ? '5px 10px' : '10px 15px',
-          zIndex: 20, opacity: 0, transform: 'scale(0.9)',
-          boxShadow: '0 5px 15px rgba(0,0,0,0.1)',
-        }}>
-          <div style={{ fontFamily: "'Playfair Display', serif", fontStyle: 'italic', fontSize: m ? 7 : 11, color: '#2a2020', textAlign: 'center', whiteSpace: 'pre-line' }}>{dialogue}</div>
-          <div style={{ position: 'absolute', bottom: -5, left: 15, width: 0, height: 0, borderLeft: '5px solid transparent', borderRight: '5px solid transparent', borderTop: '5px solid rgba(255,255,255,0.96)' }} />
-        </div>
+        {/* Dialogue bubble — desktop only inside wrapper */}
+        {!m && (
+          <div className="dial" style={{
+            position: 'absolute', bottom: '18%', right: '35%',
+            background: 'rgba(255,255,255,0.96)', backdropFilter: 'blur(10px)',
+            borderRadius: 11, padding: '10px 15px',
+            zIndex: 20, opacity: 0, transform: 'scale(0.9)',
+            boxShadow: '0 5px 15px rgba(0,0,0,0.1)',
+          }}>
+            <div style={{ fontFamily: "'Playfair Display', serif", fontStyle: 'italic', fontSize: 11, color: '#2a2020', textAlign: 'center', whiteSpace: 'pre-line' }}>{dialogue}</div>
+            <div style={{ position: 'absolute', bottom: -5, left: 15, width: 0, height: 0, borderLeft: '5px solid transparent', borderRight: '5px solid transparent', borderTop: '5px solid rgba(255,255,255,0.96)' }} />
+          </div>
+        )}
       </div>
+
+      {/* Mobile dial — positioned on the black piano body, viewport-relative */}
+      {m && (
+        <div className="dial" style={{
+          position: 'absolute', top: '30%', right: 10,
+          background: 'rgba(255,255,255,0.93)', backdropFilter: 'blur(10px)',
+          borderRadius: 10, padding: '6px 10px',
+          zIndex: 20, opacity: 0, transform: 'scale(0.9)',
+          boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+        }}>
+          <div style={{ fontFamily: "'Playfair Display', serif", fontStyle: 'italic', fontSize: 8, color: '#2a2020', textAlign: 'center', whiteSpace: 'pre-line', maxWidth: 100 }}>{dialogue}</div>
+          <div style={{ position: 'absolute', bottom: -4, left: 12, width: 0, height: 0, borderLeft: '4px solid transparent', borderRight: '4px solid transparent', borderTop: '4px solid rgba(255,255,255,0.93)' }} />
+        </div>
+      )}
 
       {/* Name — top left */}
       <div className="hname" style={{ position: 'absolute', top: m ? '3%' : '20%', left: m ? 10 : 30, zIndex: 30, opacity: 0, transform: 'translateY(20px)' }}>

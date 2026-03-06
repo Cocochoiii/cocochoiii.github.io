@@ -19,7 +19,7 @@ export default function ProjectsPage({ go }) {
     import('@rive-app/canvas').then((rive) => {
       const dpr = window.devicePixelRatio || 1
       const cW = m ? window.innerWidth : window.innerWidth * 0.4
-      const H = m ? window.innerWidth * 0.55 : window.innerHeight
+      const H = m ? window.innerWidth * 0.62 : window.innerHeight
       canvas.width = cW * dpr
       canvas.height = H * dpr
       canvas.style.width = cW + 'px'
@@ -50,7 +50,7 @@ export default function ProjectsPage({ go }) {
       <div style={{ width: '100vw', height: '100vh', background: PAL.grey, position: 'relative', overflow: 'hidden' }}>
         <div style={{ width: '100%', height: '100%', overflowY: 'auto', overflowX: 'hidden', WebkitOverflowScrolling: 'touch', display: 'flex', flexDirection: 'column' }}>
           {/* Warhol Rive header — full width, animated */}
-          <div className="wart" style={{ width: '100%', height: '50vw', position: 'relative', overflow: 'hidden', opacity: 0 }}>
+          <div className="wart" style={{ width: '100%', height: '62vw', position: 'relative', overflow: 'hidden', opacity: 0 }}>
             <canvas ref={canvasRef} style={{ display: 'block' }} />
             <div style={{ position: 'absolute', bottom: 10, left: 10, zIndex: 5 }}>
               <p style={{ fontFamily: "'Playfair Display', serif", fontStyle: 'italic', fontSize: 7, color: '#c9a96e', letterSpacing: 1.5, textTransform: 'uppercase', marginBottom: 2 }}>Selected</p>
@@ -59,7 +59,7 @@ export default function ProjectsPage({ go }) {
           </div>
 
           {/* Cards 2-col grid */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 4, padding: '4px 4px 10px', flex: 1 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gridAutoRows: '22vw', gap: 4, padding: '4px 4px 10px' }}>
             {PROJECTS.map((p, i) => (
               <ArtCard key={i} p={p} className={i % 2 === 0 ? 'proj-left' : 'proj-right'} style={{ opacity: 0 }} compact />
             ))}

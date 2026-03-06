@@ -10,11 +10,11 @@ function CardContent({ p, compact, hovered, isHover = false }) {
   const col = isHover ? p.hText : p.text
 
   const titleSize = m
-    ? (compact ? 10 : 13)
+    ? (compact ? 8 : 10)
     : (compact ? 'clamp(10px, 2.2vw, 14px)' : 'clamp(13px, 3vw, 21px)')
 
   const yearSize = m
-    ? (compact ? 25 : 35)
+    ? (compact ? 18 : 25)
     : (compact ? 'clamp(35px, 10vw, 55px)' : 'clamp(45px, 14vw, 90px)')
 
   return (
@@ -22,7 +22,7 @@ function CardContent({ p, compact, hovered, isHover = false }) {
       position: 'absolute', inset: 0, zIndex: isHover ? 2 : 0,
       display: 'flex', flexDirection: 'column', justifyContent: 'flex-end',
       padding: m
-        ? (compact ? '5px 5px' : '7px 7px')
+        ? (compact ? '4px 5px' : '5px 6px')
         : (compact ? '9px 10px' : '13px 14px'),
       pointerEvents: 'none',
     }}>
