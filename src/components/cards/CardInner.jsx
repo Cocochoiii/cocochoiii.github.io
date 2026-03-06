@@ -16,71 +16,71 @@ function CardInner({ exp, isHover, hovered }) {
   const periodCol = isHover ? `${exp.hText}99` : exp.color
 
   return (
-    <div style={{
-      position: 'absolute', inset: 0, zIndex: isHover ? 2 : 0,
-      display: 'flex', flexDirection: 'column',
-      justifyContent: 'center', alignItems: 'center', textAlign: 'center',
-      padding: m ? '4px 4px' : '11px 12px',
-      pointerEvents: 'none',
-    }}>
-      {/* Period */}
       <div style={{
-        fontFamily: "'DM Sans', sans-serif",
-        fontSize: m ? 4 : 8, fontWeight: 700,
-        letterSpacing: m ? 0.8 : 1.5, textTransform: 'uppercase',
-        color: periodCol, marginBottom: m ? 1 : 6,
+        position: 'absolute', inset: 0, zIndex: isHover ? 2 : 0,
+        display: 'flex', flexDirection: 'column',
+        justifyContent: 'center', alignItems: 'center', textAlign: 'center',
+        padding: m ? '3px 3px' : '11px 12px',
+        pointerEvents: 'none',
       }}>
-        {exp.period}
-      </div>
+        {/* Period */}
+        <div style={{
+          fontFamily: "'DM Sans', sans-serif",
+          fontSize: m ? 5 : 8, fontWeight: 700,
+          letterSpacing: m ? 0.8 : 1.5, textTransform: 'uppercase',
+          color: periodCol, marginBottom: m ? 1 : 6,
+        }}>
+          {exp.period}
+        </div>
 
-      {/* Title */}
-      <h3 style={{
-        fontFamily: "'Playfair Display', serif",
-        fontSize: m ? 11 : 'clamp(20px, 3vw, 40px)',
-        fontWeight: 800, color: titleCol,
-        lineHeight: 1.05, letterSpacing: -0.25,
-        margin: 0, marginBottom: m ? 1 : 3,
-        transform: isHover && hovered ? 'translateY(-1px)' : 'none',
-        transition: 'transform 0.4s cubic-bezier(0.25,0,0,1)',
-      }}>
-        {exp.title}
-      </h3>
+        {/* Title */}
+        <h3 style={{
+          fontFamily: "'Playfair Display', serif",
+          fontSize: m ? 12 : 'clamp(20px, 3vw, 40px)',
+          fontWeight: 800, color: titleCol,
+          lineHeight: 1.05, letterSpacing: -0.25,
+          margin: 0, marginBottom: m ? 1 : 3,
+          transform: isHover && hovered ? 'translateY(-1px)' : 'none',
+          transition: 'transform 0.4s cubic-bezier(0.25,0,0,1)',
+        }}>
+          {exp.title}
+        </h3>
 
-      {/* Role */}
-      <div style={{
-        fontFamily: "'DM Sans', sans-serif",
-        fontSize: m ? 6 : 20, fontWeight: 500,
-        color: subCol, marginBottom: m ? 2 : 8,
-      }}>
-        {exp.role}
-      </div>
+        {/* Role */}
+        <div style={{
+          fontFamily: "'DM Sans', sans-serif",
+          fontSize: m ? 7 : 20, fontWeight: 500,
+          color: subCol, marginBottom: m ? 1 : 8,
+        }}>
+          {exp.role}
+        </div>
 
-      {/* Highlights */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: m ? 1 : 3, alignItems: 'center' }}>
-        {exp.highlights.map((h, i) => (
-          <div key={i} style={{
-            fontFamily: "'DM Sans', sans-serif",
-            fontSize: m ? 4 : 13, color: hlCol,
-            lineHeight: 1.45,
-            display: 'flex', alignItems: 'center', gap: m ? 2 : 4,
-          }}>
+        {/* Highlights */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: m ? 1 : 3, alignItems: 'center' }}>
+          {exp.highlights.map((h, i) => (
+              <div key={i} style={{
+                fontFamily: "'DM Sans', sans-serif",
+                fontSize: m ? 5 : 13, color: hlCol,
+                lineHeight: 1.45,
+                display: 'flex', alignItems: 'center', gap: m ? 2 : 4,
+              }}>
             <span style={{
               width: 2, height: 2, borderRadius: '50%',
               background: dotCol, opacity: 0.5, flexShrink: 0,
             }} />
-            {h}
-          </div>
-        ))}
-      </div>
+                {h}
+              </div>
+          ))}
+        </div>
 
-      {/* Decorative line */}
-      <div style={{
-        width: isHover && hovered ? (m ? 13 : 25) : (m ? 7 : 14),
-        height: 1, background: dotCol, opacity: 0.25,
-        borderRadius: 1, marginTop: m ? 4 : 8,
-        transition: 'width 0.5s cubic-bezier(0.25,0,0,1)',
-      }} />
-    </div>
+        {/* Decorative line */}
+        <div style={{
+          width: isHover && hovered ? (m ? 13 : 25) : (m ? 7 : 14),
+          height: 1, background: dotCol, opacity: 0.25,
+          borderRadius: 1, marginTop: m ? 4 : 8,
+          transition: 'width 0.5s cubic-bezier(0.25,0,0,1)',
+        }} />
+      </div>
   )
 }
 

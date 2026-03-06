@@ -19,17 +19,17 @@ export default function ExperiencePage({ go }) {
     let r = null
     import('@rive-app/canvas').then((rive) => {
       const dpr = window.devicePixelRatio || 1
-      const size = m ? Math.min(window.innerWidth * 0.42, 180) : 450
+      const size = m ? Math.min(window.innerWidth * 0.65, 280) : 450
       canvas.width = size * dpr
       canvas.height = size * dpr
       canvas.style.width = size + 'px'
       canvas.style.height = size + 'px'
       r = new rive.Rive({
-        src: '/experience.riv', canvas, artboard: 'AO Eyes',
-        stateMachines: 'Eyes', autoplay: true,
-        layout: new rive.Layout({ fit: rive.Fit.Cover, alignment: rive.Alignment.Center }),
-        onLoad: () => r.resizeDrawingSurfaceToCanvas(),
-      })
+                          src: '/experience.riv', canvas, artboard: 'AO Eyes',
+                          stateMachines: 'Eyes', autoplay: true,
+                          layout: new rive.Layout({ fit: rive.Fit.Cover, alignment: rive.Alignment.Center }),
+                          onLoad: () => r.resizeDrawingSurfaceToCanvas(),
+                        })
     })
     return () => { if (r) r.cleanup() }
   }, [m])
@@ -62,83 +62,83 @@ export default function ExperiencePage({ go }) {
   /* ── MOBILE ── */
   if (m) {
     return (
-      <div style={{ width: '100vw', height: '100vh', background: EYE.bg, position: 'relative', overflow: 'hidden' }}>
-        <Particles />
-        <div style={{
-          position: 'relative', zIndex: 1,
-          width: '100%', height: '100%',
-          overflowY: 'auto', overflowX: 'hidden',
-          WebkitOverflowScrolling: 'touch',
-          padding: '44px 6px 10px', display: 'flex', flexDirection: 'column',
-        }}>
-          {/* Header with eye */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8, padding: '0 4px' }}>
-            <div className="eye-center" style={{ flexShrink: 0, opacity: 0 }}>
-              <div style={{ borderRadius: '50%', overflow: 'hidden', boxShadow: '0 6px 24px rgba(0,0,0,0.4)' }}>
-                <canvas ref={canvasRef} style={{ display: 'block' }} />
+        <div style={{ width: '100vw', height: '100vh', background: EYE.bg, position: 'relative', overflow: 'hidden' }}>
+          <Particles />
+          <div style={{
+            position: 'relative', zIndex: 1,
+            width: '100%', height: '100%',
+            overflowY: 'auto', overflowX: 'hidden',
+            WebkitOverflowScrolling: 'touch',
+            padding: '40px 6px 6px', display: 'flex', flexDirection: 'column',
+          }}>
+            {/* Header with eye */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 4, padding: '0 4px' }}>
+              <div className="eye-center" style={{ flexShrink: 0, opacity: 0 }}>
+                <div style={{ borderRadius: '50%', overflow: 'hidden', boxShadow: '0 6px 24px rgba(0,0,0,0.4)' }}>
+                  <canvas ref={canvasRef} style={{ display: 'block' }} />
+                </div>
+              </div>
+              <div className="exp-center" style={{ opacity: 0 }}>
+                <p style={{ fontFamily: "'Playfair Display', serif", fontStyle: 'italic', fontSize: 6, color: EYE.skin, letterSpacing: 1.5, textTransform: 'uppercase', marginBottom: 2 }}>Experience</p>
+                <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: 16, fontWeight: 800, color: EYE.cream, letterSpacing: -0.3, lineHeight: 1.1 }}>Where I've<br/>Worked</h2>
               </div>
             </div>
-            <div className="exp-center" style={{ opacity: 0 }}>
-              <p style={{ fontFamily: "'Playfair Display', serif", fontStyle: 'italic', fontSize: 5, color: EYE.skin, letterSpacing: 1.5, textTransform: 'uppercase', marginBottom: 2 }}>Experience</p>
-              <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: 12, fontWeight: 800, color: EYE.cream, letterSpacing: -0.3, lineHeight: 1.1 }}>Where I've<br/>Worked</h2>
+
+            {/* Cards — 2-col grid, fills remaining space */}
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 4, flex: 1 }}>
+              {EXPERIENCES.map((exp, i) => (
+                  <ExpCard key={i} exp={exp} className={i % 2 === 0 ? 'exp-left' : 'exp-right'} style={{ opacity: 0 }} />
+              ))}
+            </div>
+
+            {/* Next button */}
+            <div className="exp-next" style={{ display: 'flex', justifyContent: 'center', marginTop: 10, paddingBottom: 10, opacity: 0 }}>
+              <button onClick={goAbout} style={{ background: 'none', border: `1px solid ${EYE.warm}30`, borderRadius: 16, padding: '6px 16px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6 }}>
+                <div>
+                  <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 5, color: `${EYE.warm}70`, letterSpacing: 1, textTransform: 'uppercase', marginBottom: 1 }}>Next</div>
+                  <div style={{ fontFamily: "'Playfair Display', serif", fontSize: 9, fontWeight: 700, color: EYE.cream }}>About Me</div>
+                </div>
+                <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke={`${EYE.warm}70`} strokeWidth="1.5"><path d="M5 12h14M12 5l7 7-7 7" strokeLinecap="round" strokeLinejoin="round"/></svg>
+              </button>
             </div>
           </div>
-
-          {/* Cards — 2-col grid, fills remaining space */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 4, flex: 1 }}>
-            {EXPERIENCES.map((exp, i) => (
-              <ExpCard key={i} exp={exp} className={i % 2 === 0 ? 'exp-left' : 'exp-right'} style={{ opacity: 0 }} />
-            ))}
-          </div>
-
-          {/* Next button */}
-          <div className="exp-next" style={{ display: 'flex', justifyContent: 'center', marginTop: 10, paddingBottom: 10, opacity: 0 }}>
-            <button onClick={goAbout} style={{ background: 'none', border: `1px solid ${EYE.warm}30`, borderRadius: 16, padding: '6px 16px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6 }}>
-              <div>
-                <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 5, color: `${EYE.warm}70`, letterSpacing: 1, textTransform: 'uppercase', marginBottom: 1 }}>Next</div>
-                <div style={{ fontFamily: "'Playfair Display', serif", fontSize: 9, fontWeight: 700, color: EYE.cream }}>About Me</div>
-              </div>
-              <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke={`${EYE.warm}70`} strokeWidth="1.5"><path d="M5 12h14M12 5l7 7-7 7" strokeLinecap="round" strokeLinejoin="round"/></svg>
-            </button>
-          </div>
+          <button className="page-back" onClick={() => go('home')} style={{ zIndex: 100 }}>←</button>
+          <NavOverlay go={go} current="experience" dark />
         </div>
-        <button className="page-back" onClick={() => go('home')} style={{ zIndex: 100 }}>←</button>
-        <NavOverlay go={go} current="experience" dark />
-      </div>
     )
   }
 
   /* ── DESKTOP ── */
   return (
-    <div style={{ width: '100vw', height: '100vh', background: EYE.bg, position: 'relative', overflow: 'hidden' }}>
-      <Particles />
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.1fr 1fr', gridTemplateRows: '1fr 1fr 1fr', gap: 5, padding: 5, width: '100vw', height: '100vh', position: 'relative', zIndex: 1 }}>
-        <ExpCard exp={EXPERIENCES[0]} className="exp-left" style={{ gridColumn: '1', gridRow: '1', opacity: 0 }} />
-        <div className="exp-center" style={{ gridColumn: '2', gridRow: '1', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 4, opacity: 0 }}>
-          <p style={{ fontFamily: "'Playfair Display', serif", fontStyle: 'italic', fontSize: 7, color: EYE.skin, letterSpacing: 2, textTransform: 'uppercase' }}>Experience</p>
-          <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: 19, fontWeight: 800, color: EYE.cream, letterSpacing: -1, textAlign: 'center', lineHeight: 1.1 }}>Where I've<br/>Worked</h2>
-        </div>
-        <ExpCard exp={EXPERIENCES[3]} className="exp-right" style={{ gridColumn: '3', gridRow: '1', opacity: 0 }} />
-        <ExpCard exp={EXPERIENCES[1]} className="exp-left" style={{ gridColumn: '1', gridRow: '2', opacity: 0 }} />
-        <div className="eye-center" style={{ gridColumn: '2', gridRow: '2', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'visible', zIndex: 5, opacity: 0 }}>
-          <div style={{ width: 450, height: 450, borderRadius: '50%', overflow: 'hidden', boxShadow: '0 12px 40px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.04)', marginTop: -75 }}>
-            <canvas ref={canvasRef} style={{ display: 'block' }} />
+      <div style={{ width: '100vw', height: '100vh', background: EYE.bg, position: 'relative', overflow: 'hidden' }}>
+        <Particles />
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.1fr 1fr', gridTemplateRows: '1fr 1fr 1fr', gap: 5, padding: 5, width: '100vw', height: '100vh', position: 'relative', zIndex: 1 }}>
+          <ExpCard exp={EXPERIENCES[0]} className="exp-left" style={{ gridColumn: '1', gridRow: '1', opacity: 0 }} />
+          <div className="exp-center" style={{ gridColumn: '2', gridRow: '1', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 4, opacity: 0 }}>
+            <p style={{ fontFamily: "'Playfair Display', serif", fontStyle: 'italic', fontSize: 7, color: EYE.skin, letterSpacing: 2, textTransform: 'uppercase' }}>Experience</p>
+            <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: 19, fontWeight: 800, color: EYE.cream, letterSpacing: -1, textAlign: 'center', lineHeight: 1.1 }}>Where I've<br/>Worked</h2>
+          </div>
+          <ExpCard exp={EXPERIENCES[3]} className="exp-right" style={{ gridColumn: '3', gridRow: '1', opacity: 0 }} />
+          <ExpCard exp={EXPERIENCES[1]} className="exp-left" style={{ gridColumn: '1', gridRow: '2', opacity: 0 }} />
+          <div className="eye-center" style={{ gridColumn: '2', gridRow: '2', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'visible', zIndex: 5, opacity: 0 }}>
+            <div style={{ width: 450, height: 450, borderRadius: '50%', overflow: 'hidden', boxShadow: '0 12px 40px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.04)', marginTop: -75 }}>
+              <canvas ref={canvasRef} style={{ display: 'block' }} />
+            </div>
+          </div>
+          <ExpCard exp={EXPERIENCES[2]} className="exp-right" style={{ gridColumn: '3', gridRow: '2', opacity: 0 }} />
+          <ExpCard exp={EXPERIENCES[4]} className="exp-left" style={{ gridColumn: '1', gridRow: '3', opacity: 0 }} />
+          <ExpCard exp={EXPERIENCES[5]} className="exp-center" style={{ gridColumn: '2', gridRow: '3', opacity: 0 }} />
+          <div className="exp-next" style={{ gridColumn: '3', gridRow: '3', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 8, opacity: 0 }}>
+            <button onClick={goAbout} onMouseEnter={onNextEnter} onMouseLeave={onNextLeave} style={{ background: 'none', border: `1.5px solid ${EYE.warm}30`, borderRadius: 30, padding: '14px 24px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 7, transition: 'all 0.4s cubic-bezier(0.25,0,0,1)' }}>
+              <div style={{ textAlign: 'left' }}>
+                <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 5, color: `${EYE.warm}70`, letterSpacing: 1.2, textTransform: 'uppercase', marginBottom: 2 }}>Next</div>
+                <div style={{ fontFamily: "'Playfair Display', serif", fontSize: 10, fontWeight: 700, color: EYE.cream, lineHeight: 1.15 }}>About Me</div>
+              </div>
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke={`${EYE.warm}70`} strokeWidth="1.5"><path d="M5 12h14M12 5l7 7-7 7" strokeLinecap="round" strokeLinejoin="round"/></svg>
+            </button>
           </div>
         </div>
-        <ExpCard exp={EXPERIENCES[2]} className="exp-right" style={{ gridColumn: '3', gridRow: '2', opacity: 0 }} />
-        <ExpCard exp={EXPERIENCES[4]} className="exp-left" style={{ gridColumn: '1', gridRow: '3', opacity: 0 }} />
-        <ExpCard exp={EXPERIENCES[5]} className="exp-center" style={{ gridColumn: '2', gridRow: '3', opacity: 0 }} />
-        <div className="exp-next" style={{ gridColumn: '3', gridRow: '3', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 8, opacity: 0 }}>
-          <button onClick={goAbout} onMouseEnter={onNextEnter} onMouseLeave={onNextLeave} style={{ background: 'none', border: `1.5px solid ${EYE.warm}30`, borderRadius: 30, padding: '14px 24px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 7, transition: 'all 0.4s cubic-bezier(0.25,0,0,1)' }}>
-            <div style={{ textAlign: 'left' }}>
-              <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 5, color: `${EYE.warm}70`, letterSpacing: 1.2, textTransform: 'uppercase', marginBottom: 2 }}>Next</div>
-              <div style={{ fontFamily: "'Playfair Display', serif", fontSize: 10, fontWeight: 700, color: EYE.cream, lineHeight: 1.15 }}>About Me</div>
-            </div>
-            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke={`${EYE.warm}70`} strokeWidth="1.5"><path d="M5 12h14M12 5l7 7-7 7" strokeLinecap="round" strokeLinejoin="round"/></svg>
-          </button>
-        </div>
+        <NavOverlay go={go} current="experience" dark />
       </div>
-      <NavOverlay go={go} current="experience" dark />
-    </div>
   )
 }
