@@ -12,16 +12,18 @@ export default function ExperiencePage({ go }) {
   const m = useIsMobile()
   const canvasRef = useRef(null)
 
-  /* Rive — eye */
+  /* Rive — eye (interactive on both platforms) */
   useEffect(() => {
     const canvas = canvasRef.current
     if (!canvas) return
     let r = null
     import('@rive-app/canvas').then((rive) => {
       const dpr = window.devicePixelRatio || 1
-      const size = m ? 200 : 450
-      canvas.width = size * dpr; canvas.height = size * dpr
-      canvas.style.width = size + 'px'; canvas.style.height = size + 'px'
+      const size = m ? Math.min(window.innerWidth * 0.85, 360) : 450
+      canvas.width = size * dpr
+      canvas.height = size * dpr
+      canvas.style.width = size + 'px'
+      canvas.style.height = size + 'px'
       r = new rive.Rive({
         src: '/experience.riv', canvas, artboard: 'AO Eyes',
         stateMachines: 'Eyes', autoplay: true,
@@ -35,50 +37,68 @@ export default function ExperiencePage({ go }) {
   /* Entrance */
   useEffect(() => {
     const tl = gsap.timeline({ defaults: { ease: 'power3.out' } })
-    tl.fromTo('.eye-center', { opacity: 0, scale: 0.7, y: 60 }, { opacity: 1, scale: 1, y: 0, duration: 1.1, delay: 0.15 })
-    tl.fromTo('.exp-left', { opacity: 0, x: -80, filter: 'blur(12px)' }, { opacity: 1, x: 0, filter: 'blur(0px)', duration: 0.8, stagger: 0.12 }, '-=0.7')
-    tl.fromTo('.exp-right', { opacity: 0, x: 80, filter: 'blur(12px)' }, { opacity: 1, x: 0, filter: 'blur(0px)', duration: 0.8, stagger: 0.12 }, '-=0.9')
-    tl.fromTo('.exp-center', { opacity: 0, y: 60, filter: 'blur(8px)' }, { opacity: 1, y: 0, filter: 'blur(0px)', duration: 0.8, stagger: 0.12 }, '-=1.0')
+    tl.fromTo('.eye-center', { opacity: 0, scale: 0.7, y: 30 }, { opacity: 1, scale: 1, y: 0, duration: 1.1, delay: 0.15 })
+    tl.fromTo('.exp-left', { opacity: 0, x: m ? -20 : -80, filter: 'blur(8px)' }, { opacity: 1, x: 0, filter: 'blur(0px)', duration: 0.8, stagger: 0.1 }, '-=0.7')
+    tl.fromTo('.exp-right', { opacity: 0, x: m ? 20 : 80, filter: 'blur(8px)' }, { opacity: 1, x: 0, filter: 'blur(0px)', duration: 0.8, stagger: 0.1 }, '-=0.9')
+    tl.fromTo('.exp-center', { opacity: 0, y: 30, filter: 'blur(6px)' }, { opacity: 1, y: 0, filter: 'blur(0px)', duration: 0.8, stagger: 0.1 }, '-=1.0')
     tl.fromTo('.exp-next', { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.5 }, '-=0.3')
     return () => tl.kill()
-  }, [])
+  }, [m])
 
-  const onNextEnter = useCallback((e) => { e.currentTarget.style.borderColor = `${EYE.warm}60`; e.currentTarget.style.transform = 'translateX(6px)'; e.currentTarget.style.background = `${EYE.warm}0a` }, [])
-  const onNextLeave = useCallback((e) => { e.currentTarget.style.borderColor = `${EYE.warm}30`; e.currentTarget.style.transform = ''; e.currentTarget.style.background = 'none' }, [])
+  const onNextEnter = useCallback((e) => {
+    const el = e.currentTarget
+    el.style.borderColor = `${EYE.warm}60`
+    el.style.transform = 'translateX(6px)'
+    el.style.background = `${EYE.warm}0a`
+  }, [])
+  const onNextLeave = useCallback((e) => {
+    const el = e.currentTarget
+    el.style.borderColor = `${EYE.warm}30`
+    el.style.transform = ''
+    el.style.background = 'none'
+  }, [])
   const goAbout = useCallback(() => go('about'), [go])
 
-  /* ── MOBILE LAYOUT ── */
+  /* ── MOBILE ── */
   if (m) {
     return (
       <div style={{ width: '100vw', height: '100vh', background: EYE.bg, position: 'relative', overflow: 'hidden' }}>
         <Particles />
-        <div style={{ position: 'relative', zIndex: 1, width: '100%', height: '100%', overflowY: 'auto', overflowX: 'hidden', padding: '30px 5px 50px', display: 'flex', flexDirection: 'column', gap: 4 }}>
-
-          {/* Header + eye */}
-          <div className="exp-center" style={{ textAlign: 'center', marginBottom: 8, opacity: 0 }}>
-            <p style={{ fontFamily: "'Playfair Display', serif", fontStyle: 'italic', fontSize: 11, color: EYE.skin, letterSpacing: 3, textTransform: 'uppercase' }}>Experience</p>
-            <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: 18, fontWeight: 800, color: EYE.cream, letterSpacing: -1, lineHeight: 1.1 }}>Where I've Worked</h2>
-          </div>
-
-          <div className="eye-center" style={{ display: 'flex', justifyContent: 'center', marginBottom: 8, opacity: 0 }}>
-            <div style={{ width: 100, height: 100, borderRadius: '50%', overflow: 'hidden', boxShadow: '0 6px 20px rgba(0,0,0,0.4)' }}>
-              <canvas ref={canvasRef} style={{ display: 'block', width: '100%', height: '100%', objectFit: 'cover' }} />
+        <div style={{
+          position: 'relative', zIndex: 1,
+          width: '100%', height: '100%',
+          overflowY: 'auto', overflowX: 'hidden',
+          WebkitOverflowScrolling: 'touch',
+          padding: '44px 6px 10px', display: 'flex', flexDirection: 'column',
+        }}>
+          {/* Header with eye */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8, padding: '0 4px' }}>
+            <div className="eye-center" style={{ flexShrink: 0, opacity: 0 }}>
+              <div style={{ borderRadius: '50%', overflow: 'hidden', boxShadow: '0 6px 24px rgba(0,0,0,0.4)' }}>
+                <canvas ref={canvasRef} style={{ display: 'block' }} />
+              </div>
+            </div>
+            <div className="exp-center" style={{ opacity: 0 }}>
+              <p style={{ fontFamily: "'Playfair Display', serif", fontStyle: 'italic', fontSize: 5, color: EYE.skin, letterSpacing: 1.5, textTransform: 'uppercase', marginBottom: 2 }}>Experience</p>
+              <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: 14, fontWeight: 800, color: EYE.cream, letterSpacing: -0.5, lineHeight: 1.1 }}>Where I've<br/>Worked</h2>
             </div>
           </div>
 
-          {/* Cards stacked */}
-          {EXPERIENCES.map((exp, i) => (
-            <ExpCard key={i} exp={exp} className={i % 2 === 0 ? 'exp-left' : 'exp-right'} style={{ minHeight: 80, opacity: 0 }} />
-          ))}
+          {/* Cards — 2-col grid, fills remaining space */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 4, flex: 1 }}>
+            {EXPERIENCES.map((exp, i) => (
+              <ExpCard key={i} exp={exp} className={i % 2 === 0 ? 'exp-left' : 'exp-right'} style={{ opacity: 0 }} />
+            ))}
+          </div>
 
-          {/* Next */}
-          <div className="exp-next" style={{ display: 'flex', justifyContent: 'center', marginTop: 16, opacity: 0 }}>
-            <button onClick={goAbout} style={{ background: 'none', border: `1.5px solid ${EYE.warm}30`, borderRadius: 20, padding: '8px 16px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 10 }}>
-              <div style={{ textAlign: 'left' }}>
-                <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 9, color: `${EYE.warm}70`, letterSpacing: 2, textTransform: 'uppercase', marginBottom: 2 }}>Next</div>
-                <div style={{ fontFamily: "'Playfair Display', serif", fontSize: 10, fontWeight: 700, color: EYE.cream }}>About Me</div>
+          {/* Next button */}
+          <div className="exp-next" style={{ display: 'flex', justifyContent: 'center', marginTop: 10, paddingBottom: 10, opacity: 0 }}>
+            <button onClick={goAbout} style={{ background: 'none', border: `1px solid ${EYE.warm}30`, borderRadius: 16, padding: '6px 16px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6 }}>
+              <div>
+                <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 5, color: `${EYE.warm}70`, letterSpacing: 1, textTransform: 'uppercase', marginBottom: 1 }}>Next</div>
+                <div style={{ fontFamily: "'Playfair Display', serif", fontSize: 9, fontWeight: 700, color: EYE.cream }}>About Me</div>
               </div>
-              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke={`${EYE.warm}70`} strokeWidth="1.5"><path d="M5 12h14M12 5l7 7-7 7" strokeLinecap="round" strokeLinejoin="round"/></svg>
+              <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke={`${EYE.warm}70`} strokeWidth="1.5"><path d="M5 12h14M12 5l7 7-7 7" strokeLinecap="round" strokeLinejoin="round"/></svg>
             </button>
           </div>
         </div>
@@ -88,7 +108,7 @@ export default function ExperiencePage({ go }) {
     )
   }
 
-  /* ── DESKTOP LAYOUT (unchanged) ── */
+  /* ── DESKTOP ── */
   return (
     <div style={{ width: '100vw', height: '100vh', background: EYE.bg, position: 'relative', overflow: 'hidden' }}>
       <Particles />

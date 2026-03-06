@@ -43,18 +43,22 @@ export default function AboutPage({ go }) {
     let r = null
     import('@rive-app/canvas').then((rive) => {
       const dpr = window.devicePixelRatio || 1
-      const size = m ? Math.min(window.innerWidth * 0.6, 300) : Math.min(window.innerWidth * 1.0, window.innerHeight * 1.0, 1100)
-      canvas.width = size * dpr; canvas.height = size * dpr
-      canvas.style.width = size + 'px'; canvas.style.height = size + 'px'
+      const size = m ? Math.min(window.innerWidth * 1.0, 450) : Math.min(window.innerWidth * 1.0, window.innerHeight * 1.0, 1100)
+      canvas.width = size * dpr
+      canvas.height = size * dpr
+      canvas.style.width = size + 'px'
+      canvas.style.height = size + 'px'
       r = new rive.Rive({
         src: '/about_me.riv', canvas, stateMachines: 'State Machine 1', autoplay: true,
         layout: new rive.Layout({ fit: rive.Fit.Contain, alignment: rive.Alignment.Center }),
         onLoad: () => r.resizeDrawingSurfaceToCanvas(),
       })
       const onResize = () => {
-        const s = m ? Math.min(window.innerWidth * 0.6, 300) : Math.min(window.innerWidth * 0.6, window.innerHeight * 0.6, 900)
-        canvas.width = s * dpr; canvas.height = s * dpr
-        canvas.style.width = s + 'px'; canvas.style.height = s + 'px'
+        const s = m ? Math.min(window.innerWidth * 1.0, 450) : Math.min(window.innerWidth * 0.6, window.innerHeight * 0.6, 900)
+        canvas.width = s * dpr
+        canvas.height = s * dpr
+        canvas.style.width = s + 'px'
+        canvas.style.height = s + 'px'
         r.layout = new rive.Layout({ fit: rive.Fit.Contain, alignment: rive.Alignment.Center })
         r.resizeDrawingSurfaceToCanvas()
       }
@@ -80,15 +84,15 @@ export default function AboutPage({ go }) {
   const pad = m ? '0 12px' : '0 clamp(20px, 8vw, 80px)'
 
   return (
-    <div ref={scrollRef} style={{ width: '100vw', height: '100vh', background: '#fff', position: 'relative', overflowX: 'hidden', overflowY: 'auto' }}>
+    <div ref={scrollRef} style={{ width: '100vw', height: '100vh', background: '#fff', position: 'relative', overflowX: 'hidden', overflowY: 'auto', WebkitOverflowScrolling: 'touch' }}>
       <style>{PAGE_CSS}</style>
 
       {/* ===== HERO ===== */}
-      <div style={{ width: '100%', minHeight: m ? 'auto' : '100vh', position: 'relative', display: m ? 'flex' : 'block', flexDirection: 'column', alignItems: 'center', paddingTop: m ? 60 : 0, paddingBottom: m ? 40 : 0 }}>
+      <div style={{ width: '100%', minHeight: m ? 'auto' : '100vh', background: '#fff', position: 'relative', display: m ? 'flex' : 'block', flexDirection: 'column', alignItems: 'center', paddingTop: m ? 8 : 0, paddingBottom: m ? 8 : 0 }}>
 
         {/* Rive */}
         <div style={{ position: m ? 'relative' : 'absolute', inset: m ? undefined : 0, zIndex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', width: m ? '100%' : undefined }}>
-          <canvas ref={canvasRef} style={{ display: 'block', maxWidth: m ? '80vw' : undefined }} />
+          <canvas ref={canvasRef} style={{ display: 'block', maxWidth: '100%' }} />
         </div>
 
         {/* LEFT panel */}
@@ -98,8 +102,8 @@ export default function AboutPage({ go }) {
           width: m ? '100%' : 'clamp(140px, 28vw, 210px)', zIndex: 10, opacity: 0,
           padding: m ? '0 14px' : 0, textAlign: m ? 'center' : 'left',
         }}>
-          <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: m ? 10 : 15, fontWeight: 700, letterSpacing: m ? 2 : 3, textTransform: 'uppercase', color: EYE.rose, marginBottom: m ? 5 : 10 }}>About Me</p>
-          <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: m ? 22 : 'clamp(65px, 9vw, 90px)', fontWeight: 900, color: EYE.shadow, marginBottom: m ? 6 : 12, lineHeight: 0.92, letterSpacing: m ? -1 : -2 }}>
+          <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: m ? 8 : 15, fontWeight: 700, letterSpacing: m ? 2 : 3, textTransform: 'uppercase', color: EYE.rose, marginBottom: m ? 3 : 10 }}>About Me</p>
+          <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: m ? 24 : 'clamp(65px, 9vw, 90px)', fontWeight: 900, color: EYE.shadow, marginBottom: m ? 4 : 12, lineHeight: 0.92, letterSpacing: m ? -1 : -2 }}>
             Coco<br/>Choi
           </h2>
           <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: m ? 12 : 'clamp(13px, 1.8vw, 15px)', lineHeight: 1.55, color: '#444', fontWeight: 400 }}>
@@ -115,7 +119,7 @@ export default function AboutPage({ go }) {
           width: m ? '100%' : 'clamp(140px, 28vw, 210px)', zIndex: 10, opacity: 0,
           padding: m ? '0 14px' : 0, marginTop: m ? 10 : 0,
         }}>
-          <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: m ? 12 : 'clamp(13px, 1.8vw, 15px)', lineHeight: 1.6, color: '#444', marginBottom: m ? 10 : 16, fontWeight: 400 }}>
+          <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: m ? 12 : 'clamp(13px, 1.8vw, 15px)', lineHeight: 1.6, color: '#444', marginBottom: m ? 6 : 16, fontWeight: 400 }}>
             Northeastern CS grad student. Previously at{' '}
             <span style={{ fontWeight: 700, color: EYE.shadow }}>Audi</span>,{' '}
             <span style={{ fontWeight: 700, color: EYE.shadow }}>Mars Inc.</span>, &{' '}
@@ -136,7 +140,7 @@ export default function AboutPage({ go }) {
         </div>
 
         {/* Scroll hint */}
-        <div className="ab-scroll-hint" style={{ position: m ? 'relative' : 'absolute', bottom: m ? undefined : 18, left: m ? undefined : '50%', transform: m ? undefined : 'translateX(-50%)', zIndex: 10, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4, opacity: 0, marginTop: m ? 12 : 0 }}>
+        <div className="ab-scroll-hint" style={{ position: m ? 'relative' : 'absolute', bottom: m ? undefined : 18, left: m ? undefined : '50%', transform: m ? undefined : 'translateX(-50%)', zIndex: 10, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4, opacity: 0, marginTop: m ? 6 : 0 }}>
           <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 6, letterSpacing: 1.5, textTransform: 'uppercase', color: '#bbb' }}>Scroll</div>
           <svg width="10" height="14" viewBox="0 0 16 24" fill="none" stroke="#ccc" strokeWidth="1.5" strokeLinecap="round"><rect x="1" y="1" width="14" height="22" rx="7"/><line x1="8" y1="6" x2="8" y2="10"/></svg>
         </div>

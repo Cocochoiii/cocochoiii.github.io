@@ -11,7 +11,7 @@ export default function ProjectsPage({ go }) {
   const m = useIsMobile()
   const canvasRef = useRef(null)
 
-  /* Rive — Warhol */
+  /* Rive — Warhol animation (plays on both mobile & desktop) */
   useEffect(() => {
     const canvas = canvasRef.current
     if (!canvas) return
@@ -19,9 +19,11 @@ export default function ProjectsPage({ go }) {
     import('@rive-app/canvas').then((rive) => {
       const dpr = window.devicePixelRatio || 1
       const cW = m ? window.innerWidth : window.innerWidth * 0.4
-      const H = m ? window.innerWidth * 0.6 : window.innerHeight
-      canvas.width = cW * dpr; canvas.height = H * dpr
-      canvas.style.width = cW + 'px'; canvas.style.height = H + 'px'
+      const H = m ? window.innerWidth * 0.55 : window.innerHeight
+      canvas.width = cW * dpr
+      canvas.height = H * dpr
+      canvas.style.width = cW + 'px'
+      canvas.style.height = H + 'px'
       r = new rive.Rive({
         src: '/warhol.riv', canvas, artboard: 'New Artboard',
         animations: 'Animation 1', autoplay: true,
@@ -35,32 +37,31 @@ export default function ProjectsPage({ go }) {
   /* Entrance */
   useEffect(() => {
     const tl = gsap.timeline({ defaults: { ease: 'power3.out' } })
-    tl.fromTo('.wart', { opacity: 0, x: m ? 0 : -100, y: m ? -40 : 0, filter: 'blur(14px)' }, { opacity: 1, x: 0, y: 0, filter: 'blur(0px)', duration: 1.1, delay: 0.15 })
-    tl.fromTo('.proj-left', { opacity: 0, x: m ? 0 : -60, y: m ? 30 : 0, filter: 'blur(10px)' }, { opacity: 1, x: 0, y: 0, filter: 'blur(0px)', duration: 0.7, stagger: 0.08 }, '-=0.6')
-    tl.fromTo('.proj-right', { opacity: 0, x: m ? 0 : 60, y: m ? 30 : 0, filter: 'blur(10px)' }, { opacity: 1, x: 0, y: 0, filter: 'blur(0px)', duration: 0.7, stagger: 0.08 }, '-=0.85')
-    tl.fromTo('.proj-wide', { opacity: 0, y: 40, filter: 'blur(8px)' }, { opacity: 1, y: 0, filter: 'blur(0px)', duration: 0.7 }, '-=0.9')
+    tl.fromTo('.wart', { opacity: 0, x: m ? 0 : -100, y: m ? -20 : 0, filter: 'blur(14px)' }, { opacity: 1, x: 0, y: 0, filter: 'blur(0px)', duration: 1.1, delay: 0.15 })
+    tl.fromTo('.proj-left', { opacity: 0, x: m ? -20 : -60, filter: 'blur(8px)' }, { opacity: 1, x: 0, filter: 'blur(0px)', duration: 0.7, stagger: 0.08 }, '-=0.6')
+    tl.fromTo('.proj-right', { opacity: 0, x: m ? 20 : 60, filter: 'blur(8px)' }, { opacity: 1, x: 0, filter: 'blur(0px)', duration: 0.7, stagger: 0.08 }, '-=0.85')
+    tl.fromTo('.proj-wide', { opacity: 0, y: 20, filter: 'blur(8px)' }, { opacity: 1, y: 0, filter: 'blur(0px)', duration: 0.7 }, '-=0.9')
     return () => tl.kill()
   }, [m])
 
-  /* ── MOBILE LAYOUT ── */
+  /* ── MOBILE ── */
   if (m) {
     return (
       <div style={{ width: '100vw', height: '100vh', background: PAL.grey, position: 'relative', overflow: 'hidden' }}>
-        <div style={{ width: '100%', height: '100%', overflowY: 'auto', overflowX: 'hidden' }}>
-          {/* Warhol header */}
-          <div className="wart" style={{ width: '100%', height: '40vw', position: 'relative', overflow: 'hidden', opacity: 0 }}>
+        <div style={{ width: '100%', height: '100%', overflowY: 'auto', overflowX: 'hidden', WebkitOverflowScrolling: 'touch', display: 'flex', flexDirection: 'column' }}>
+          {/* Warhol Rive header — full width, animated */}
+          <div className="wart" style={{ width: '100%', height: '50vw', position: 'relative', overflow: 'hidden', opacity: 0 }}>
             <canvas ref={canvasRef} style={{ display: 'block' }} />
-            <div style={{ position: 'absolute', bottom: 10, left: 10, right: 10, zIndex: 5 }}>
-              <p style={{ fontFamily: "'Playfair Display', serif", fontStyle: 'italic', fontSize: 9, color: '#c9a96e', letterSpacing: 1.5, textTransform: 'uppercase', marginBottom: 2 }}>Selected</p>
-              <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: 20, fontWeight: 800, color: '#f0e8dc', lineHeight: 1.05, letterSpacing: -1 }}>Projects</h2>
-              <div style={{ width: 15, height: 1, background: '#c9a96e', marginTop: 4, borderRadius: 2 }} />
+            <div style={{ position: 'absolute', bottom: 10, left: 10, zIndex: 5 }}>
+              <p style={{ fontFamily: "'Playfair Display', serif", fontStyle: 'italic', fontSize: 7, color: '#c9a96e', letterSpacing: 1.5, textTransform: 'uppercase', marginBottom: 2 }}>Selected</p>
+              <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: 18, fontWeight: 800, color: '#f0e8dc', lineHeight: 1.05, letterSpacing: -0.5 }}>Projects</h2>
             </div>
           </div>
 
-          {/* Cards grid 2-col */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 4, padding: '4px 4px 50px' }}>
+          {/* Cards 2-col grid */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 4, padding: '4px 4px 10px', flex: 1 }}>
             {PROJECTS.map((p, i) => (
-              <ArtCard key={i} p={p} className={i % 2 === 0 ? 'proj-left' : 'proj-right'} style={{ minHeight: 90, opacity: 0 }} compact />
+              <ArtCard key={i} p={p} className={i % 2 === 0 ? 'proj-left' : 'proj-right'} style={{ opacity: 0 }} compact />
             ))}
           </div>
         </div>
@@ -70,7 +71,7 @@ export default function ProjectsPage({ go }) {
     )
   }
 
-  /* ── DESKTOP LAYOUT (unchanged) ── */
+  /* ── DESKTOP ── */
   return (
     <div style={{ width: '100vw', height: '100vh', background: PAL.grey, position: 'relative', overflow: 'hidden', display: 'flex' }}>
       <div className="wart" style={{ width: '40%', flexShrink: 0, overflow: 'hidden', opacity: 0, position: 'relative', zIndex: 1 }}>
@@ -88,7 +89,7 @@ export default function ProjectsPage({ go }) {
         <ArtCard p={PROJECTS[3]} className="proj-left" style={{ gridColumn: '1', gridRow: '3', opacity: 0 }} />
         <ArtCard p={PROJECTS[4]} className="proj-right" style={{ gridColumn: '2', gridRow: '3', opacity: 0 }} />
         <ArtCard p={PROJECTS[5]} className="proj-left" style={{ gridColumn: '1', gridRow: '4', opacity: 0 }} />
-        <div style={{ gridColumn: '2', gridRow: '4', display: 'flex', flexDirection: 'column', gap: 7 }}>
+        <div style={{ gridColumn: '2', gridRow: '4', display: 'flex', flexDirection: 'column', gap: 4 }}>
           <ArtCard p={PROJECTS[6]} className="proj-right" style={{ flex: 1, opacity: 0 }} compact />
           <ArtCard p={PROJECTS[7]} className="proj-right" style={{ flex: 1, opacity: 0 }} compact />
         </div>

@@ -1,4 +1,4 @@
-/* Fonts loaded via <link> in index.html — NOT @import */
+/* Fonts loaded via <link> in index.html */
 
 :root {
   --rose: #E37B88; --cream: #faf5f0; --grey: #848283;
@@ -54,19 +54,21 @@ html, body, #root {
 }
 .page-back:hover { background: rgba(255,255,255,0.18); transform: scale(1.1) translateX(-1px); }
 
-.p-card { border-radius: 7px; overflow: hidden; position: relative; cursor: pointer; transition: transform 0.5s cubic-bezier(0.2,0,0,1), box-shadow 0.5s; }
-.p-card:hover { transform: translateY(-3px) scale(1.015); box-shadow: 0 8px 20px rgba(0,0,0,0.25); }
-.p-card .info { position: absolute; bottom: 0; left: 0; right: 0; padding: 9px 11px; }
-.p-card .pname { font-family: 'Playfair Display', serif; font-size: 10px; font-weight: 700; color: white; }
-.p-card .pmeta { font-size: 6px; color: rgba(255,255,255,0.5); letter-spacing: 1px; text-transform: uppercase; margin-top: 2px; }
-.p-card .arrow { position: absolute; top: 7px; right: 7px; width: 18px; height: 18px; border-radius: 50%; background: rgba(255,255,255,0.1); backdrop-filter: blur(4px); display: flex; align-items: center; justify-content: center; color: white; font-size: 7px; opacity: 0; transform: translateY(3px); transition: all 0.4s; }
-.p-card:hover .arrow { opacity: 1; transform: translateY(0); }
+/* Cards — tap feedback for mobile */
+.exp-card, .proj-card { -webkit-tap-highlight-color: transparent; }
+.exp-card:active, .proj-card:active { opacity: 0.9; transition: opacity 0.15s; }
 
 .trans-wrap { position: fixed; inset: 0; z-index: 500; pointer-events: none; display: flex; align-items: center; justify-content: center; }
 
+/* ── Mobile ── */
 @media (max-width: 900px) {
   .pill-btn { padding: 5px 10px; font-size: 6px; }
-  .ham-btn { top: 8px; right: 8px; width: 24px; height: 24px; }
-  .ham-btn .bar { width: 10px; height: 1px; }
+  .ham-btn { top: 8px; right: 8px; width: 22px; height: 22px; }
+  .ham-btn .bar { width: 9px; height: 1px; }
   .page-back { top: 8px; left: 8px; width: 20px; height: 20px; font-size: 9px; }
+
+  /* Smooth momentum scrolling on iOS */
+  * { -webkit-overflow-scrolling: touch; }
+
+  /* Disable 3D tilt on mobile (too jarring with touch) */
 }
