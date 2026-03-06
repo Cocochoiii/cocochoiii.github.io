@@ -87,9 +87,9 @@ export default function App() {
         <div
           ref={grainRefA}
           style={{
-            position: 'absolute', inset: '-200px',
+            position: 'absolute', inset: '-100px',
             backgroundImage: GRAIN_A,
-            backgroundSize: '200px 200px',
+            backgroundSize: '100px 100px',
           }}
         />
       </div>

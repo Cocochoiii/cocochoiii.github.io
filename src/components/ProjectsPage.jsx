@@ -48,19 +48,19 @@ export default function ProjectsPage({ go }) {
       <div style={{ width: '100vw', height: '100vh', background: PAL.grey, position: 'relative', overflow: 'hidden' }}>
         <div style={{ width: '100%', height: '100%', overflowY: 'auto', overflowX: 'hidden' }}>
           {/* Warhol header */}
-          <div className="wart" style={{ width: '100%', height: '50vw', position: 'relative', overflow: 'hidden', opacity: 0 }}>
+          <div className="wart" style={{ width: '100%', height: '40vw', position: 'relative', overflow: 'hidden', opacity: 0 }}>
             <canvas ref={canvasRef} style={{ display: 'block' }} />
-            <div style={{ position: 'absolute', bottom: 20, left: 20, right: 20, zIndex: 5 }}>
-              <p style={{ fontFamily: "'Playfair Display', serif", fontStyle: 'italic', fontSize: 13, color: '#c9a96e', letterSpacing: 3, textTransform: 'uppercase', marginBottom: 4 }}>Selected</p>
-              <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: 32, fontWeight: 800, color: '#f0e8dc', lineHeight: 1.05, letterSpacing: -1 }}>Projects</h2>
-              <div style={{ width: 30, height: 2, background: '#c9a96e', marginTop: 8, borderRadius: 2 }} />
+            <div style={{ position: 'absolute', bottom: 10, left: 10, right: 10, zIndex: 5 }}>
+              <p style={{ fontFamily: "'Playfair Display', serif", fontStyle: 'italic', fontSize: 9, color: '#c9a96e', letterSpacing: 1.5, textTransform: 'uppercase', marginBottom: 2 }}>Selected</p>
+              <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: 20, fontWeight: 800, color: '#f0e8dc', lineHeight: 1.05, letterSpacing: -1 }}>Projects</h2>
+              <div style={{ width: 15, height: 1, background: '#c9a96e', marginTop: 4, borderRadius: 2 }} />
             </div>
           </div>
 
           {/* Cards grid 2-col */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 6, padding: '6px 6px 80px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 4, padding: '4px 4px 50px' }}>
             {PROJECTS.map((p, i) => (
-              <ArtCard key={i} p={p} className={i % 2 === 0 ? 'proj-left' : 'proj-right'} style={{ minHeight: 150, opacity: 0 }} compact />
+              <ArtCard key={i} p={p} className={i % 2 === 0 ? 'proj-left' : 'proj-right'} style={{ minHeight: 90, opacity: 0 }} compact />
             ))}
           </div>
         </div>
@@ -75,13 +75,13 @@ export default function ProjectsPage({ go }) {
     <div style={{ width: '100vw', height: '100vh', background: PAL.grey, position: 'relative', overflow: 'hidden', display: 'flex' }}>
       <div className="wart" style={{ width: '40%', flexShrink: 0, overflow: 'hidden', opacity: 0, position: 'relative', zIndex: 1 }}>
         <canvas ref={canvasRef} style={{ display: 'block' }} />
-        <div style={{ position: 'absolute', bottom: 40, left: 28, right: 28, zIndex: 5 }}>
-          <p style={{ fontFamily: "'Playfair Display', serif", fontStyle: 'italic', fontSize: 20, color: '#c9a96e', letterSpacing: 4, textTransform: 'uppercase', marginBottom: 8 }}>Selected</p>
-          <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: 'clamp(48px, 4vw, 60px)', fontWeight: 800, color: '#f0e8dc', lineHeight: 1.05, letterSpacing: -2 }}>Projects</h2>
-          <div style={{ width: 40, height: 2, background: '#c9a96e', marginTop: 14, borderRadius: 2 }} />
+        <div style={{ position: 'absolute', bottom: 20, left: 14, right: 14, zIndex: 5 }}>
+          <p style={{ fontFamily: "'Playfair Display', serif", fontStyle: 'italic', fontSize: 10, color: '#c9a96e', letterSpacing: 2, textTransform: 'uppercase', marginBottom: 4 }}>Selected</p>
+          <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: 'clamp(24px, 4vw, 30px)', fontWeight: 800, color: '#f0e8dc', lineHeight: 1.05, letterSpacing: -1 }}>Projects</h2>
+          <div style={{ width: 20, height: 1, background: '#c9a96e', marginTop: 7, borderRadius: 2 }} />
         </div>
       </div>
-      <div style={{ flex: 1, display: 'grid', gridTemplateColumns: '1fr 1fr', gridTemplateRows: '1.15fr 0.55fr 1fr 1.3fr', gap: 7, padding: 7, height: '100vh', zIndex: 1 }}>
+      <div style={{ flex: 1, display: 'grid', gridTemplateColumns: '1fr 1fr', gridTemplateRows: '1.15fr 0.55fr 1fr 1.3fr', gap: 4, padding: 4, height: '100vh', zIndex: 1 }}>
         <ArtCard p={PROJECTS[0]} className="proj-left" style={{ gridColumn: '1', gridRow: '1', opacity: 0 }} />
         <ArtCard p={PROJECTS[1]} className="proj-right" style={{ gridColumn: '2', gridRow: '1', opacity: 0 }} />
         <ArtCard p={PROJECTS[2]} className="proj-wide" style={{ gridColumn: '1 / 3', gridRow: '2', opacity: 0 }} />

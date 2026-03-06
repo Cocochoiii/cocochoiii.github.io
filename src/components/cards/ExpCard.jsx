@@ -47,7 +47,7 @@ function ExpCard({ exp, className = '', style = {} }) {
       className={`exp-card ${className}`}
       style={{
         background: 'rgba(255,255,255,0.04)',
-        borderRadius: 16,
+        borderRadius: 8,
         overflow: 'hidden',
         position: 'relative',
         cursor: 'default',
@@ -64,7 +64,7 @@ function ExpCard({ exp, className = '', style = {} }) {
       {/* Top accent line */}
       <div
         style={{
-          position: 'absolute', top: 0, left: 0, right: 0, height: 2.5,
+          position: 'absolute', top: 0, left: 0, right: 0, height: 1.25,
           background: `linear-gradient(90deg, ${exp.color}, ${exp.color}33)`,
           zIndex: 3,
         }}

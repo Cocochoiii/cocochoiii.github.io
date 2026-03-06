@@ -51,7 +51,7 @@ function ArtCard({ p, className = '', style = {}, compact = false }) {
       className={`proj-card ${className}`}
       style={{
         background: p.bg,
-        borderRadius: 16,
+        borderRadius: 8,
         position: 'relative',
         cursor: 'pointer',
         overflow: 'hidden',

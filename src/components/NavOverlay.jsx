@@ -56,22 +56,22 @@ function NavOverlay({ go, current = 'home', dark = false, light = false }) {
       {open && (
         <div ref={overlayRef} onClick={close} style={{ position: 'fixed', inset: 0, zIndex: 150, background: 'rgba(10, 8, 8, 0.96)', backdropFilter: 'blur(24px) saturate(1.2)', display: 'flex', opacity: 0, overflow: 'hidden' }}>
 
-          {!m && <div ref={decorRef} style={{ position: 'absolute', top: '50%', left: '25%', width: '60vh', height: '60vh', borderRadius: '50%', border: '1px solid rgba(255,255,255,0.08)', transform: 'translate(-50%, -50%) scale(0)', pointerEvents: 'none' }} />}
+          {!m && <div ref={decorRef} style={{ position: 'absolute', top: '50%', left: '25%', width: '30vh', height: '30vh', borderRadius: '50%', border: '1px solid rgba(255,255,255,0.08)', transform: 'translate(-50%, -50%) scale(0)', pointerEvents: 'none' }} />}
 
-          <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 2, background: 'rgba(255,255,255,0.05)' }}>
+          <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: 1, background: 'rgba(255,255,255,0.05)' }}>
             <div ref={progressRef} style={{ height: '100%', background: 'linear-gradient(90deg, #E37B88, #c9a96e)', transformOrigin: 'left center', transform: 'scaleX(0)' }} />
           </div>
 
-          <div style={{ position: 'absolute', bottom: m ? 24 : 48, left: m ? 24 : 60, display: 'flex', alignItems: 'center', gap: 20 }}>
-            <div ref={counterRef} style={{ fontFamily: "'Playfair Display', serif", fontSize: m ? 12 : 14, color: 'rgba(255,255,255,0.25)', letterSpacing: 3, opacity: 0 }}>
+          <div style={{ position: 'absolute', bottom: m ? 12 : 24, left: m ? 12 : 30, display: 'flex', alignItems: 'center', gap: 10 }}>
+            <div ref={counterRef} style={{ fontFamily: "'Playfair Display', serif", fontSize: m ? 8 : 9, color: 'rgba(255,255,255,0.25)', letterSpacing: 1.5, opacity: 0 }}>
               {String(currentIndex + 1).padStart(2, '0')} / {String(NAV_PAGES.length).padStart(2, '0')}
             </div>
-            <div ref={lineRef} style={{ width: m ? 40 : 80, height: 1, background: 'rgba(255,255,255,0.12)', transformOrigin: 'left center' }} />
+            <div ref={lineRef} style={{ width: m ? 20 : 40, height: 1, background: 'rgba(255,255,255,0.12)', transformOrigin: 'left center' }} />
           </div>
 
-          {!m && <div style={{ position: 'absolute', left: 28, top: '50%', transform: 'translateY(-50%) rotate(-90deg)', fontFamily: "'DM Sans', sans-serif", fontSize: 10, letterSpacing: 4, color: 'rgba(255,255,255,0.1)', textTransform: 'uppercase' }}>Navigation</div>}
+          {!m && <div style={{ position: 'absolute', left: 28, top: '50%', transform: 'translateY(-50%) rotate(-90deg)', fontFamily: "'DM Sans', sans-serif", fontSize: 5, letterSpacing: 2, color: 'rgba(255,255,255,0.1)', textTransform: 'uppercase' }}>Navigation</div>}
 
-          <div style={{ marginLeft: 'auto', display: 'flex', flexDirection: 'column', justifyContent: 'center', paddingRight: m ? 24 : 'clamp(60px, 8vw, 140px)', gap: m ? 2 : 6 }}>
+          <div style={{ marginLeft: 'auto', display: 'flex', flexDirection: 'column', justifyContent: 'center', paddingRight: m ? 12 : 'clamp(30px, 8vw, 70px)', gap: m ? 1 : 3 }}>
             {NAV_PAGES.map((p, i) => {
               const isActive = p.key === current
               return (
@@ -80,7 +80,7 @@ function NavOverlay({ go, current = 'home', dark = false, light = false }) {
             })}
           </div>
 
-          <div style={{ position: 'absolute', bottom: m ? 24 : 48, right: m ? 24 : 60, fontFamily: "'DM Sans', sans-serif", fontSize: m ? 9 : 11, color: 'rgba(255,255,255,0.15)', letterSpacing: 2.5, textTransform: 'uppercase' }}>Coco Choi · 2025</div>
+          <div style={{ position: 'absolute', bottom: m ? 12 : 24, right: m ? 12 : 30, fontFamily: "'DM Sans', sans-serif", fontSize: m ? 7 : 7, color: 'rgba(255,255,255,0.15)', letterSpacing: 1.25, textTransform: 'uppercase' }}>Coco Choi · 2025</div>
         </div>
       )}
     </>
@@ -104,12 +104,12 @@ const NavItem = memo(
     }
 
     return (
-      <button ref={ref} onClick={handleClick} onMouseEnter={handleEnter} onMouseLeave={handleLeave} style={{ background: 'none', border: 'none', cursor: 'pointer', textAlign: 'right', padding: isMobile ? '10px 0' : '14px 0', position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'flex-end', opacity: 0 }}>
+      <button ref={ref} onClick={handleClick} onMouseEnter={handleEnter} onMouseLeave={handleLeave} style={{ background: 'none', border: 'none', cursor: 'pointer', textAlign: 'right', padding: isMobile ? '5px 0' : '7px 0', position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'flex-end', opacity: 0 }}>
         <div className="nav-line" style={{ position: 'absolute', bottom: 8, right: 0, width: '100%', height: 1, background: page.accent, opacity: isActive ? 0.3 : 0, transformOrigin: 'right center', transform: isActive ? 'scaleX(0.3)' : 'scaleX(0)' }} />
-        <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: isMobile ? 10 : 11, fontWeight: 500, color: isActive ? page.accent : 'rgba(255,255,255,0.15)', letterSpacing: 3, marginBottom: isMobile ? 3 : 6 }}>{String(index + 1).padStart(2, '0')}</span>
-        <span className="nav-label" style={{ fontFamily: "'Playfair Display', serif", fontSize: isMobile ? 'clamp(28px, 8vw, 42px)' : 'clamp(38px, 5.5vw, 68px)', fontWeight: 800, color: isActive ? page.accent : 'rgba(255,255,255,0.8)', letterSpacing: isActive ? (isMobile ? 4 : 8) : 3, lineHeight: 1.1, transition: 'letter-spacing 0.4s, color 0.4s' }}>{page.label}</span>
-        <span className="nav-sub" style={{ fontFamily: "'DM Sans', sans-serif", fontSize: isMobile ? 10 : 12, fontWeight: 500, color: 'rgba(255,255,255,0.3)', letterSpacing: 2.5, textTransform: 'uppercase', marginTop: isMobile ? 3 : 6, opacity: isActive ? 0.7 : 0, transform: isActive ? 'translateX(0)' : 'translateX(15px)' }}>{page.subtitle}</span>
-        {isActive && <div style={{ position: 'absolute', right: isMobile ? -16 : -28, top: '50%', transform: 'translateY(-50%)', width: isMobile ? 5 : 7, height: isMobile ? 5 : 7, borderRadius: '50%', background: page.accent, boxShadow: `0 0 16px ${page.accent}80` }} />}
+        <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: isMobile ? 8 : 8, fontWeight: 500, color: isActive ? page.accent : 'rgba(255,255,255,0.15)', letterSpacing: 3, marginBottom: isMobile ? 2 : 3 }}>{String(index + 1).padStart(2, '0')}</span>
+        <span className="nav-label" style={{ fontFamily: "'Playfair Display', serif", fontSize: isMobile ? 'clamp(14px, 5.5vw, 24px)' : 'clamp(19px, 5.5vw, 34px)', fontWeight: 800, color: isActive ? page.accent : 'rgba(255,255,255,0.8)', letterSpacing: isActive ? (isMobile ? 2 : 4) : 1.5, lineHeight: 1.1, transition: 'letter-spacing 0.4s, color 0.4s' }}>{page.label}</span>
+        <span className="nav-sub" style={{ fontFamily: "'DM Sans', sans-serif", fontSize: isMobile ? 8 : 8, fontWeight: 500, color: 'rgba(255,255,255,0.3)', letterSpacing: 1.25, textTransform: 'uppercase', marginTop: isMobile ? 2 : 3, opacity: isActive ? 0.7 : 0, transform: isActive ? 'translateX(0)' : 'translateX(15px)' }}>{page.subtitle}</span>
+        {isActive && <div style={{ position: 'absolute', right: isMobile ? -8 : -14, top: '50%', transform: 'translateY(-50%)', width: isMobile ? 3 : 4, height: isMobile ? 3 : 4, borderRadius: '50%', background: page.accent, boxShadow: `0 0 16px ${page.accent}80` }} />}
       </button>
     )
   }),
