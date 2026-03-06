@@ -249,7 +249,7 @@ export default function HomePage({ go }) {
         </div>
 
         {/* Typewriter */}
-        <div className="hsub2" style={{ position: 'absolute', top: m ? '10%' : '34%', right: m ? 10 : 40, left: m ? 10 : 'auto', zIndex: 30, opacity: 0 }}>
+        <div className="hsub2" style={{ position: 'absolute', top: m ? '13%' : '34%', right: m ? 10 : 40, left: m ? 10 : 'auto', zIndex: 30, opacity: 0 }}>
           <div style={{
             fontFamily: "'Playfair Display', serif",
             fontSize: m ? 'clamp(12px, 4.5vw, 18px)' : 'clamp(16px, 6vw, 32px)',
@@ -270,7 +270,7 @@ export default function HomePage({ go }) {
         {/* Mobile: bottom nav bar */}
         {m && (
             <div style={{
-              position: 'absolute', bottom: 10, left: '50%', transform: 'translateX(-50%)',
+              position: 'absolute', bottom: 10, left: '75%', transform: 'translateX(-50%)',
               zIndex: 30, display: 'flex', gap: 5,
             }}>
               {[
