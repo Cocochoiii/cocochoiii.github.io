@@ -75,16 +75,16 @@ export default function HomePage({ go }) {
       canvas.style.width = W + 'px'
       canvas.style.height = H + 'px'
       const r = new rive.Rive({
-        src: '/piano.riv', canvas, artboard: 'Bye Quincy',
-        stateMachines: 'State Machine 1', autoplay: true,
-        layout: new rive.Layout({ fit: rive.Fit.Cover, alignment: rive.Alignment.Center }),
-        onLoad: () => {
-          r.resizeDrawingSurfaceToCanvas()
-          const inputs = r.stateMachineInputs('State Machine 1')
-          const roll = inputs?.find((i) => i.name === 'roll')
-          if (roll) setTimeout(() => { roll.value = true }, 800)
-        },
-      })
+                                src: '/piano.riv', canvas, artboard: 'Bye Quincy',
+                                stateMachines: 'State Machine 1', autoplay: true,
+                                layout: new rive.Layout({ fit: rive.Fit.Cover, alignment: rive.Alignment.Center }),
+                                onLoad: () => {
+                                  r.resizeDrawingSurfaceToCanvas()
+                                  const inputs = r.stateMachineInputs('State Machine 1')
+                                  const roll = inputs?.find((i) => i.name === 'roll')
+                                  if (roll) setTimeout(() => { roll.value = true }, 800)
+                                },
+                              })
       riveRef.current = r
     })
     return () => { if (riveRef.current) riveRef.current.cleanup(); riveRef.current = null }
@@ -144,14 +144,14 @@ export default function HomePage({ go }) {
   const desktopOffset = ((SCALE - 1) / 2) * 100 + 8
 
   const wrapperStyle = m
-    ? {
+                       ? {
         position: 'absolute',
         width: '210vh', height: '130vh',
         left: '50%', top: '50%',
         transform: 'translate(-50%, -50%)',
         zIndex: 1,
       }
-    : {
+                       : {
         position: 'absolute',
         top: `-${desktopOffset}%`,
         left: `-${((SCALE - 1) / 2) * 100}%`,
@@ -161,137 +161,137 @@ export default function HomePage({ go }) {
       }
 
   return (
-    <div style={{ width: '100vw', height: '100vh', position: 'relative', overflow: 'hidden', background: '#E37B88' }}>
-      <div className="noise-overlay" />
-      <style>{`
+      <div style={{ width: '100vw', height: '100vh', position: 'relative', overflow: 'hidden', background: '#E37B88' }}>
+        <div className="noise-overlay" />
+        <style>{`
         @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
         .noise-overlay { position: fixed; inset: 0; z-index: 99; pointer-events: none; opacity: 0.045; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E"); }
         .social-icon { display: flex; align-items: center; justify-content: center; width: ${m ? 20 : 24}px; height: ${m ? 20 : 24}px; border-radius: 50%; background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.25); color: rgba(255,255,255,0.8); cursor: pointer; transition: all 0.4s cubic-bezier(0.25,0,0,1); backdrop-filter: blur(8px); text-decoration: none; }
         .social-icon:hover { background: rgba(255,255,255,1); color: #E37B88; transform: translateY(-3px) scale(1.1); }
       `}</style>
 
-      {/* BG text spotlight — desktop only */}
-      {!m && (
-        <div className="reveal-mask" style={{ position: 'absolute', inset: 0, zIndex: 0, pointerEvents: 'none', opacity: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', transform: 'translateY(-5vh)', WebkitMaskImage: `radial-gradient(circle 110px at ${mouse.x}px ${mouse.y}px, black 15%, transparent 100%)`, maskImage: `radial-gradient(circle 110px at ${mouse.x}px ${mouse.y}px, black 15%, transparent 100%)` }}>
-          <div style={{ fontFamily: "'Playfair Display', serif", fontSize: 'clamp(30px, 12vw, 85px)', fontWeight: 900, color: '#c4606c', textAlign: 'center', whiteSpace: 'nowrap', letterSpacing: -2 }}>
-            <div>CREATIVE</div><div>SOFTWARE</div><div>ENGINEER</div>
-          </div>
-        </div>
-      )}
-
-      {/* Piano Rive wrapper — landscape-locked on mobile */}
-      <div ref={parallaxRef} style={wrapperStyle}>
-        <canvas ref={canvasRef} style={{ position: 'absolute', top: 0, left: 0, display: 'block' }} />
-
-        {/* Hot zones — same % positions, work on both mouse & touch */}
-        {zones.map((z) => (
-          <div key={z.id} className="hot" style={{
-            position: 'absolute', top: z.top, left: z.left,
-            transform: 'translate(-50%, -50%)',
-            width: m ? Math.max(z.w, 44) : z.w,
-            height: m ? Math.max(z.h, 44) : z.h,
-            borderRadius: z.r, cursor: 'pointer', zIndex: 10, opacity: 0,
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-          }}
-            onMouseEnter={() => handleZoneEnter(z)}
-            onMouseLeave={handleZoneLeave}
-            onClick={() => handleZoneClick(z)}
-          >
-            <div style={{ position: 'absolute', inset: -10, borderRadius: '50%', background: 'radial-gradient(circle, rgba(255,255,255,0.25) 0%, transparent 70%)', opacity: hovered === z.id ? 1 : 0, transition: 'all 0.5s ease' }} />
-            {!m && <div style={{ position: 'absolute', bottom: -26, left: '50%', transform: 'translateX(-50%)', fontFamily: "'Playfair Display', serif", fontStyle: 'italic', fontSize: 12, color: 'white', opacity: hovered === z.id ? 1 : 0, transition: '0.3s', whiteSpace: 'nowrap' }}>{z.label}</div>}
-            {/* Mobile: show label on tap */}
-            {m && hovered === z.id && <div style={{ position: 'absolute', top: -20, left: '50%', transform: 'translateX(-50%)', fontFamily: "'DM Sans', sans-serif", fontSize: 7, fontWeight: 700, color: 'white', background: 'rgba(0,0,0,0.4)', padding: '2px 8px', borderRadius: 10, whiteSpace: 'nowrap' }}>{z.label}</div>}
-          </div>
-        ))}
-
-        {/* Dialogue bubble — desktop only inside wrapper */}
+        {/* BG text spotlight — desktop only */}
         {!m && (
-          <div className="dial" style={{
-            position: 'absolute', bottom: '18%', right: '35%',
-            background: 'rgba(255,255,255,0.96)', backdropFilter: 'blur(10px)',
-            borderRadius: 11, padding: '10px 15px',
-            zIndex: 20, opacity: 0, transform: 'scale(0.9)',
-            boxShadow: '0 5px 15px rgba(0,0,0,0.1)',
-          }}>
-            <div style={{ fontFamily: "'Playfair Display', serif", fontStyle: 'italic', fontSize: 11, color: '#2a2020', textAlign: 'center', whiteSpace: 'pre-line' }}>{dialogue}</div>
-            <div style={{ position: 'absolute', bottom: -5, left: 15, width: 0, height: 0, borderLeft: '5px solid transparent', borderRight: '5px solid transparent', borderTop: '5px solid rgba(255,255,255,0.96)' }} />
-          </div>
+            <div className="reveal-mask" style={{ position: 'absolute', inset: 0, zIndex: 0, pointerEvents: 'none', opacity: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', transform: 'translateY(-5vh)', WebkitMaskImage: `radial-gradient(circle 110px at ${mouse.x}px ${mouse.y}px, black 15%, transparent 100%)`, maskImage: `radial-gradient(circle 110px at ${mouse.x}px ${mouse.y}px, black 15%, transparent 100%)` }}>
+              <div style={{ fontFamily: "'Playfair Display', serif", fontSize: 'clamp(30px, 12vw, 85px)', fontWeight: 900, color: '#c4606c', textAlign: 'center', whiteSpace: 'nowrap', letterSpacing: -2 }}>
+                <div>CREATIVE</div><div>SOFTWARE</div><div>ENGINEER</div>
+              </div>
+            </div>
         )}
-      </div>
 
-      {/* Mobile dial — positioned on the black piano body, viewport-relative */}
-      {m && (
-        <div className="dial" style={{
-          position: 'absolute', top: '30%', right: 10,
-          background: 'rgba(255,255,255,0.93)', backdropFilter: 'blur(10px)',
-          borderRadius: 10, padding: '6px 10px',
-          zIndex: 20, opacity: 0, transform: 'scale(0.9)',
-          boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
-        }}>
-          <div style={{ fontFamily: "'Playfair Display', serif", fontStyle: 'italic', fontSize: 8, color: '#2a2020', textAlign: 'center', whiteSpace: 'pre-line', maxWidth: 100 }}>{dialogue}</div>
-          <div style={{ position: 'absolute', bottom: -4, left: 12, width: 0, height: 0, borderLeft: '4px solid transparent', borderRight: '4px solid transparent', borderTop: '4px solid rgba(255,255,255,0.93)' }} />
+        {/* Piano Rive wrapper — landscape-locked on mobile */}
+        <div ref={parallaxRef} style={wrapperStyle}>
+          <canvas ref={canvasRef} style={{ position: 'absolute', top: 0, left: 0, display: 'block' }} />
+
+          {/* Hot zones — same % positions, work on both mouse & touch */}
+          {zones.map((z) => (
+              <div key={z.id} className="hot" style={{
+                position: 'absolute', top: z.top, left: z.left,
+                transform: 'translate(-50%, -50%)',
+                width: m ? Math.max(z.w, 44) : z.w,
+                height: m ? Math.max(z.h, 44) : z.h,
+                borderRadius: z.r, cursor: 'pointer', zIndex: 10, opacity: 0,
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+              }}
+                   onMouseEnter={() => handleZoneEnter(z)}
+                   onMouseLeave={handleZoneLeave}
+                   onClick={() => handleZoneClick(z)}
+              >
+                <div style={{ position: 'absolute', inset: -10, borderRadius: '50%', background: 'radial-gradient(circle, rgba(255,255,255,0.25) 0%, transparent 70%)', opacity: hovered === z.id ? 1 : 0, transition: 'all 0.5s ease' }} />
+                {!m && <div style={{ position: 'absolute', bottom: -26, left: '50%', transform: 'translateX(-50%)', fontFamily: "'Playfair Display', serif", fontStyle: 'italic', fontSize: 12, color: 'white', opacity: hovered === z.id ? 1 : 0, transition: '0.3s', whiteSpace: 'nowrap' }}>{z.label}</div>}
+                {/* Mobile: show label on tap */}
+                {m && hovered === z.id && <div style={{ position: 'absolute', top: -20, left: '50%', transform: 'translateX(-50%)', fontFamily: "'DM Sans', sans-serif", fontSize: 7, fontWeight: 700, color: 'white', background: 'rgba(0,0,0,0.4)', padding: '2px 8px', borderRadius: 10, whiteSpace: 'nowrap' }}>{z.label}</div>}
+              </div>
+          ))}
+
+          {/* Dialogue bubble — desktop only inside wrapper */}
+          {!m && (
+              <div className="dial" style={{
+                position: 'absolute', bottom: '18%', right: '35%',
+                background: 'rgba(255,255,255,0.96)', backdropFilter: 'blur(10px)',
+                borderRadius: 11, padding: '10px 15px',
+                zIndex: 20, opacity: 0, transform: 'scale(0.9)',
+                boxShadow: '0 5px 15px rgba(0,0,0,0.1)',
+              }}>
+                <div style={{ fontFamily: "'Playfair Display', serif", fontStyle: 'italic', fontSize: 11, color: '#2a2020', textAlign: 'center', whiteSpace: 'pre-line' }}>{dialogue}</div>
+                <div style={{ position: 'absolute', bottom: -5, left: 15, width: 0, height: 0, borderLeft: '5px solid transparent', borderRight: '5px solid transparent', borderTop: '5px solid rgba(255,255,255,0.96)' }} />
+              </div>
+          )}
         </div>
-      )}
 
-      {/* Name — top left */}
-      <div className="hname" style={{ position: 'absolute', top: m ? '3%' : '20%', left: m ? 10 : 30, zIndex: 30, opacity: 0, transform: 'translateY(20px)' }}>
-        {'Coco Choi'.split('').map((ch, i) => (
-          <span key={i} className="piano-key-letter" style={{
-            fontFamily: "'Playfair Display', serif",
-            fontSize: m ? 'clamp(20px, 8vw, 36px)' : 'clamp(40px, 9vw, 75px)',
-            fontWeight: 900, color: 'white', display: 'inline-block',
-          }}
-            onMouseEnter={(e) => handleLetterHover(e, i)}
-            onClick={(e) => m && handleLetterHover(e, i)}>
+        {/* Mobile dial — positioned on the black piano body, viewport-relative */}
+        {m && (
+            <div className="dial" style={{
+              position: 'absolute', top: '37%', left:'30%',
+              background: 'rgba(255,255,255,0.93)', backdropFilter: 'blur(10px)',
+              borderRadius: 10, padding: '6px 10px',
+              zIndex: 20, opacity: 0, transform: 'scale(0.9)',
+              boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+            }}>
+              <div style={{ fontFamily: "'Playfair Display', serif", fontStyle: 'italic', fontSize: 8, color: '#2a2020', textAlign: 'center', whiteSpace: 'pre-line', maxWidth: 100 }}>{dialogue}</div>
+              <div style={{ position: 'absolute', bottom: -4, left: 12, width: 0, height: 0, borderLeft: '4px solid transparent', borderRight: '4px solid transparent', borderTop: '4px solid rgba(255,255,255,0.93)' }} />
+            </div>
+        )}
+
+        {/* Name — top left */}
+        <div className="hname" style={{ position: 'absolute', top: m ? '3%' : '20%', left: m ? 10 : 30, zIndex: 30, opacity: 0, transform: 'translateY(20px)' }}>
+          {'Coco Choi'.split('').map((ch, i) => (
+              <span key={i} className="piano-key-letter" style={{
+                fontFamily: "'Playfair Display', serif",
+                fontSize: m ? 'clamp(30px, 10vw, 44px)' : 'clamp(40px, 9vw, 75px)',
+                fontWeight: 900, color: 'white', display: 'inline-block',
+              }}
+                    onMouseEnter={(e) => handleLetterHover(e, i)}
+                    onClick={(e) => m && handleLetterHover(e, i)}>
             {ch === ' ' ? '\u00A0' : ch}
           </span>
-        ))}
-      </div>
-
-      {/* Typewriter */}
-      <div className="hsub2" style={{ position: 'absolute', top: m ? '10%' : '34%', right: m ? 10 : 40, left: m ? 10 : 'auto', zIndex: 30, opacity: 0 }}>
-        <div style={{
-          fontFamily: "'Playfair Display', serif",
-          fontSize: m ? 'clamp(9px, 3.5vw, 14px)' : 'clamp(16px, 6vw, 32px)',
-          fontWeight: 900, color: 'white', letterSpacing: -0.5,
-          textAlign: m ? 'left' : 'right',
-        }}>
-          {displayed}<span style={{ borderRight: '2px solid white', animation: 'blink 0.7s infinite' }} />
-        </div>
-      </div>
-
-      {/* Social icons */}
-      <div className="hsocials" style={{ position: 'absolute', bottom: m ? 10 : 40, left: m ? 10 : 30, zIndex: 30, display: 'flex', gap: m ? 5 : 8, opacity: 0 }}>
-        {SOCIALS.map((s, i) => (
-          <a key={i} className="social-icon" href={s.href} target="_blank" rel="noreferrer" onMouseEnter={() => playNote(880, 0.1)}>{SOCIAL_ICONS[i]}</a>
-        ))}
-      </div>
-
-      {/* Mobile: bottom nav bar */}
-      {m && (
-        <div style={{
-          position: 'absolute', bottom: 10, left: '50%', transform: 'translateX(-50%)',
-          zIndex: 30, display: 'flex', gap: 5,
-        }}>
-          {[
-            { label: 'Work', nav: 'experience' },
-            { label: 'Projects', nav: 'projects' },
-            { label: 'About', nav: 'about' },
-          ].map((item) => (
-            <button key={item.nav} onClick={() => { playNote(440, 0.2); go(item.nav) }} style={{
-              background: 'rgba(255,255,255,0.2)', border: '1px solid rgba(255,255,255,0.3)',
-              borderRadius: 14, padding: '5px 12px', color: 'white',
-              fontFamily: "'DM Sans', sans-serif", fontSize: 7, fontWeight: 700,
-              letterSpacing: 0.8, textTransform: 'uppercase', cursor: 'pointer',
-              backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)',
-            }}>
-              {item.label}
-            </button>
           ))}
         </div>
-      )}
 
-      <NavOverlay go={go} current="home" />
-    </div>
+        {/* Typewriter */}
+        <div className="hsub2" style={{ position: 'absolute', top: m ? '10%' : '34%', right: m ? 10 : 40, left: m ? 10 : 'auto', zIndex: 30, opacity: 0 }}>
+          <div style={{
+            fontFamily: "'Playfair Display', serif",
+            fontSize: m ? 'clamp(12px, 4.5vw, 18px)' : 'clamp(16px, 6vw, 32px)',
+            fontWeight: 900, color: 'white', letterSpacing: -0.5,
+            textAlign: m ? 'left' : 'right',
+          }}>
+            {displayed}<span style={{ borderRight: '2px solid white', animation: 'blink 0.7s infinite' }} />
+          </div>
+        </div>
+
+        {/* Social icons */}
+        <div className="hsocials" style={{ position: 'absolute', bottom: m ? 10 : 40, left: m ? 10 : 30, zIndex: 30, display: 'flex', gap: m ? 5 : 8, opacity: 0 }}>
+          {SOCIALS.map((s, i) => (
+              <a key={i} className="social-icon" href={s.href} target="_blank" rel="noreferrer" onMouseEnter={() => playNote(880, 0.1)}>{SOCIAL_ICONS[i]}</a>
+          ))}
+        </div>
+
+        {/* Mobile: bottom nav bar */}
+        {m && (
+            <div style={{
+              position: 'absolute', bottom: 10, left: '50%', transform: 'translateX(-50%)',
+              zIndex: 30, display: 'flex', gap: 5,
+            }}>
+              {[
+                { label: 'Work', nav: 'experience' },
+                { label: 'Projects', nav: 'projects' },
+                { label: 'About', nav: 'about' },
+              ].map((item) => (
+                  <button key={item.nav} onClick={() => { playNote(440, 0.2); go(item.nav) }} style={{
+                    background: 'rgba(255,255,255,0.2)', border: '1px solid rgba(255,255,255,0.3)',
+                    borderRadius: 14, padding: '5px 12px', color: 'white',
+                    fontFamily: "'DM Sans', sans-serif", fontSize: 7, fontWeight: 700,
+                    letterSpacing: 0.8, textTransform: 'uppercase', cursor: 'pointer',
+                    backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)',
+                  }}>
+                    {item.label}
+                  </button>
+              ))}
+            </div>
+        )}
+
+        <NavOverlay go={go} current="home" />
+      </div>
   )
 }
