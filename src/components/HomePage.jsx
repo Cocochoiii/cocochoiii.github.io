@@ -15,15 +15,103 @@ const SOCIAL_ICONS = [<GitHubIcon />, <LinkedInIcon />, <EmailIcon />]
 const DEFAULT_MSG_DESKTOP = 'Click on the objects\non my piano to explore'
 const DEFAULT_MSG_MOBILE = 'Tap the objects\non my piano to explore'
 
+/* ── Hand-drawn bubble tail ── */
+function BubbleTail({ color = 'rgba(255,255,255,0.96)', size = 'desktop' }) {
+  const w = size === 'mobile' ? 14 : 18
+  const h = size === 'mobile' ? 7 : 9
+  return (
+      <svg width={w} height={h} viewBox="0 0 18 9" fill="none"
+           style={{ position: 'absolute', bottom: -(h - 1), left: size === 'mobile' ? 10 : 13, display: 'block' }}>
+        <path d="M1 0.5 C3 0.8, 4.5 2, 5.5 4 C6.5 6, 6 8.5, 5 8.5 C4.5 8.5, 7 6, 8.5 4 C10 2, 12 0.6, 14 0.5"
+              stroke={color} strokeWidth="0" fill={color} />
+      </svg>
+  )
+}
+
+/*
+ * ── Pencil circle ──
+ * Hand-drawn ellipse SVG that "draws on" via stroke-dashoffset.
+ * The path is intentionally irregular — not a perfect ellipse.
+ * viewBox is 0 0 100 100, stretched to fit each zone's size + padding.
+ */
+const PENCIL_PATH = 'M 50 5 C 72 3, 97 18, 96 45 C 95 72, 75 97, 48 96 C 22 95, 3 76, 4 50 C 5 24, 25 7, 50 5'
+const PENCIL_LEN = 310 /* approximate path length */
+
+function PencilCircle({ active, w, h, mobile }) {
+  const pad = mobile ? 14 : 22
+  const sw = w + pad
+  const sh = h + pad
+  return (
+      <svg
+          width={sw} height={sh}
+          viewBox="0 0 100 100"
+          preserveAspectRatio="none"
+          style={{
+            position: 'absolute',
+            top: '50%', left: '50%',
+            transform: 'translate(-50%, -50%)',
+            pointerEvents: 'none',
+            overflow: 'visible',
+          }}
+      >
+        <path
+            d={PENCIL_PATH}
+            fill="none"
+            stroke="rgba(255,255,255,0.55)"
+            strokeWidth="1.2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeDasharray={PENCIL_LEN}
+            strokeDashoffset={active ? 0 : PENCIL_LEN}
+            style={{
+              transition: active
+                          ? 'stroke-dashoffset 0.5s cubic-bezier(0.25,0,0,1)'
+                          : 'stroke-dashoffset 0.3s cubic-bezier(0.6,0,1,1)',
+              filter: 'url(#sketchy-sm)',
+            }}
+        />
+      </svg>
+  )
+}
+
+/*
+ * ── Floating note ──
+ * A single tiny ♪ per zone that drifts upward + fades in/out when idle.
+ * Disappears once the user interacts with any hotspot.
+ */
+const NOTE_CHARS = ['♪', '♫', '♩']
+
+function FloatingNote({ visible, seed = 0, spread = 16 }) {
+  if (!visible) return null
+  const ch = NOTE_CHARS[seed % NOTE_CHARS.length]
+  /* Offset slightly from center so each zone's note sits in a different spot */
+  const angle = (seed * 137.5) % 360 /* golden-angle distribution */
+  const rad = (angle * Math.PI) / 180
+  const x = Math.cos(rad) * spread * 0.6
+  const y = Math.sin(rad) * spread * 0.5
+  return (
+      <div
+          className="floating-note"
+          style={{
+            position: 'absolute',
+            top: `calc(50% + ${y}px)`,
+            left: `calc(50% + ${x}px)`,
+            fontSize: 30,
+            color: 'rgb(255,255,255)',
+            textShadow: '0 0 5px rgba(255, 220, 140, 0.3)',
+            animationDelay: `${seed * 0.7}s`,
+            pointerEvents: 'none',
+            userSelect: 'none',
+            lineHeight: 1,
+          }}
+      >
+        {ch}
+      </div>
+  )
+}
+
 export default function HomePage({ go }) {
   const m = useIsMobile()
-
-  /*
-   * On desktop: oversized wrapper fills beyond viewport edges for parallax.
-   * On mobile: wrapper is forced to landscape ratio (160vw × 100vw) so the
-   * hot-zone % positions match the Rive artboard exactly like desktop.
-   * The wrapper is then centered vertically within the portrait viewport.
-   */
   const SCALE = 1.55
 
   const canvasRef   = useRef(null)
@@ -55,7 +143,7 @@ export default function HomePage({ go }) {
     return () => window.removeEventListener('mousemove', fn)
   }, [m])
 
-  /* Rive init — use same scale for both, but size based on wrapper */
+  /* Rive init */
   useEffect(() => {
     const canvas = canvasRef.current
     if (!canvas) return
@@ -63,7 +151,6 @@ export default function HomePage({ go }) {
       const dpr = window.devicePixelRatio || 1
       let W, H
       if (m) {
-        // Landscape wrapper matching desktop ratio — 210vh × 130vh
         W = window.innerHeight * 2.1
         H = window.innerHeight * 1.3
       } else {
@@ -103,8 +190,12 @@ export default function HomePage({ go }) {
     return () => tl.kill()
   }, [startTyping])
 
+  /* Dismiss floating notes on first interaction */
   const dismissHint = useCallback(() => {
-    if (hintVisible) { setHintVisible(false); gsap.to('.discover-hint', { opacity: 0, y: -10, duration: 0.4 }) }
+    if (hintVisible) {
+      setHintVisible(false)
+      gsap.to('.floating-note', { opacity: 0, y: -10, scale: 0.5, duration: 0.35, stagger: 0.04, ease: 'power2.in' })
+    }
   }, [hintVisible])
 
   const toggleMusic = useCallback(() => {
@@ -135,12 +226,6 @@ export default function HomePage({ go }) {
     gsap.to(e.currentTarget, { y: 5, scaleY: 0.95, duration: 0.1, yoyo: true, repeat: 1 })
   }, [])
 
-  /*
-   * MOBILE wrapper: landscape-locked at 160vw × 100vw, centered vertically.
-   * This ensures hot-zone % positions land on the same Rive objects as desktop.
-   *
-   * DESKTOP wrapper: original oversized parallax wrapper.
-   */
   const desktopOffset = ((SCALE - 1) / 2) * 100 + 8
 
   const wrapperStyle = m
@@ -160,14 +245,62 @@ export default function HomePage({ go }) {
         zIndex: 1,
       }
 
+  const sketchyFilter = 'url(#sketchy)'
+
   return (
       <div style={{ width: '100vw', height: '100vh', position: 'relative', overflow: 'hidden', background: '#E37B88' }}>
         <div className="noise-overlay" />
+
+        {/* ── SVG filter definitions ── */}
+        <svg style={{ position: 'absolute', width: 0, height: 0 }} aria-hidden="true">
+          <defs>
+            <filter id="sketchy" x="-5%" y="-5%" width="110%" height="110%" filterUnits="objectBoundingBox">
+              <feTurbulence type="turbulence" baseFrequency="0.04" numOctaves="4" seed="2" result="turbulence" />
+              <feDisplacementMap in="SourceGraphic" in2="turbulence" scale="2.5" xChannelSelector="R" yChannelSelector="G" />
+            </filter>
+            <filter id="sketchy-sm" x="-8%" y="-8%" width="116%" height="116%" filterUnits="objectBoundingBox">
+              <feTurbulence type="turbulence" baseFrequency="0.06" numOctaves="3" seed="7" result="turbulence" />
+              <feDisplacementMap in="SourceGraphic" in2="turbulence" scale="1.8" xChannelSelector="R" yChannelSelector="G" />
+            </filter>
+          </defs>
+        </svg>
+
         <style>{`
         @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
         .noise-overlay { position: fixed; inset: 0; z-index: 99; pointer-events: none; opacity: 0.045; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E"); }
-        .social-icon { display: flex; align-items: center; justify-content: center; width: ${m ? 20 : 24}px; height: ${m ? 20 : 24}px; border-radius: 50%; background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.25); color: rgba(255,255,255,0.8); cursor: pointer; transition: all 0.4s cubic-bezier(0.25,0,0,1); backdrop-filter: blur(8px); text-decoration: none; }
-        .social-icon:hover { background: rgba(255,255,255,1); color: #E37B88; transform: translateY(-3px) scale(1.1); }
+
+        .social-icon {
+          display: flex; align-items: center; justify-content: center;
+          width: ${m ? 20 : 24}px; height: ${m ? 20 : 24}px;
+          border-radius: 50%;
+          background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.25);
+          color: rgba(255,255,255,0.8); cursor: pointer;
+          transition: all 0.4s cubic-bezier(0.25,0,0,1);
+          backdrop-filter: blur(8px); text-decoration: none;
+          filter: url(#sketchy-sm);
+        }
+        .social-icon:hover {
+          background: rgba(255,255,255,1); color: #E37B88;
+          transform: translateY(-3px) scale(1.1);
+        }
+        .sketchy-btn {
+          filter: url(#sketchy-sm);
+          transition: all 0.4s cubic-bezier(0.25,0,0,1);
+        }
+        .sketchy-btn:hover { transform: translateY(-2px) scale(1.04); }
+        .sketchy-btn:active { transform: scale(0.97); }
+
+        /* ── Floating music note drift ── */
+        @keyframes noteDrift {
+          0%   { transform: translate(0, 0) rotate(0deg); opacity: 0; }
+          15%  { opacity: 0.6; }
+          50%  { transform: translate(2px, -10px) rotate(8deg); opacity: 0.5; }
+          85%  { opacity: 0.6; }
+          100% { transform: translate(-1px, -18px) rotate(-3deg); opacity: 0; }
+        }
+        .floating-note {
+          animation: noteDrift 3.2s ease-in-out infinite;
+        }
       `}</style>
 
         {/* BG text spotlight — desktop only */}
@@ -179,32 +312,69 @@ export default function HomePage({ go }) {
             </div>
         )}
 
-        {/* Piano Rive wrapper — landscape-locked on mobile */}
+        {/* Piano Rive wrapper */}
         <div ref={parallaxRef} style={wrapperStyle}>
           <canvas ref={canvasRef} style={{ position: 'absolute', top: 0, left: 0, display: 'block' }} />
 
-          {/* Hot zones — same % positions, work on both mouse & touch */}
-          {zones.map((z) => (
-              <div key={z.id} className="hot" style={{
-                position: 'absolute', top: z.top, left: z.left,
-                transform: 'translate(-50%, -50%)',
-                width: m ? Math.max(z.w, 44) : z.w,
-                height: m ? Math.max(z.h, 44) : z.h,
-                borderRadius: z.r, cursor: 'pointer', zIndex: 10, opacity: 0,
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-              }}
-                   onMouseEnter={() => handleZoneEnter(z)}
-                   onMouseLeave={handleZoneLeave}
-                   onClick={() => handleZoneClick(z)}
-              >
-                <div style={{ position: 'absolute', inset: -10, borderRadius: '50%', background: 'radial-gradient(circle, rgba(255,255,255,0.25) 0%, transparent 70%)', opacity: hovered === z.id ? 1 : 0, transition: 'all 0.5s ease' }} />
-                {!m && <div style={{ position: 'absolute', bottom: -26, left: '50%', transform: 'translateX(-50%)', fontFamily: "'Playfair Display', serif", fontStyle: 'italic', fontSize: 12, color: 'white', opacity: hovered === z.id ? 1 : 0, transition: '0.3s', whiteSpace: 'nowrap' }}>{z.label}</div>}
-                {/* Mobile: show label on tap */}
-                {m && hovered === z.id && <div style={{ position: 'absolute', top: -20, left: '50%', transform: 'translateX(-50%)', fontFamily: "'DM Sans', sans-serif", fontSize: 7, fontWeight: 700, color: 'white', background: 'rgba(0,0,0,0.4)', padding: '2px 8px', borderRadius: 10, whiteSpace: 'nowrap' }}>{z.label}</div>}
-              </div>
-          ))}
+          {/* ── Hot zones with pencil circles + floating notes ── */}
+          {zones.map((z, zi) => {
+            const isActive = hovered === z.id
+            const zoneW = m ? Math.max(z.w, 44) : z.w
+            const zoneH = m ? Math.max(z.h, 44) : z.h
+            const noteSpread = Math.min(zoneW, zoneH) * 0.4
 
-          {/* Dialogue bubble — desktop only inside wrapper */}
+            return (
+                <div key={z.id} className="hot" style={{
+                  position: 'absolute', top: z.top, left: z.left,
+                  transform: 'translate(-50%, -50%)',
+                  width: zoneW, height: zoneH,
+                  borderRadius: z.r, cursor: 'pointer', zIndex: 10, opacity: 0,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                }}
+                     onMouseEnter={() => handleZoneEnter(z)}
+                     onMouseLeave={handleZoneLeave}
+                     onClick={() => handleZoneClick(z)}
+                >
+                  {/* Pencil circle — draws on when hovered/tapped */}
+                  <PencilCircle active={isActive} w={zoneW} h={zoneH} mobile={m} />
+
+                  {/* Floating note — one per zone, visible only while idle */}
+                  <FloatingNote visible={hintVisible && !isActive} seed={zi} spread={noteSpread} />
+
+                  {/* Desktop label — italic annotation style */}
+                  {!m && (
+                      <div style={{
+                        position: 'absolute', bottom: -26, left: '50%',
+                        transform: `translateX(-50%) ${isActive ? 'translateY(0)' : 'translateY(4px)'}`,
+                        fontFamily: "'Playfair Display', serif", fontStyle: 'italic',
+                        fontSize: 12, color: 'white',
+                        opacity: isActive ? 1 : 0,
+                        transition: 'all 0.35s cubic-bezier(0.25,0,0,1)',
+                        whiteSpace: 'nowrap', filter: 'url(#sketchy-sm)',
+                      }}>
+                        {z.label}
+                      </div>
+                  )}
+
+                  {/* Mobile label — appears on tap */}
+                  {m && isActive && (
+                      <div style={{
+                        position: 'absolute', top: -20, left: '50%',
+                        transform: 'translateX(-50%)',
+                        fontFamily: "'Playfair Display', serif", fontStyle: 'italic',
+                        fontSize: 8, fontWeight: 600, color: 'white',
+                        background: 'rgba(0,0,0,0.3)',
+                        padding: '2px 8px', borderRadius: 10,
+                        whiteSpace: 'nowrap', filter: 'url(#sketchy-sm)',
+                      }}>
+                        {z.label}
+                      </div>
+                  )}
+                </div>
+            )
+          })}
+
+          {/* Dialogue bubble — desktop */}
           {!m && (
               <div className="dial" style={{
                 position: 'absolute', bottom: '18%', right: '35%',
@@ -212,24 +382,26 @@ export default function HomePage({ go }) {
                 borderRadius: 11, padding: '10px 15px',
                 zIndex: 20, opacity: 0, transform: 'scale(0.9)',
                 boxShadow: '0 5px 15px rgba(0,0,0,0.1)',
+                filter: sketchyFilter,
               }}>
                 <div style={{ fontFamily: "'Playfair Display', serif", fontStyle: 'italic', fontSize: 11, color: '#2a2020', textAlign: 'center', whiteSpace: 'pre-line' }}>{dialogue}</div>
-                <div style={{ position: 'absolute', bottom: -5, left: 15, width: 0, height: 0, borderLeft: '5px solid transparent', borderRight: '5px solid transparent', borderTop: '5px solid rgba(255,255,255,0.96)' }} />
+                <BubbleTail />
               </div>
           )}
         </div>
 
-        {/* Mobile dial — positioned on the black piano body, viewport-relative */}
+        {/* Mobile dialogue bubble */}
         {m && (
             <div className="dial" style={{
-              position: 'absolute', top: '37%', left:'30%',
+              position: 'absolute', top: '37%', left: '30%',
               background: 'rgba(255,255,255,0.93)', backdropFilter: 'blur(10px)',
               borderRadius: 10, padding: '6px 10px',
               zIndex: 20, opacity: 0, transform: 'scale(0.9)',
               boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+              filter: sketchyFilter,
             }}>
               <div style={{ fontFamily: "'Playfair Display', serif", fontStyle: 'italic', fontSize: 8, color: '#2a2020', textAlign: 'center', whiteSpace: 'pre-line', maxWidth: 100 }}>{dialogue}</div>
-              <div style={{ position: 'absolute', bottom: -4, left: 12, width: 0, height: 0, borderLeft: '4px solid transparent', borderRight: '4px solid transparent', borderTop: '4px solid rgba(255,255,255,0.93)' }} />
+              <BubbleTail color="rgba(255,255,255,0.93)" size="mobile" />
             </div>
         )}
 
@@ -278,7 +450,7 @@ export default function HomePage({ go }) {
                 { label: 'Projects', nav: 'projects' },
                 { label: 'About', nav: 'about' },
               ].map((item) => (
-                  <button key={item.nav} onClick={() => { playNote(440, 0.2); go(item.nav) }} style={{
+                  <button key={item.nav} className="sketchy-btn" onClick={() => { playNote(440, 0.2); go(item.nav) }} style={{
                     background: 'rgba(255,255,255,0.2)', border: '1px solid rgba(255,255,255,0.3)',
                     borderRadius: 14, padding: '5px 12px', color: 'white',
                     fontFamily: "'DM Sans', sans-serif", fontSize: 7, fontWeight: 700,
