@@ -321,7 +321,7 @@ export default function HomePage({ go }) {
             const isActive = hovered === z.id
             const zoneW = m ? Math.max(z.w, 44) : z.w
             const zoneH = m ? Math.max(z.h, 44) : z.h
-            const noteSpread = Math.min(zoneW, zoneH) * 0.4
+            const noteSpread = Math.min(zoneW, zoneH) * 0.8
 
             return (
                 <div key={z.id} className="hot" style={{
