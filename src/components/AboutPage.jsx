@@ -43,7 +43,7 @@ export default function AboutPage({ go }) {
     let r = null
     import('@rive-app/canvas').then((rive) => {
       const dpr = window.devicePixelRatio || 1
-      const size = m ? Math.min(window.innerWidth * 1.0, 450) : Math.min(window.innerWidth * 1.0, window.innerHeight * 1.0, 1100)
+      const size = m ? Math.min(window.innerWidth * 1.0, 450) : Math.min(window.innerWidth * 1.0, window.innerHeight * 1.0, 1200)
       canvas.width = size * dpr
       canvas.height = size * dpr
       canvas.style.width = size + 'px'
@@ -98,7 +98,7 @@ export default function AboutPage({ go }) {
         {/* LEFT panel */}
         <div ref={leftRef} className="ab-left" style={{
           position: m ? 'relative' : 'absolute', right: m ? undefined : '70%',
-          top: m ? undefined : '44%', transform: m ? undefined : 'translateY(-50%)',
+          top: m ? undefined : '20%', transform: m ? undefined : 'translateY(-50%)',
           width: m ? '100%' : 'clamp(140px, 28vw, 210px)', zIndex: 10, opacity: 0,
           padding: m ? '0 14px' : 0, textAlign: m ? 'center' : 'left',
         }}>
@@ -115,7 +115,7 @@ export default function AboutPage({ go }) {
         {/* RIGHT panel */}
         <div ref={rightRef} className="ab-right" style={{
           position: m ? 'relative' : 'absolute', left: m ? undefined : '70%',
-          top: m ? undefined : '50%', transform: m ? undefined : 'translateY(-50%)',
+          top: m ? undefined : '60%', transform: m ? undefined : 'translateY(-50%)',
           width: m ? '100%' : 'clamp(140px, 28vw, 210px)', zIndex: 10, opacity: 0,
           padding: m ? '0 14px' : 0, marginTop: m ? 10 : 0,
         }}>
