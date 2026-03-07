@@ -100,7 +100,6 @@ export default function App() {
             const bgs = STRIP_BG[target] || STRIP_BG.home
             const tl = gsap.timeline()
 
-            /* Apply per-strip art-directed backgrounds */
             strips.forEach((el, i) => {
                 gsap.set(el, {
                     scaleY: 0,

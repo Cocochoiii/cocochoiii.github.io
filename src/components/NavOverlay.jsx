@@ -95,23 +95,34 @@ function NavOverlay({ go, current = 'home', dark = false, light = false }) {
 
 const NavItem = memo(
     forwardRef(function NavItem({ page, index, isActive, onNav, isMobile }, ref) {
+        const lineRef = useRef(null)
         const handleClick = (e) => { e.stopPropagation(); onNav(page.key) }
+
+        /* Brush-stroke underline: sweeps in from right on entrance, expands on hover */
+        useEffect(() => {
+            if (!lineRef.current) return
+            if (isActive) {
+                gsap.to(lineRef.current, { scaleX: 0.35, opacity: 0.5, duration: 0.6, delay: 0.3, ease: 'power2.out' })
+            }
+        }, [isActive])
+
         const handleEnter = (e) => {
             if (isActive) return
             gsap.to(e.currentTarget.querySelector('.nav-label'), { letterSpacing: isMobile ? 2 : 4, color: page.accent, duration: 0.4, ease: 'power2.out' })
             gsap.to(e.currentTarget.querySelector('.nav-sub'), { opacity: 1, x: 0, duration: 0.35 })
-            gsap.to(e.currentTarget.querySelector('.nav-line'), { scaleX: 1, opacity: 1, duration: 0.4 })
+            gsap.to(lineRef.current, { scaleX: 1, opacity: 0.7, duration: 0.4, ease: 'power2.out' })
         }
         const handleLeave = (e) => {
             if (isActive) return
             gsap.to(e.currentTarget.querySelector('.nav-label'), { letterSpacing: 0.5, color: 'rgba(255,255,255,0.8)', duration: 0.4 })
             gsap.to(e.currentTarget.querySelector('.nav-sub'), { opacity: 0, x: 15, duration: 0.3 })
-            gsap.to(e.currentTarget.querySelector('.nav-line'), { scaleX: 0, opacity: 0, duration: 0.3 })
+            gsap.to(lineRef.current, { scaleX: 0, opacity: 0, duration: 0.3, ease: 'power2.in' })
         }
 
         return (
             <button ref={ref} onClick={handleClick} onMouseEnter={handleEnter} onMouseLeave={handleLeave} style={{ background: 'none', border: 'none', cursor: 'pointer', textAlign: 'right', padding: isMobile ? '5px 0' : '7px 0', position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'flex-end', opacity: 0 }}>
-                <div className="nav-line" style={{ position: 'absolute', bottom: 4, right: 0, width: '100%', height: 1, background: page.accent, opacity: isActive ? 0.3 : 0, transformOrigin: 'right center', transform: isActive ? 'scaleX(0.3)' : 'scaleX(0)' }} />
+                {/* Brush-stroke underline — gradient tapers at edges */}
+                <div ref={lineRef} className="nav-line" style={{ position: 'absolute', bottom: 3, right: 0, width: '100%', height: 2, background: `linear-gradient(90deg, transparent, ${page.accent}, ${page.accent}90)`, opacity: 0, transformOrigin: 'right center', transform: 'scaleX(0)', borderRadius: 1 }} />
                 <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: isMobile ? 5 : 6, fontWeight: 500, color: isActive ? page.accent : 'rgba(255,255,255,0.15)', letterSpacing: 1.5, marginBottom: isMobile ? 2 : 3 }}>{String(index + 1).padStart(2, '0')}</span>
                 <span className="nav-label" style={{ fontFamily: "'Patrick Hand', cursive", fontSize: isMobile ? 'clamp(16px, 6vw, 28px)' : 'clamp(22px, 6vw, 38px)', fontWeight: 400, color: isActive ? page.accent : 'rgba(255,255,255,0.8)', letterSpacing: isActive ? (isMobile ? 1 : 3) : 0.5, lineHeight: 1.1, transition: 'letter-spacing 0.4s, color 0.4s' }}>{page.label}</span>
                 <span className="nav-sub" style={{ fontFamily: "'DM Sans', sans-serif", fontSize: isMobile ? 5 : 6, fontWeight: 500, color: 'rgba(255,255,255,0.3)', letterSpacing: 1.25, textTransform: 'uppercase', marginTop: isMobile ? 2 : 3, opacity: isActive ? 0.7 : 0, transform: isActive ? 'translateX(0)' : 'translateX(8px)' }}>{page.subtitle}</span>
