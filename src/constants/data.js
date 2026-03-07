@@ -1,10 +1,10 @@
 import { EYE, PAL } from './theme'
 
 export const NAV_PAGES = [
-  { key: 'home',       label: 'Home',       subtitle: 'Piano Hero',      accent: '#e37b88' },
-  { key: 'experience', label: 'Experience',  subtitle: "Where I've Been", accent: '#e37b88' },
-  { key: 'projects',   label: 'Projects',    subtitle: 'Selected Work',   accent: '#e37b88' },
-  { key: 'about',      label: 'About',       subtitle: 'Get to Know Me',  accent: '#e37b88' },
+  { key: 'home',       label: 'Home',       subtitle: 'Piano Hero',      accent: '#E37B88' },
+  { key: 'experience', label: 'Experience',  subtitle: "Where I've Been", accent: EYE.iris },
+  { key: 'projects',   label: 'Projects',    subtitle: 'Selected Work',   accent: PAL.orange },
+  { key: 'about',      label: 'About',       subtitle: 'Get to Know Me',  accent: '#928544' },
 ]
 
 export const TYPEWRITER_TITLES = [

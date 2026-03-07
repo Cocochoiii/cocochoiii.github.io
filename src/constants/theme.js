@@ -29,7 +29,7 @@ export const BG = {
   home:       '#E37B88',
   projects:   '#8a8685',
   experience: '#313131',
-  about:      '#ffffff',
+  about:      '#000000',
 }
 
 export const STRIP_COUNT = 5
