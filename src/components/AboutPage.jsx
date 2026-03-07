@@ -69,7 +69,6 @@ const LinkedInIcon = () => (<svg width="12" height="12" viewBox="0 0 24 24" fill
 const SOCIAL_ICONS = [<GitHubIcon />, <LinkedInIcon />]
 
 const PAGE_CSS = `
-  @import url('https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap');
   .skill-pill { transition: all 0.35s cubic-bezier(0.25,0,0,1); cursor: default; }
   .skill-pill:hover { transform: translateY(-3px) scale(1.06); box-shadow: 0 6px 20px rgba(0,0,0,0.1); }
   @keyframes marqueeRight { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
@@ -80,6 +79,17 @@ const PAGE_CSS = `
     10% { opacity: 1; }
     50% { transform: translateY(10px); opacity: 0.6; }
     90% { opacity: 0; }
+  }
+  /* Drop-cap — medieval illuminated manuscript style */
+  .story-para::first-letter {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.4em;
+    font-weight: 800;
+    float: left;
+    line-height: 0.8;
+    margin-right: 4px;
+    margin-top: 2px;
+    color: #C47C47;
   }
 `
 
@@ -322,14 +332,14 @@ export default function AboutPage({ go }) {
           <div className="ab-reveal" style={{ maxWidth: 550, margin: '0 auto', padding: pad, opacity: 0 }}>
             <div style={{ display: 'grid', gridTemplateColumns: m ? '1fr' : '1fr 1fr', gap: m ? 12 : 'clamp(20px, 5vw, 40px)' }}>
               <div>
-                <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: m ? 7 : 9, lineHeight: 2, color: STORY_TEXT }}>I hold a BA in Business and Film from Franklin & Marshall College and I'm currently pursuing my MS in Computer Science at Northeastern University. This blend of technical and creative backgrounds shapes how I approach every project.</p>
+                <p className="story-para" style={{ fontFamily: "'DM Sans', sans-serif", fontSize: m ? 7 : 9, lineHeight: 2, color: STORY_TEXT }}>I studied film before I ever wrote a line of code. At Franklin & Marshall, I learned to storyboard scenes, direct the viewer's eye, and edit until every frame earned its place. Now, pursuing my MS in Computer Science at Northeastern, I bring that same cinematic instinct to software — every interaction is a scene, every transition a cut.</p>
                 <div style={{ margin: m ? '10px 0' : '16px 0', height: 1, background: 'linear-gradient(90deg, #C47C4740, transparent)' }} />
-                <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: m ? 7 : 9, lineHeight: 2, color: STORY_TEXT }}>My professional journey includes building healthcare research tools at UbiWell Lab, designing IoT data pipelines at Audi, and developing enterprise web apps at Mars Inc. in Hong Kong.</p>
+                <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: m ? 7 : 9, lineHeight: 2, color: STORY_TEXT }}>That duality shaped my career. At UbiWell Lab I built healthcare tools where clarity saves lives. At Audi I designed data pipelines that turned 20,000 sensor streams into stories engineers could read. At Mars Inc. in Hong Kong I shipped apps to thousands of daily users — each screen choreographed like a short film.</p>
               </div>
               <div>
-                <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: m ? 7 : 9, lineHeight: 2, color: STORY_TEXT }}>I combine software engineering, design, and animation to create digital experiences that feel delightful to interact with. Outside of work, I founded Pet Paradise — a full-stack platform born from my love of caring for 20+ cats and dogs.</p>
+                <p className="story-para" style={{ fontFamily: "'DM Sans', sans-serif", fontSize: m ? 7 : 9, lineHeight: 2, color: STORY_TEXT }}>I believe code can be romantic. Not in a sentimental way — in the way a painter layers light, or a director holds a shot one beat longer than expected. The best software has rhythm, texture, and emotion. That's what I chase: the moment a user forgets they're using a tool and starts feeling something instead.</p>
                 <div style={{ margin: m ? '10px 0' : '16px 0', height: 1, background: 'linear-gradient(90deg, #D8995C40, transparent)' }} />
-                <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: m ? 7 : 9, lineHeight: 2, color: STORY_TEXT }}>When I'm not coding, you'll find me drawing, exploring new design tools, or experimenting with Rive animations — like the ones you see on this very website.</p>
+                <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: m ? 7 : 9, lineHeight: 2, color: STORY_TEXT }}>Outside of work I founded Pet Paradise — a full-stack platform born from caring for 20+ cats and dogs. When I'm not coding, you'll find me drawing, composing shots in my head, or animating things that probably don't need animating. This website is one of those things.</p>
               </div>
             </div>
           </div>
