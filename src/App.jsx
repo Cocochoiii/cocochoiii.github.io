@@ -54,11 +54,11 @@ const STRIP_BG = {
         PAL.dark,
     ],
     about: [
-        '#faf8f5',
-        '#ffffff',
-        '#f8f5f0',
-        '#ffffff',
-        '#faf8f5',
+        '#d8995c',
+        '#080603',
+        '#928544',
+        '#23150d',
+        '#c47c47',
     ],
 }
 
