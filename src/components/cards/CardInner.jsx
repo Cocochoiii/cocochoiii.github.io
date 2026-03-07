@@ -35,10 +35,10 @@ function CardInner({ exp, isHover, hovered }) {
 
         {/* Title */}
         <h3 style={{
-          fontFamily: "'Playfair Display', serif",
-          fontSize: m ? 12 : 'clamp(20px, 3vw, 40px)',
-          fontWeight: 800, color: titleCol,
-          lineHeight: 1.05, letterSpacing: -0.25,
+          fontFamily: "'Patrick Hand', cursive",
+          fontSize: m ? 14 : 'clamp(22px, 3.2vw, 42px)',
+          fontWeight: 400, color: titleCol,
+          lineHeight: 1.05, letterSpacing: 0,
           margin: 0, marginBottom: m ? 1 : 3,
           transform: isHover && hovered ? 'translateY(-1px)' : 'none',
           transition: 'transform 0.4s cubic-bezier(0.25,0,0,1)',
@@ -49,7 +49,7 @@ function CardInner({ exp, isHover, hovered }) {
         {/* Role */}
         <div style={{
           fontFamily: "'DM Sans', sans-serif",
-          fontSize: m ? 7 : 20, fontWeight: 500,
+          fontSize: m ? 7 : 16, fontWeight: 500,
           color: subCol, marginBottom: m ? 1 : 8,
         }}>
           {exp.role}
@@ -60,8 +60,8 @@ function CardInner({ exp, isHover, hovered }) {
           {exp.highlights.map((h, i) => (
               <div key={i} style={{
                 fontFamily: "'DM Sans', sans-serif",
-                fontSize: m ? 5 : 13, color: hlCol,
-                lineHeight: 1.45,
+                fontSize: m ? 5 : 11, color: hlCol,
+                lineHeight: 1.5,
                 display: 'flex', alignItems: 'center', gap: m ? 2 : 4,
               }}>
             <span style={{

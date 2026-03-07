@@ -102,11 +102,11 @@ function HandPen({ mobile }) {
 /* ── Seeded pseudo-random for hand-wobble rotations ── */
 function charWobble(i) {
     const seed = Math.sin(i * 73.17 + 3.71) * 10000
-    return (seed - Math.floor(seed) - 0.5) * 5 /* ±2.5 degrees */
+    return (seed - Math.floor(seed) - 0.5) * 3 /* ±1.5 degrees */
 }
 function charShiftY(i) {
     const seed = Math.cos(i * 41.3 + 1.9) * 10000
-    return (seed - Math.floor(seed) - 0.5) * 3 /* ±1.5px vertical jitter */
+    return (seed - Math.floor(seed) - 0.5) * 2 /* ±1px vertical jitter */
 }
 
 export default function HomePage({ go }) {
@@ -230,11 +230,11 @@ export default function HomePage({ go }) {
                 <defs>
                     <filter id="sketchy" x="-5%" y="-5%" width="110%" height="110%" filterUnits="objectBoundingBox">
                         <feTurbulence type="turbulence" baseFrequency="0.04" numOctaves="4" seed="2" result="turbulence" />
-                        <feDisplacementMap in="SourceGraphic" in2="turbulence" scale="2.5" xChannelSelector="R" yChannelSelector="G" />
+                        <feDisplacementMap in="SourceGraphic" in2="turbulence" scale="1.5" xChannelSelector="R" yChannelSelector="G" />
                     </filter>
                     <filter id="sketchy-sm" x="-8%" y="-8%" width="116%" height="116%" filterUnits="objectBoundingBox">
                         <feTurbulence type="turbulence" baseFrequency="0.06" numOctaves="3" seed="7" result="turbulence" />
-                        <feDisplacementMap in="SourceGraphic" in2="turbulence" scale="1.8" xChannelSelector="R" yChannelSelector="G" />
+                        <feDisplacementMap in="SourceGraphic" in2="turbulence" scale="1.0" xChannelSelector="R" yChannelSelector="G" />
                     </filter>
                 </defs>
             </svg>
@@ -266,7 +266,7 @@ export default function HomePage({ go }) {
 
         /* ── Ink-appear: each handwritten character fades in from below ── */
         @keyframes inkAppear {
-          0%   { opacity: 0; transform: translateY(6px) rotate(8deg) scale(0.7); filter: blur(2px); }
+          0%   { opacity: 0; transform: translateY(4px) rotate(4deg) scale(0.8); filter: blur(1px); }
           60%  { opacity: 1; filter: blur(0px); }
           100% { opacity: 1; transform: translateY(0) rotate(var(--wobble)) scale(1); filter: blur(0px); }
         }

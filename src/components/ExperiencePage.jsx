@@ -79,8 +79,9 @@ export default function ExperiencePage({ go }) {
                 </div>
               </div>
               <div className="exp-center" style={{ opacity: 0 }}>
-                <p style={{ fontFamily: "'Playfair Display', serif", fontStyle: 'italic', fontSize: 6, color: EYE.skin, letterSpacing: 1.5, textTransform: 'uppercase', marginBottom: 2 }}>Experience</p>
-                <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: 16, fontWeight: 800, color: EYE.cream, letterSpacing: -0.3, lineHeight: 1.1 }}>Where I've<br/>Worked</h2>
+                <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 8, fontWeight: 600, letterSpacing: 2.5, textTransform: 'uppercase', color: EYE.skin, marginBottom: 3 }}>Experience</p>
+                <h2 style={{ fontFamily: "'Patrick Hand', cursive", fontSize: 20, fontWeight: 400, color: EYE.cream, letterSpacing: -0.3, lineHeight: 1.1 }}>Where I've<br/>Worked</h2>
+                <div style={{ width: 18, height: 1, background: EYE.skin, opacity: 0.4, marginTop: 4, borderRadius: 1 }} />
               </div>
             </div>
 
@@ -96,7 +97,7 @@ export default function ExperiencePage({ go }) {
               <button onClick={goAbout} style={{ background: 'none', border: `1px solid ${EYE.warm}30`, borderRadius: 16, padding: '6px 16px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6 }}>
                 <div>
                   <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 5, color: `${EYE.warm}70`, letterSpacing: 1, textTransform: 'uppercase', marginBottom: 1 }}>Next</div>
-                  <div style={{ fontFamily: "'Playfair Display', serif", fontSize: 9, fontWeight: 700, color: EYE.cream }}>About Me</div>
+                  <div style={{ fontFamily: "'Patrick Hand', cursive", fontSize: 11, fontWeight: 400, color: EYE.cream }}>About Me</div>
                 </div>
                 <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke={`${EYE.warm}70`} strokeWidth="1.5"><path d="M5 12h14M12 5l7 7-7 7" strokeLinecap="round" strokeLinejoin="round"/></svg>
               </button>
@@ -115,8 +116,9 @@ export default function ExperiencePage({ go }) {
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.1fr 1fr', gridTemplateRows: '1fr 1fr 1fr', gap: 5, padding: 5, width: '100vw', height: '100vh', position: 'relative', zIndex: 1 }}>
           <ExpCard exp={EXPERIENCES[0]} className="exp-left" style={{ gridColumn: '1', gridRow: '1', opacity: 0 }} />
           <div className="exp-center" style={{ gridColumn: '2', gridRow: '1', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 4, opacity: 0 }}>
-            <p style={{ fontFamily: "'Playfair Display', serif", fontStyle: 'italic', fontSize: 7, color: EYE.skin, letterSpacing: 2, textTransform: 'uppercase' }}>Experience</p>
-            <h2 style={{ fontFamily: "'Playfair Display', serif", fontSize: 19, fontWeight: 800, color: EYE.cream, letterSpacing: -1, textAlign: 'center', lineHeight: 1.1 }}>Where I've<br/>Worked</h2>
+            <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 9, fontWeight: 600, letterSpacing: 3, textTransform: 'uppercase', color: EYE.skin }}>Experience</p>
+            <h2 style={{ fontFamily: "'Patrick Hand', cursive", fontSize: 26, fontWeight: 400, color: EYE.cream, letterSpacing: -0.5, textAlign: 'center', lineHeight: 1.1 }}>Where I've<br/>Worked</h2>
+            <div style={{ width: 30, height: 1.5, background: EYE.skin, opacity: 0.35, borderRadius: 1, marginTop: 2 }} />
           </div>
           <ExpCard exp={EXPERIENCES[3]} className="exp-right" style={{ gridColumn: '3', gridRow: '1', opacity: 0 }} />
           <ExpCard exp={EXPERIENCES[1]} className="exp-left" style={{ gridColumn: '1', gridRow: '2', opacity: 0 }} />
@@ -132,7 +134,7 @@ export default function ExperiencePage({ go }) {
             <button onClick={goAbout} onMouseEnter={onNextEnter} onMouseLeave={onNextLeave} style={{ background: 'none', border: `1.5px solid ${EYE.warm}30`, borderRadius: 30, padding: '14px 24px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 7, transition: 'all 0.4s cubic-bezier(0.25,0,0,1)' }}>
               <div style={{ textAlign: 'left' }}>
                 <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 5, color: `${EYE.warm}70`, letterSpacing: 1.2, textTransform: 'uppercase', marginBottom: 2 }}>Next</div>
-                <div style={{ fontFamily: "'Playfair Display', serif", fontSize: 10, fontWeight: 700, color: EYE.cream, lineHeight: 1.15 }}>About Me</div>
+                <div style={{ fontFamily: "'Patrick Hand', cursive", fontSize: 13, fontWeight: 400, color: EYE.cream, lineHeight: 1.15 }}>About Me</div>
               </div>
               <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke={`${EYE.warm}70`} strokeWidth="1.5"><path d="M5 12h14M12 5l7 7-7 7" strokeLinecap="round" strokeLinejoin="round"/></svg>
             </button>
