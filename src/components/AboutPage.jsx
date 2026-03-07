@@ -312,7 +312,7 @@ export default function AboutPage({ go }) {
         <div style={{ width: '100%', background: STORY_BG, padding: m ? '30px 0' : 'clamp(40px, 10vw, 80px) 0', overflow: 'hidden' }}>
           <div className="ab-reveal" style={{ maxWidth: 550, margin: '0 auto', padding: pad, opacity: 0 }}>
             <div style={{ display: 'flex', alignItems: 'flex-start', gap: m ? 6 : 10, marginBottom: m ? 18 : 30 }}>
-              <span style={{ fontFamily: "'Playfair Display', serif", fontSize: m ? 20 : 'clamp(40px, 10vw, 70px)', fontWeight: 900, color: a.accent, lineHeight: 0.8, opacity: 0.25, transition: 'color 0.5s' }}>"</span>
+              <span style={{ fontFamily: "'Playfair Display', serif", fontSize: m ? 20 : 'clamp(30px, 8vw, 50px)', fontWeight: 900, color: a.accent, lineHeight: 0.8, opacity: 0.25, transition: 'color 0.5s' }}>"</span>
               <h3 style={{ fontFamily: "'Playfair Display', serif", fontSize: m ? 14 : 'clamp(14px, 3.5vw, 23px)', fontWeight: 700, fontStyle: 'italic', color: '#23150D', lineHeight: 1.3, letterSpacing: -1, marginTop: m ? 4 : 8 }}>
                 {a.quote}
               </h3>
@@ -373,7 +373,7 @@ export default function AboutPage({ go }) {
             <p style={{ fontFamily: "'DM Sans', sans-serif", fontSize: m ? 7 : 9, color: '#D8995C50', marginBottom: m ? 14 : 24, lineHeight: 1.7 }}>
               Whether it's a project, a job opportunity, or just to say hi — I'd love to hear from you.
             </p>
-            <a href="mailto:choi.coco@northeastern.edu" onMouseEnter={handleCtaEnter} onMouseLeave={handleCtaLeave} style={{ display: 'inline-flex', alignItems: 'center', gap: m ? 5 : 8, padding: m ? '8px 16px' : '11px 24px', borderRadius: 30, background: '#C47C47', color: 'white', fontFamily: "'DM Sans', sans-serif", fontSize: m ? 7 : 9, fontWeight: 700, letterSpacing: 0.75, textDecoration: 'none', transition: 'all 0.4s cubic-bezier(0.25,0,0,1)', boxShadow: '0 4px 15px #C47C4740' }}>
+            <a href="mailto:choi.coco@northeastern.edu" onMouseEnter={handleCtaEnter} onMouseLeave={handleCtaLeave} style={{ display: 'inline-flex', alignItems: 'center', gap: m ? 5 : 8, padding: m ? '8px 16px' : '11px 24px', borderRadius: 30, background: '#C47C47', color: 'white', fontFamily: "'Patrick Hand', cursive", fontSize: m ? 10 : 13, fontWeight: 400, letterSpacing: 0.5, textDecoration: 'none', transition: 'all 0.4s cubic-bezier(0.25,0,0,1)', boxShadow: '0 4px 15px #C47C4740' }}>
               <MailIcon /> Say Hello
             </a>
 

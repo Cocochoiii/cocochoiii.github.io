@@ -17,11 +17,14 @@ export const TYPEWRITER_TITLES = [
 ]
 
 export const HOME_ZONES = (musicOn) => [
-  { id: 'exp',    top: '62.5%', left: '45%',   w: 50,  h: 50,  r: '50%',  label: 'Experience', msg: "Let me show you\nwhere I've worked",         nav: 'experience', freq: 261.6 },
-  { id: 'proj',   top: '60%',   left: '48%',   w: 38,  h: 45,  r: '4px',  label: 'Projects',   msg: "Check out what\nI've built",                 nav: 'projects',   freq: 329.6 },
-  { id: 'resume', top: '61%',   left: '55.5%', w: 28,  h: 28,  r: '50%',  label: 'Resume',     msg: "Here's my resume",                            nav: null,         freq: 392.0 },
-  { id: 'keys',   top: '69%',   left: '52%',   w: 250, h: 20,  r: '4px',  label: '♫ Music',    msg: musicOn ? 'Click to pause 🎵' : 'Click to play music 🎶', nav: '_music', freq: 523.3 },
-  { id: 'about',  top: '75%',   left: '51%',   w: 100, h: 100, r: '50%',  label: 'About Me',   msg: "That's me!\nNice to meet you",                nav: 'about',      freq: 659.3 },
+  { id: 'exp',    top: '62.5%', left: '45%',   w: 50,  h: 50,  r: '50%',  label: 'Experience', msg: "That's my little globe!\nI've worked across 3 countries",  nav: 'experience', freq: 261.6 },
+  { id: 'proj',   top: '60%',   left: '48%',   w: 38,  h: 45,  r: '4px',  label: 'Projects',   msg: "My notebook of ideas —\nwanna peek inside?",              nav: 'projects',   freq: 329.6 },
+  { id: 'resume', top: '61%',   left: '55.5%', w: 28,  h: 28,  r: '50%',  label: 'Resume',     msg: "My resume — grab a copy!",                                nav: null,         freq: 392.0 },
+  { id: 'keys',   top: '69%',   left: '52%',   w: 250, h: 20,  r: '4px',  label: '♫ Music',    msg: musicOn ? 'Click to pause the melody 🎵' : 'These keys actually play!\nClick to start music 🎶', nav: '_music', freq: 523.3 },
+  { id: 'about',  top: '75%',   left: '51%',   w: 100, h: 100, r: '50%',  label: 'About Me',   msg: "That's me, Coco!\nI code, draw & care for 20+ pets",      nav: 'about',      freq: 659.3 },
+  { id: 'lid',    top: '42%',   left: '50%',   w: 180, h: 80,  r: '8px',  label: 'Piano',      msg: "My grand piano —\nwhere code meets creativity",            nav: null,         freq: 196.0 },
+  { id: 'coffee', top: '57%',   left: '57%',   w: 30,  h: 30,  r: '50%',  label: 'Coffee',     msg: "Fuel for late-night coding ☕\nUsually iced oat latte",     nav: null,         freq: 440.0 },
+  { id: 'shadow', top: '52%',   left: '38%',   w: 40,  h: 40,  r: '50%',  label: 'Music Note', msg: "♫ I play piano in real life too!\nClassical & jazz",        nav: null,         freq: 349.2 },
 ]
 
 export const SOCIALS = [

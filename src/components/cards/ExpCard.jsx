@@ -4,13 +4,14 @@ import CardInner from './CardInner'
 import useIsMobile from '../../hooks/useIsMobile'
 
 /*
- * Gallery-frame corner ornament — L-shaped gilded mark.
+ * Gallery-frame corner ornament — L-shaped gilded mark with corner pin.
  */
 function FrameCorner({ pos, color, mobile }) {
-    const len   = mobile ? 8 : 14
+    const len   = mobile ? 10 : 20
     const thick = mobile ? 1 : 1.5
-    const gap   = mobile ? 1 : 2
-    const o     = 0.3
+    const gap   = mobile ? 1.5 : 3
+    const o     = 0.45
+    const pinSize = mobile ? 2 : 3
 
     const isTop  = pos[0] === 't'
     const isLeft = pos[1] === 'l'
@@ -24,35 +25,57 @@ function FrameCorner({ pos, color, mobile }) {
             right: isLeft ? 'auto' : gap,
             pointerEvents: 'none', zIndex: 4,
         }}>
+            {/* Horizontal bar */}
             <div style={{
                 position: 'absolute', top: 0,
                 [isLeft ? 'left' : 'right']: 0,
                 width: len, height: thick,
                 background: color, opacity: o, borderRadius: 0.5,
             }} />
+            {/* Vertical bar */}
             <div style={{
                 position: 'absolute', top: 0,
                 [isLeft ? 'left' : 'right']: 0,
                 width: thick, height: len,
                 background: color, opacity: o, borderRadius: 0.5,
             }} />
+            {/* Corner pin — tiny circle at the L junction */}
+            <div style={{
+                position: 'absolute',
+                top: -pinSize / 2 + thick / 2,
+                [isLeft ? 'left' : 'right']: -pinSize / 2 + thick / 2,
+                width: pinSize, height: pinSize, borderRadius: '50%',
+                background: color, opacity: o * 0.8,
+            }} />
         </div>
     )
 }
 
-function ExpCard({ exp, className = '', style = {} }) {
+/*
+ * Clip-path origin map for directional reveal.
+ * 'left'   → reveals from left edge
+ * 'right'  → reveals from right edge
+ * 'bottom' → reveals from bottom edge
+ * 'center' → reveals from center (mobile default)
+ */
+const ORIGINS = {
+    left:   { from: '0% 50%',   to: '0% 50%' },
+    right:  { from: '100% 50%', to: '100% 50%' },
+    bottom: { from: '50% 100%', to: '50% 100%' },
+    top:    { from: '50% 0%',   to: '50% 0%' },
+    center: { from: '50% 50%',  to: '50% 50%' },
+}
+
+function ExpCard({ exp, className = '', style = {}, revealOrigin = 'top' }) {
     const m = useIsMobile()
     const cardRef  = useRef(null)
     const hoverRef = useRef(null)
     const [hovered, setHovered] = useState(false)
 
-    /*
-     * ── Interaction split ──
-     * Desktop: mouseEnter/Leave for hover, mouseMove for 3D tilt.
-     * Mobile:  onClick only — toggles reveal/hide. No mouse events.
-     *          This prevents the mouseEnter→mouseLeave race that killed
-     *          the clip-path animation on touch devices.
-     */
+    /* Resolve clip-path origin */
+    const origin = m ? ORIGINS.center : (ORIGINS[revealOrigin] || ORIGINS.top)
+    const clipFrom = `circle(0% at ${origin.from})`
+    const clipTo   = `circle(150% at ${origin.to})`
 
     /* Desktop: 3D tilt on mouse move */
     const onMove = useCallback((e) => {
@@ -70,12 +93,11 @@ function ExpCard({ exp, className = '', style = {} }) {
         if (hoverRef.current) {
             gsap.killTweensOf(hoverRef.current)
             gsap.fromTo(hoverRef.current,
-                        /* Mobile: reveal from center for full coverage; Desktop: from top */
-                        { clipPath: m ? 'circle(0% at 50% 50%)' : 'circle(0% at 50% 0%)' },
-                        { clipPath: m ? 'circle(150% at 50% 50%)' : 'circle(150% at 50% 0%)', duration: m ? 0.7 : 1.0, ease: 'power3.out' },
+                        { clipPath: clipFrom },
+                        { clipPath: clipTo, duration: m ? 0.7 : 1.0, ease: 'power3.out' },
             )
         }
-    }, [m])
+    }, [m, clipFrom, clipTo])
 
     const hide = useCallback(() => {
         setHovered(false)
@@ -83,11 +105,11 @@ function ExpCard({ exp, className = '', style = {} }) {
         if (hoverRef.current) {
             gsap.killTweensOf(hoverRef.current)
             gsap.to(hoverRef.current, {
-                clipPath: m ? 'circle(0% at 50% 50%)' : 'circle(0% at 50% 0%)',
+                clipPath: clipFrom,
                 duration: m ? 0.5 : 0.7, ease: 'power2.in',
             })
         }
-    }, [m])
+    }, [m, clipFrom])
 
     /* Desktop hover */
     const onEnter = useCallback(() => { if (!m) reveal() }, [m, reveal])
@@ -99,13 +121,12 @@ function ExpCard({ exp, className = '', style = {} }) {
         if (hovered) hide(); else reveal()
     }, [m, hovered, reveal, hide])
 
-    /* Mobile: tap outside any card to close (via document listener) */
+    /* Mobile: tap outside any card to close */
     useEffect(() => {
         if (!m || !hovered) return
         const handleOutside = (e) => {
             if (cardRef.current && !cardRef.current.contains(e.target)) hide()
         }
-        /* Small delay so the current tap doesn't immediately close */
         const timer = setTimeout(() => {
             document.addEventListener('touchstart', handleOutside, { passive: true })
         }, 50)
@@ -169,11 +190,11 @@ function ExpCard({ exp, className = '', style = {} }) {
             {/* Card content */}
             <CardInner exp={exp} isHover={false} hovered={hovered} />
 
-            {/* Hover/tap reveal layer */}
+            {/* Hover/tap reveal layer — direction based on revealOrigin */}
             <div ref={hoverRef} style={{
                 position: 'absolute', inset: 0,
                 background: exp.hBg,
-                clipPath: m ? 'circle(0% at 50% 50%)' : 'circle(0% at 50% 0%)',
+                clipPath: clipFrom,
                 zIndex: 1,
             }}>
                 <CardInner exp={exp} isHover={true} hovered={hovered} />

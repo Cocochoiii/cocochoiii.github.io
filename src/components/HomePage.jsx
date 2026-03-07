@@ -12,8 +12,8 @@ const LinkedInIcon = () => (<svg width="12" height="12" viewBox="0 0 24 24" fill
 const EmailIcon = () => (<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>)
 const SOCIAL_ICONS = [<GitHubIcon />, <LinkedInIcon />, <EmailIcon />]
 
-const DEFAULT_MSG_DESKTOP = 'Click on the objects\non my piano to explore'
-const DEFAULT_MSG_MOBILE = 'Tap the objects\non my piano to explore'
+const DEFAULT_MSG_DESKTOP = 'Hover over the objects\non my piano to discover more!'
+const DEFAULT_MSG_MOBILE = 'Tap around my piano\nto discover hidden secrets!'
 
 /* ── Hand-drawn bubble tail ── */
 function BubbleTail({ color = 'rgba(255,255,255,0.96)', size = 'desktop' }) {
@@ -28,22 +28,53 @@ function BubbleTail({ color = 'rgba(255,255,255,0.96)', size = 'desktop' }) {
     )
 }
 
-/* ── Pencil circle (hotspot) ── */
+/* ── Pencil circle (hotspot) — GSAP-driven hand-draw ── */
 const PENCIL_PATH = 'M 50 5 C 72 3, 97 18, 96 45 C 95 72, 75 97, 48 96 C 22 95, 3 76, 4 50 C 5 24, 25 7, 50 5'
 const PENCIL_LEN = 310
 
 function PencilCircle({ active, w, h, mobile }) {
     const pad = mobile ? 14 : 22
+    const pathRef = useRef(null)
+    const dotRef = useRef(null)
+    const prevActive = useRef(false)
+
+    useEffect(() => {
+        const path = pathRef.current
+        const dot = dotRef.current
+        if (!path || !dot) return
+
+        if (active && !prevActive.current) {
+            /* ── Draw in: ink dot appears → line draws out from it ── */
+            gsap.killTweensOf([path, dot])
+            // Ink dot pops in first
+            gsap.fromTo(dot, { scale: 0, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.15, ease: 'back.out(3)' })
+            // Line draws after short delay — slow start, fast middle, slow end
+            gsap.fromTo(path,
+                        { strokeDashoffset: PENCIL_LEN, opacity: 0.4 },
+                        { strokeDashoffset: 0, opacity: 1, duration: 0.7, delay: 0.1, ease: 'power2.inOut' },
+            )
+        } else if (!active && prevActive.current) {
+            /* ── Erase: line retracts, dot fades ── */
+            gsap.killTweensOf([path, dot])
+            gsap.to(path, { strokeDashoffset: PENCIL_LEN, opacity: 0, duration: 0.3, ease: 'power2.in' })
+            gsap.to(dot, { scale: 0, opacity: 0, duration: 0.2, delay: 0.1 })
+        }
+
+        prevActive.current = active
+    }, [active])
+
     return (
         <svg width={w + pad} height={h + pad} viewBox="0 0 100 100" preserveAspectRatio="none"
              style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', pointerEvents: 'none', overflow: 'visible' }}>
-            <path d={PENCIL_PATH} fill="none" stroke="rgba(255,255,255,0.55)" strokeWidth="1.2"
+            {/* Ink dot at pen-down point (top center of the wobbly circle) */}
+            <circle ref={dotRef} cx="50" cy="5" r="1.5" fill="rgba(255,255,255,0.7)" style={{ opacity: 0, transformOrigin: '50px 5px' }} />
+            {/* Hand-drawn circle path */}
+            <path ref={pathRef} d={PENCIL_PATH} fill="none"
+                  stroke="rgba(255,255,255,0.65)" strokeWidth={mobile ? 2 : 2.5}
                   strokeLinecap="round" strokeLinejoin="round"
-                  strokeDasharray={PENCIL_LEN} strokeDashoffset={active ? 0 : PENCIL_LEN}
-                  style={{
-                      transition: active ? 'stroke-dashoffset 0.5s cubic-bezier(0.25,0,0,1)' : 'stroke-dashoffset 0.3s cubic-bezier(0.6,0,1,1)',
-                      filter: 'url(#sketchy-sm)',
-                  }} />
+                  strokeDasharray={PENCIL_LEN} strokeDashoffset={PENCIL_LEN}
+                  className={active ? 'pencil-breathe' : undefined}
+                  style={{ filter: 'url(#sketchy-sm)', opacity: 0 }} />
         </svg>
     )
 }
@@ -190,6 +221,11 @@ export default function HomePage({ go }) {
         }
     }, [hintVisible])
 
+    /* Ink-fade dialogue text on every change */
+    useEffect(() => {
+        gsap.fromTo('.dial-text', { opacity: 0, y: 3 }, { opacity: 1, y: 0, duration: 0.25, ease: 'power2.out' })
+    }, [dialogue])
+
     const toggleMusic = useCallback(() => {
         if (!bgMusic) { setDialogue("No music file yet!\nAdd music.mp3 to /public/"); return }
         if (musicOn) { bgMusic.pause(); setMusicOn(false); setDialogue('Music paused 🎵') }
@@ -255,6 +291,14 @@ export default function HomePage({ go }) {
         .sketchy-btn:hover { transform: translateY(-2px) scale(1.04); }
         .sketchy-btn:active { transform: scale(0.97); }
 
+        /* Pencil circle breathing — pen-pressure wobble when drawn */
+        @keyframes pencilBreathe {
+          0%, 100% { stroke-width: 2.5; opacity: 1; }
+          30%      { stroke-width: 1.8; opacity: 0.8; }
+          70%      { stroke-width: 3;   opacity: 1; }
+        }
+        .pencil-breathe { animation: pencilBreathe 2.5s ease-in-out infinite 0.8s; }
+
         @keyframes noteDrift {
           0%   { transform: translate(0, 0) rotate(0deg); opacity: 0; }
           15%  { opacity: 0.6; }
@@ -287,7 +331,7 @@ export default function HomePage({ go }) {
 
             {/* Piano Rive wrapper */}
             <div ref={parallaxRef} style={wrapperStyle}>
-                <canvas ref={canvasRef} style={{ position: 'absolute', top: 0, left: 0, display: 'block' }} />
+                <canvas ref={canvasRef} style={{ position: 'absolute', top: 0, left: 0, display: 'block', outline: '4px solid #E37B88' }} />
 
                 {/* ── Hot zones ── */}
                 {zones.map((z, zi) => {
@@ -306,19 +350,21 @@ export default function HomePage({ go }) {
                             <FloatingNote visible={hintVisible && !isActive} seed={zi} spread={Math.min(zoneW, zoneH) * 0.8} />
                             {!m && (
                                 <div style={{
-                                    position: 'absolute', bottom: -26, left: '50%',
+                                    position: 'absolute', bottom: -34, left: '50%',
                                     transform: `translateX(-50%) ${isActive ? 'translateY(0)' : 'translateY(4px)'}`,
-                                    fontFamily: "'Playfair Display', serif", fontStyle: 'italic', fontSize: 12, color: 'white',
+                                    fontFamily: "'Patrick Hand', cursive", fontSize: 20, fontWeight: 400, color: 'white',
+                                    textShadow: '0 2px 6px rgba(0,0,0,0.35)',
                                     opacity: isActive ? 1 : 0, transition: 'all 0.35s cubic-bezier(0.25,0,0,1)',
-                                    whiteSpace: 'nowrap', filter: 'url(#sketchy-sm)',
+                                    whiteSpace: 'nowrap',
                                 }}>{z.label}</div>
                             )}
                             {m && isActive && (
                                 <div style={{
-                                    position: 'absolute', top: -20, left: '50%', transform: 'translateX(-50%)',
-                                    fontFamily: "'Playfair Display', serif", fontStyle: 'italic', fontSize: 8, fontWeight: 600,
-                                    color: 'white', background: 'rgba(0,0,0,0.3)', padding: '2px 8px', borderRadius: 10,
-                                    whiteSpace: 'nowrap', filter: 'url(#sketchy-sm)',
+                                    position: 'absolute', top: -26, left: '50%', transform: 'translateX(-50%)',
+                                    fontFamily: "'Patrick Hand', cursive", fontSize: 15, fontWeight: 400,
+                                    color: 'white', textShadow: '0 2px 4px rgba(0,0,0,0.35)',
+                                    background: 'rgba(0,0,0,0.3)', padding: '4px 12px', borderRadius: 12,
+                                    whiteSpace: 'nowrap',
                                 }}>{z.label}</div>
                             )}
                         </div>
@@ -328,12 +374,12 @@ export default function HomePage({ go }) {
                 {/* Dialogue bubble — desktop */}
                 {!m && (
                     <div className="dial" style={{
-                        position: 'absolute', bottom: '18%', right: '35%',
+                        position: 'absolute', bottom: '18%', right: '30%',
                         background: 'rgba(255,255,255,0.96)', backdropFilter: 'blur(10px)',
-                        borderRadius: 11, padding: '10px 15px', zIndex: 20, opacity: 0, transform: 'scale(0.9)',
-                        boxShadow: '0 5px 15px rgba(0,0,0,0.1)', filter: sketchyFilter,
+                        borderRadius: 14, padding: '14px 20px', zIndex: 20, opacity: 0, transform: 'scale(0.9)',
+                        boxShadow: '0 6px 20px rgba(0,0,0,0.12)', filter: sketchyFilter,
                     }}>
-                        <div style={{ fontFamily: "'Playfair Display', serif", fontStyle: 'italic', fontSize: 11, color: '#2a2020', textAlign: 'center', whiteSpace: 'pre-line' }}>{dialogue}</div>
+                        <div className="dial-text" style={{ fontFamily: "'Patrick Hand', cursive", fontSize: 18, color: '#2a2020', textAlign: 'center', whiteSpace: 'pre-line', lineHeight: 1.4 }}>{dialogue}</div>
                         <BubbleTail />
                     </div>
                 )}
@@ -344,10 +390,10 @@ export default function HomePage({ go }) {
                 <div className="dial" style={{
                     position: 'absolute', top: '37%', left: '30%',
                     background: 'rgba(255,255,255,0.93)', backdropFilter: 'blur(10px)',
-                    borderRadius: 10, padding: '6px 10px', zIndex: 20, opacity: 0, transform: 'scale(0.9)',
-                    boxShadow: '0 4px 12px rgba(0,0,0,0.15)', filter: sketchyFilter,
+                    borderRadius: 12, padding: '10px 14px', zIndex: 20, opacity: 0, transform: 'scale(0.9)',
+                    boxShadow: '0 5px 16px rgba(0,0,0,0.15)', filter: sketchyFilter,
                 }}>
-                    <div style={{ fontFamily: "'Playfair Display', serif", fontStyle: 'italic', fontSize: 8, color: '#2a2020', textAlign: 'center', whiteSpace: 'pre-line', maxWidth: 100 }}>{dialogue}</div>
+                    <div className="dial-text" style={{ fontFamily: "'Patrick Hand', cursive", fontSize: 12, color: '#2a2020', textAlign: 'center', whiteSpace: 'pre-line', maxWidth: 140, lineHeight: 1.4 }}>{dialogue}</div>
                     <BubbleTail color="rgba(255,255,255,0.93)" size="mobile" />
                 </div>
             )}
@@ -378,8 +424,8 @@ export default function HomePage({ go }) {
             }}>
                 <div style={{
                     fontFamily: "'Playfair Display', serif", fontStyle: 'italic',
-                    fontSize: m ? 'clamp(12px, 4.5vw, 18px)' : 'clamp(16px, 6vw, 32px)',
-                    fontWeight: 700, color: 'white', letterSpacing: 0.5,
+                    fontSize: m ? 'clamp(24px, 4.5vw, 28px)' : 'clamp(16px, 6vw, 32px)',
+                    fontWeight: 800, color: 'white', letterSpacing: 0.5,
                     textAlign: m ? 'left' : 'right',
                     filter: 'url(#sketchy-sm)',
                 }}>

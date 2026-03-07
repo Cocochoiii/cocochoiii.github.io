@@ -3,14 +3,13 @@ import { useEffect, useRef, memo } from 'react'
 const PARTICLE_COUNT = 25
 
 /**
- * Gallery dust particles — slow sine-wave drift with breathing opacity.
- * Mimics real dust motes floating through a spotlight beam:
- *   - Gentle sinusoidal x/y movement (no straight lines)
- *   - Each particle has a unique phase seed for organic variety
- *   - Opacity pulses slowly, like catching and losing the light
- *   - Half the speed of the original linear motion
+ * Lightweight floating particles canvas overlay.
+ *
+ * @param {object} [attractPoint] — { x: 0-1, y: 0-1 } normalized viewport position.
+ *   Particles near this point slow down and drift toward it, creating
+ *   a subtle gravitational pull (e.g. the eye on Experience page).
  */
-function Particles() {
+function Particles({ attractPoint = null }) {
   const canvasRef = useRef(null)
 
   useEffect(() => {
@@ -18,54 +17,57 @@ function Particles() {
     if (!canvas) return
 
     const ctx = canvas.getContext('2d')
-    let W = window.innerWidth
-    let H = window.innerHeight
-    canvas.width  = W
-    canvas.height = H
+    canvas.width  = window.innerWidth
+    canvas.height = window.innerHeight
+
+    /* Attract center in pixels */
+    const ax = attractPoint ? attractPoint.x * canvas.width : -1
+    const ay = attractPoint ? attractPoint.y * canvas.height : -1
+    const ATTRACT_RADIUS = 200
+    const ATTRACT_STRENGTH = 0.003
 
     const particles = Array.from({ length: PARTICLE_COUNT }, () => ({
-      x:     Math.random() * W,
-      y:     Math.random() * H,
-      r:     Math.random() * 1.2 + 0.3,
-      /* Base drift — very slow */
-      dx:    (Math.random() - 0.5) * 0.08,
-      dy:    (Math.random() - 0.5) * 0.06,
-      /* Sine parameters — unique per particle */
-      seed:  Math.random() * Math.PI * 2,
-      freqX: 0.0006 + Math.random() * 0.0008,
-      freqY: 0.0004 + Math.random() * 0.0006,
-      ampX:  0.12 + Math.random() * 0.18,
-      ampY:  0.08 + Math.random() * 0.14,
-      /* Opacity breathing */
-      oBase: 0.02 + Math.random() * 0.03,
-      oAmp:  0.01 + Math.random() * 0.025,
-      oFreq: 0.001 + Math.random() * 0.002,
+      x:  Math.random() * canvas.width,
+      y:  Math.random() * canvas.height,
+      r:  Math.random() * 1.2 + 0.4,
+      dx: (Math.random() - 0.5) * 0.2,
+      dy: (Math.random() - 0.5) * 0.2,
+      o:  Math.random() * 0.08 + 0.02,
     }))
 
     let frame
-    let t = 0
 
     const draw = () => {
-      t++
-      ctx.clearRect(0, 0, W, H)
+      ctx.clearRect(0, 0, canvas.width, canvas.height)
 
       for (const p of particles) {
-        /* Sine-wave drift replaces linear dx/dy */
-        p.x += p.dx + Math.sin(t * p.freqX + p.seed) * p.ampX
-        p.y += p.dy + Math.cos(t * p.freqY + p.seed) * p.ampY
+        /* Gravity toward attract point */
+        if (attractPoint) {
+          const ddx = ax - p.x
+          const ddy = ay - p.y
+          const dist = Math.sqrt(ddx * ddx + ddy * ddy)
+          if (dist < ATTRACT_RADIUS && dist > 1) {
+            const force = ATTRACT_STRENGTH * (1 - dist / ATTRACT_RADIUS)
+            p.dx += (ddx / dist) * force
+            p.dy += (ddy / dist) * force
+            /* Dampen near center so they don't cluster */
+            p.dx *= 0.995
+            p.dy *= 0.995
+          }
+        }
 
-        /* Wrap edges */
-        if (p.x < -5)  p.x = W + 5
-        if (p.x > W + 5) p.x = -5
-        if (p.y < -5)  p.y = H + 5
-        if (p.y > H + 5) p.y = -5
+        p.x += p.dx
+        p.y += p.dy
 
-        /* Breathing opacity */
-        const o = p.oBase + Math.sin(t * p.oFreq + p.seed) * p.oAmp
+        // Wrap around screen edges
+        if (p.x < 0) p.x = canvas.width
+        if (p.x > canvas.width) p.x = 0
+        if (p.y < 0) p.y = canvas.height
+        if (p.y > canvas.height) p.y = 0
 
         ctx.beginPath()
         ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2)
-        ctx.fillStyle = `rgba(240,232,220,${Math.max(0, o)})`
+        ctx.fillStyle = `rgba(240,232,220,${p.o})`
         ctx.fill()
       }
 
@@ -73,21 +75,8 @@ function Particles() {
     }
 
     frame = requestAnimationFrame(draw)
-
-    /* Handle resize */
-    const onResize = () => {
-      W = window.innerWidth
-      H = window.innerHeight
-      canvas.width  = W
-      canvas.height = H
-    }
-    window.addEventListener('resize', onResize)
-
-    return () => {
-      cancelAnimationFrame(frame)
-      window.removeEventListener('resize', onResize)
-    }
-  }, [])
+    return () => cancelAnimationFrame(frame)
+  }, [attractPoint])
 
   return (
       <canvas
