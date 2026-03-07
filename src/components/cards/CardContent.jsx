@@ -91,14 +91,22 @@ function CardContent({ p, compact, hovered, isHover = false }) {
           {p.meta}
         </div>
 
-        {/* Decorative line */}
-        <div style={{
-          width: isHover && hovered ? (m ? 13 : 25) : (m ? 8 : 15),
-          height: 1.25, background: col, opacity: 0.2,
-          borderRadius: 1.5,
-          marginTop: m ? 3 : (compact ? 5 : 7),
-          transition: 'width 0.5s cubic-bezier(0.25,0,0,1)',
-        }} />
+        {/* Decorative double line — Warhol screen-print offset */}
+        <div style={{ marginTop: m ? 3 : (compact ? 5 : 7) }}>
+          <div style={{
+            width: isHover && hovered ? (m ? 13 : 25) : (m ? 8 : 15),
+            height: 1.25, background: col, opacity: 0.2,
+            borderRadius: 1.5,
+            transition: 'width 0.5s cubic-bezier(0.25,0,0,1)',
+          }} />
+          <div style={{
+            width: isHover && hovered ? (m ? 10 : 20) : (m ? 6 : 12),
+            height: 1, background: col, opacity: 0.1,
+            borderRadius: 1,
+            marginTop: m ? 2 : 3,
+            transition: 'width 0.5s cubic-bezier(0.25,0,0,1) 0.05s',
+          }} />
+        </div>
       </div>
   )
 }

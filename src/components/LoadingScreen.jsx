@@ -204,8 +204,8 @@ export default function LoadingScreen({ onComplete }) {
 
                                 <span style={{
                                     fontFamily: "'Playfair Display', serif",
-                                    fontSize: m ? 20 : 30,
-                                    fontWeight: 900,
+                                    fontSize: m ? 30 : 40,
+                                    fontWeight: 1000,
                                     color: EYE.cream,
                                     lineHeight: 1,
                                     letterSpacing: -0.5,
