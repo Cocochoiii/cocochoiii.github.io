@@ -3,8 +3,12 @@ import { useEffect, useRef, memo } from 'react'
 const PARTICLE_COUNT = 25
 
 /**
- * Lightweight floating particles canvas overlay.
- * Uses requestAnimationFrame for smooth rendering.
+ * Gallery dust particles — slow sine-wave drift with breathing opacity.
+ * Mimics real dust motes floating through a spotlight beam:
+ *   - Gentle sinusoidal x/y movement (no straight lines)
+ *   - Each particle has a unique phase seed for organic variety
+ *   - Opacity pulses slowly, like catching and losing the light
+ *   - Half the speed of the original linear motion
  */
 function Particles() {
   const canvasRef = useRef(null)
@@ -14,36 +18,54 @@ function Particles() {
     if (!canvas) return
 
     const ctx = canvas.getContext('2d')
-    canvas.width  = window.innerWidth
-    canvas.height = window.innerHeight
+    let W = window.innerWidth
+    let H = window.innerHeight
+    canvas.width  = W
+    canvas.height = H
 
     const particles = Array.from({ length: PARTICLE_COUNT }, () => ({
-      x:  Math.random() * canvas.width,
-      y:  Math.random() * canvas.height,
-      r:  Math.random() * 1.2 + 0.4,
-      dx: (Math.random() - 0.5) * 0.2,
-      dy: (Math.random() - 0.5) * 0.2,
-      o:  Math.random() * 0.08 + 0.02,
+      x:     Math.random() * W,
+      y:     Math.random() * H,
+      r:     Math.random() * 1.2 + 0.3,
+      /* Base drift — very slow */
+      dx:    (Math.random() - 0.5) * 0.08,
+      dy:    (Math.random() - 0.5) * 0.06,
+      /* Sine parameters — unique per particle */
+      seed:  Math.random() * Math.PI * 2,
+      freqX: 0.0006 + Math.random() * 0.0008,
+      freqY: 0.0004 + Math.random() * 0.0006,
+      ampX:  0.12 + Math.random() * 0.18,
+      ampY:  0.08 + Math.random() * 0.14,
+      /* Opacity breathing */
+      oBase: 0.02 + Math.random() * 0.03,
+      oAmp:  0.01 + Math.random() * 0.025,
+      oFreq: 0.001 + Math.random() * 0.002,
     }))
 
     let frame
+    let t = 0
 
     const draw = () => {
-      ctx.clearRect(0, 0, canvas.width, canvas.height)
+      t++
+      ctx.clearRect(0, 0, W, H)
 
       for (const p of particles) {
-        p.x += p.dx
-        p.y += p.dy
+        /* Sine-wave drift replaces linear dx/dy */
+        p.x += p.dx + Math.sin(t * p.freqX + p.seed) * p.ampX
+        p.y += p.dy + Math.cos(t * p.freqY + p.seed) * p.ampY
 
-        // Wrap around screen edges
-        if (p.x < 0) p.x = canvas.width
-        if (p.x > canvas.width) p.x = 0
-        if (p.y < 0) p.y = canvas.height
-        if (p.y > canvas.height) p.y = 0
+        /* Wrap edges */
+        if (p.x < -5)  p.x = W + 5
+        if (p.x > W + 5) p.x = -5
+        if (p.y < -5)  p.y = H + 5
+        if (p.y > H + 5) p.y = -5
+
+        /* Breathing opacity */
+        const o = p.oBase + Math.sin(t * p.oFreq + p.seed) * p.oAmp
 
         ctx.beginPath()
         ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2)
-        ctx.fillStyle = `rgba(240,232,220,${p.o})`
+        ctx.fillStyle = `rgba(240,232,220,${Math.max(0, o)})`
         ctx.fill()
       }
 
@@ -51,14 +73,27 @@ function Particles() {
     }
 
     frame = requestAnimationFrame(draw)
-    return () => cancelAnimationFrame(frame)
+
+    /* Handle resize */
+    const onResize = () => {
+      W = window.innerWidth
+      H = window.innerHeight
+      canvas.width  = W
+      canvas.height = H
+    }
+    window.addEventListener('resize', onResize)
+
+    return () => {
+      cancelAnimationFrame(frame)
+      window.removeEventListener('resize', onResize)
+    }
   }, [])
 
   return (
-    <canvas
-      ref={canvasRef}
-      style={{ position: 'absolute', inset: 0, zIndex: 0, pointerEvents: 'none' }}
-    />
+      <canvas
+          ref={canvasRef}
+          style={{ position: 'absolute', inset: 0, zIndex: 0, pointerEvents: 'none' }}
+      />
   )
 }
 

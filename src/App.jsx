@@ -6,18 +6,13 @@ import HomePage from './components/HomePage'
 import ProjectsPage from './components/ProjectsPage'
 import ExperiencePage from './components/ExperiencePage'
 import AboutPage from './components/AboutPage'
-import { BG, STRIP_COUNT } from './constants/theme'
+import { BG, EYE, PAL, STRIP_COUNT } from './constants/theme'
 
 /* ─── Grain noise SVGs (data-URIs) ─── */
 
 const GRAIN_A = `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E")`
 const GRAIN_B = `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E")`
 
-/*
- * Organic film-grain: subtle hue-rotate ±1.5° + brightness wobble
- * simulates vintage celluloid color-temperature drift.
- * Two layers run at different speeds / directions for natural feel.
- */
 const GRAIN_CSS = `
 @keyframes grainDrift {
   0%   { filter: hue-rotate(0deg)    brightness(1); }
@@ -27,6 +22,45 @@ const GRAIN_CSS = `
   100% { filter: hue-rotate(0deg)    brightness(1); }
 }
 `
+
+/*
+ * ── Art-directed strip backgrounds per destination ──
+ *
+ * home:       Piano keys — alternating ivory & ebony
+ * experience: Oil-painting — warm EYE-palette gradient per strip
+ * projects:   Pop-art — bold PAL colors, one per strip
+ * about:      Editorial — clean whites with subtle warm tint variation
+ */
+const STRIP_BG = {
+    home: [
+        '#e37b88',                                        /* ivory key */
+        '#1a1714',                                        /* ebony key */
+        '#ffffff',                                        /* ivory key (slightly warmer) */
+        '#e37b88',                                        /* ebony key */
+        '#1a1714',                                        /* ivory key */
+    ],
+    experience: [
+        `linear-gradient(180deg, ${EYE.shadow}, ${EYE.rose})`,
+        `linear-gradient(180deg, ${EYE.rose}, ${EYE.warm})`,
+        `linear-gradient(180deg, ${EYE.warm}, ${EYE.skin})`,
+        `linear-gradient(180deg, ${EYE.skin}, ${EYE.shadow})`,
+        `linear-gradient(180deg, ${EYE.shadow}, ${EYE.iris})`,
+    ],
+    projects: [
+        PAL.pink,
+        PAL.yellow,
+        PAL.blue,
+        PAL.orange,
+        PAL.dark,
+    ],
+    about: [
+        '#faf8f5',
+        '#ffffff',
+        '#f8f5f0',
+        '#ffffff',
+        '#faf8f5',
+    ],
+}
 
 /* ─── Page lookup ─── */
 
@@ -56,18 +90,25 @@ export default function App() {
         return () => cancelAnimationFrame(frame)
     }, [])
 
-    /* ── Page transition ── */
+    /* ── Page transition with art-directed strips ── */
     const go = useCallback(
         (target) => {
             if (target === page || busy) return
             setBusy(true)
-            const color = BG[target] || '#1a1a1a'
+
             const strips = stripsRef.current.filter(Boolean)
+            const bgs = STRIP_BG[target] || STRIP_BG.home
             const tl = gsap.timeline()
 
-            strips.forEach((el) => {
-                gsap.set(el, { scaleY: 0, background: color, transformOrigin: 'top center' })
+            /* Apply per-strip art-directed backgrounds */
+            strips.forEach((el, i) => {
+                gsap.set(el, {
+                    scaleY: 0,
+                    background: bgs[i % bgs.length],
+                    transformOrigin: 'top center',
+                })
             })
+
             tl.to(strips, { scaleY: 1, duration: 0.6, stagger: 0.06, ease: 'power3.inOut' })
             tl.call(() => setPage(target), null, '-=0.1')
             tl.set(strips, { transformOrigin: 'bottom center' }, `-=${0.45 + 0.05 * STRIP_COUNT + 0.15}`)
@@ -91,7 +132,7 @@ export default function App() {
                 <ActivePage go={go} />
             </div>
 
-            {/* Film grain A — multiply + warm drift (9s cycle) */}
+            {/* Film grain A — multiply + warm drift */}
             <div style={{
                 position: 'fixed', inset: 0, zIndex: 999, pointerEvents: 'none',
                 opacity: 0.03, mixBlendMode: 'multiply',
@@ -103,7 +144,7 @@ export default function App() {
                 }} />
             </div>
 
-            {/* Film grain B — overlay + cool counter-drift (11s cycle) */}
+            {/* Film grain B — overlay + cool counter-drift */}
             <div style={{
                 position: 'fixed', inset: 0, zIndex: 999, pointerEvents: 'none',
                 opacity: 0.05, mixBlendMode: 'overlay',
