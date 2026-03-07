@@ -2,10 +2,17 @@ import { memo } from 'react'
 import { EYE } from '../../constants/theme'
 import useIsMobile from '../../hooks/useIsMobile'
 
-/**
- * Inner content for experience cards. Rendered twice per card
- * (normal + hover layer) so text remains readable during clip-path animation.
- */
+// 关键：在组件外层定义样式，确保字体生效并开启抗锯齿
+const CARD_STYLE_FIX = `
+  @import url('https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap');
+  .patrick-font {
+    font-family: 'Patrick Hand', cursive !important;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+`
+
 function CardInner({ exp, isHover, hovered }) {
   const m = useIsMobile()
 
@@ -23,23 +30,26 @@ function CardInner({ exp, isHover, hovered }) {
         padding: m ? '3px 3px' : '11px 12px',
         pointerEvents: 'none',
       }}>
+        <style>{CARD_STYLE_FIX}</style>
+
         {/* Period */}
-        <div style={{
-          fontFamily: "'DM Sans', sans-serif",
-          fontSize: m ? 5 : 8, fontWeight: 700,
-          letterSpacing: m ? 0.8 : 1.5, textTransform: 'uppercase',
-          color: periodCol, marginBottom: m ? 1 : 6,
+        <div className="patrick-font" style={{
+          fontSize: m ? 9 : 12,
+          fontWeight: 400,
+          letterSpacing: 0,
+          textTransform: 'uppercase',
+          color: periodCol, marginBottom: m ? 1 : 4,
         }}>
           {exp.period}
         </div>
 
         {/* Title */}
-        <h3 style={{
-          fontFamily: "'Patrick Hand', cursive",
-          fontSize: m ? 14 : 'clamp(22px, 3.2vw, 42px)',
+        <h3 className="patrick-font" style={{
+          fontSize: m ? 18 : 'clamp(24px, 3.5vw, 44px)',
           fontWeight: 400, color: titleCol,
-          lineHeight: 1.05, letterSpacing: 0,
-          margin: 0, marginBottom: m ? 1 : 3,
+          lineHeight: 0.9, // 调低行高，匹配 About 页面的紧凑感
+          letterSpacing: 0,
+          margin: 0, marginBottom: m ? 2 : 5,
           transform: isHover && hovered ? 'translateY(-1px)' : 'none',
           transition: 'transform 0.4s cubic-bezier(0.25,0,0,1)',
         }}>
@@ -47,10 +57,10 @@ function CardInner({ exp, isHover, hovered }) {
         </h3>
 
         {/* Role */}
-        <div style={{
-          fontFamily: "'DM Sans', sans-serif",
-          fontSize: m ? 7 : 16, fontWeight: 500,
-          color: subCol, marginBottom: m ? 1 : 8,
+        <div className="patrick-font" style={{
+          fontSize: m ? 11 : 18,
+          fontWeight: 400,
+          color: subCol, marginBottom: m ? 2 : 10,
         }}>
           {exp.role}
         </div>
@@ -58,16 +68,15 @@ function CardInner({ exp, isHover, hovered }) {
         {/* Highlights */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: m ? 1 : 3, alignItems: 'center' }}>
           {exp.highlights.map((h, i) => (
-              <div key={i} style={{
-                fontFamily: "'DM Sans', sans-serif",
-                fontSize: m ? 5 : 11, color: hlCol,
-                lineHeight: 1.5,
-                display: 'flex', alignItems: 'center', gap: m ? 2 : 4,
+              <div key={i} className="patrick-font" style={{
+                fontSize: m ? 9 : 13, color: hlCol,
+                lineHeight: 1.2,
+                display: 'flex', alignItems: 'center', gap: m ? 2 : 5,
               }}>
-            <span style={{
-              width: 2, height: 2, borderRadius: '50%',
-              background: dotCol, opacity: 0.5, flexShrink: 0,
-            }} />
+                <span style={{
+                  width: 3, height: 3, borderRadius: '50%',
+                  background: dotCol, opacity: 0.6, flexShrink: 0,
+                }} />
                 {h}
               </div>
           ))}
@@ -75,9 +84,9 @@ function CardInner({ exp, isHover, hovered }) {
 
         {/* Decorative line */}
         <div style={{
-          width: isHover && hovered ? (m ? 13 : 25) : (m ? 7 : 14),
-          height: 1, background: dotCol, opacity: 0.25,
-          borderRadius: 1, marginTop: m ? 4 : 8,
+          width: isHover && hovered ? (m ? 15 : 30) : (m ? 8 : 16),
+          height: 1.5, background: dotCol, opacity: 0.3,
+          borderRadius: 1, marginTop: m ? 6 : 12,
           transition: 'width 0.5s cubic-bezier(0.25,0,0,1)',
         }} />
       </div>
