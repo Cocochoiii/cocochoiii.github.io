@@ -50,12 +50,16 @@ export default function ExperiencePage({ go }) {
     el.style.borderColor = `${EYE.warm}60`
     el.style.transform = 'translateX(6px)'
     el.style.background = `${EYE.warm}0a`
+    const arrow = el.querySelector('.next-arrow')
+    if (arrow) gsap.to(arrow, { x: 3, duration: 0.3, ease: 'power2.out' })
   }, [])
   const onNextLeave = useCallback((e) => {
     const el = e.currentTarget
     el.style.borderColor = `${EYE.warm}30`
     el.style.transform = ''
     el.style.background = 'none'
+    const arrow = el.querySelector('.next-arrow')
+    if (arrow) gsap.to(arrow, { x: 0, duration: 0.3, ease: 'power2.out' })
   }, [])
   const goAbout = useCallback(() => go('about'), [go])
 
@@ -74,7 +78,7 @@ export default function ExperiencePage({ go }) {
             {/* Header with eye */}
             <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 4, padding: '0 4px' }}>
               <div className="eye-center" style={{ flexShrink: 0, opacity: 0 }}>
-                <div style={{ borderRadius: '50%', overflow: 'hidden', boxShadow: '0 6px 24px rgba(0,0,0,0.4)' }}>
+                <div style={{ borderRadius: '50%', overflow: 'hidden', boxShadow: '0 6px 24px rgba(0,0,0,0.4), 0 0 50px rgba(196,122,110,0.06)' }}>
                   <canvas ref={canvasRef} style={{ display: 'block' }} />
                 </div>
               </div>
@@ -94,12 +98,12 @@ export default function ExperiencePage({ go }) {
 
             {/* Next button */}
             <div className="exp-next" style={{ display: 'flex', justifyContent: 'center', marginTop: 10, paddingBottom: 10, opacity: 0 }}>
-              <button onClick={goAbout} style={{ background: 'none', border: `1px solid ${EYE.warm}30`, borderRadius: 16, padding: '6px 16px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6 }}>
+              <button onClick={goAbout} style={{ background: 'none', border: `1px solid ${EYE.warm}30`, borderRadius: 16, padding: '8px 20px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 8 }}>
                 <div>
-                  <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 5, color: `${EYE.warm}70`, letterSpacing: 1, textTransform: 'uppercase', marginBottom: 1 }}>Next</div>
-                  <div style={{ fontFamily: "'Patrick Hand', cursive", fontSize: 11, fontWeight: 400, color: EYE.cream }}>About Me</div>
+                  <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 6, color: `${EYE.warm}70`, letterSpacing: 1, textTransform: 'uppercase', marginBottom: 2 }}>Next</div>
+                  <div style={{ fontFamily: "'Patrick Hand', cursive", fontSize: 14, fontWeight: 400, color: EYE.cream }}>About Me</div>
                 </div>
-                <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke={`${EYE.warm}70`} strokeWidth="1.5"><path d="M5 12h14M12 5l7 7-7 7" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke={`${EYE.warm}70`} strokeWidth="1.5"><path d="M5 12h14M12 5l7 7-7 7" strokeLinecap="round" strokeLinejoin="round"/></svg>
               </button>
             </div>
           </div>
@@ -123,7 +127,7 @@ export default function ExperiencePage({ go }) {
           <ExpCard exp={EXPERIENCES[3]} className="exp-right" style={{ gridColumn: '3', gridRow: '1', opacity: 0 }} />
           <ExpCard exp={EXPERIENCES[1]} className="exp-left" style={{ gridColumn: '1', gridRow: '2', opacity: 0 }} />
           <div className="eye-center" style={{ gridColumn: '2', gridRow: '2', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'visible', zIndex: 5, opacity: 0 }}>
-            <div style={{ width: 450, height: 450, borderRadius: '50%', overflow: 'hidden', boxShadow: '0 12px 40px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.04)', marginTop: -75 }}>
+            <div style={{ width: 450, height: 450, borderRadius: '50%', overflow: 'hidden', boxShadow: '0 12px 40px rgba(0,0,0,0.5), 0 0 80px rgba(196,122,110,0.08), 0 0 0 1px rgba(255,255,255,0.04)', marginTop: -75 }}>
               <canvas ref={canvasRef} style={{ display: 'block' }} />
             </div>
           </div>
@@ -131,12 +135,12 @@ export default function ExperiencePage({ go }) {
           <ExpCard exp={EXPERIENCES[4]} className="exp-left" style={{ gridColumn: '1', gridRow: '3', opacity: 0 }} />
           <ExpCard exp={EXPERIENCES[5]} className="exp-center" style={{ gridColumn: '2', gridRow: '3', opacity: 0 }} />
           <div className="exp-next" style={{ gridColumn: '3', gridRow: '3', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 8, opacity: 0 }}>
-            <button onClick={goAbout} onMouseEnter={onNextEnter} onMouseLeave={onNextLeave} style={{ background: 'none', border: `1.5px solid ${EYE.warm}30`, borderRadius: 30, padding: '14px 24px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 7, transition: 'all 0.4s cubic-bezier(0.25,0,0,1)' }}>
+            <button onClick={goAbout} onMouseEnter={onNextEnter} onMouseLeave={onNextLeave} style={{ background: 'none', border: `1.5px solid ${EYE.warm}30`, borderRadius: 30, padding: '18px 32px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 10, transition: 'all 0.4s cubic-bezier(0.25,0,0,1)' }}>
               <div style={{ textAlign: 'left' }}>
-                <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 5, color: `${EYE.warm}70`, letterSpacing: 1.2, textTransform: 'uppercase', marginBottom: 2 }}>Next</div>
-                <div style={{ fontFamily: "'Patrick Hand', cursive", fontSize: 13, fontWeight: 400, color: EYE.cream, lineHeight: 1.15 }}>About Me</div>
+                <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 7, color: `${EYE.warm}70`, letterSpacing: 1.5, textTransform: 'uppercase', marginBottom: 3 }}>Next</div>
+                <div style={{ fontFamily: "'Patrick Hand', cursive", fontSize: 18, fontWeight: 400, color: EYE.cream, lineHeight: 1.15 }}>About Me</div>
               </div>
-              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke={`${EYE.warm}70`} strokeWidth="1.5"><path d="M5 12h14M12 5l7 7-7 7" strokeLinecap="round" strokeLinejoin="round"/></svg>
+              <svg className="next-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={`${EYE.warm}70`} strokeWidth="1.5"><path d="M5 12h14M12 5l7 7-7 7" strokeLinecap="round" strokeLinejoin="round"/></svg>
             </button>
           </div>
         </div>

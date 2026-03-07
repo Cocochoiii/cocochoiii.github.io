@@ -82,19 +82,19 @@ function HandPen({ mobile }) {
                  filter: 'url(#sketchy-sm)',
              }}>
             {/* Pen shaft */}
-            <line x1="10" y1="42" x2="30" y2="8" stroke="rgba(255,255,255,0.6)" strokeWidth="1.8" strokeLinecap="round" />
+            <line x1="10" y1="42" x2="30" y2="8" stroke="rgba(255,255,255,0.8)" strokeWidth="1.8" strokeLinecap="round" />
             {/* Nib tip */}
-            <path d="M30 8 L34 4 L36 9 L30 8Z" fill="rgba(255,255,255,0.4)" stroke="rgba(255,255,255,0.6)" strokeWidth="0.8" strokeLinejoin="round" />
+            <path d="M30 8 L34 4 L36 9 L30 8Z" fill="rgba(255,255,255,0.6)" stroke="rgba(255,255,255,0.8)" strokeWidth="0.8" strokeLinejoin="round" />
             {/* Ink dot at nib */}
-            <circle cx="35" cy="5" r="1.2" fill="rgba(255,255,255,0.5)" />
+            <circle cx="35" cy="5" r="1.2" fill="rgba(255,255,255,0.7)" />
             {/* Thumb */}
-            <path d="M14 36 C12 34, 11 30, 14 28 C16 26, 19 28, 18 31" stroke="rgba(255,255,255,0.45)" strokeWidth="1.6" strokeLinecap="round" fill="none" />
+            <path d="M14 36 C12 34, 11 30, 14 28 C16 26, 19 28, 18 31" stroke="rgba(255,255,255,0.65)" strokeWidth="1.6" strokeLinecap="round" fill="none" />
             {/* Index finger curling around pen */}
-            <path d="M18 31 C20 28, 23 24, 22 22 C21 20, 18 21, 17 24" stroke="rgba(255,255,255,0.45)" strokeWidth="1.6" strokeLinecap="round" fill="none" />
+            <path d="M18 31 C20 28, 23 24, 22 22 C21 20, 18 21, 17 24" stroke="rgba(255,255,255,0.65)" strokeWidth="1.6" strokeLinecap="round" fill="none" />
             {/* Middle finger */}
-            <path d="M17 24 C16 22, 18 19, 21 19 C23 19, 24 21, 22 24" stroke="rgba(255,255,255,0.35)" strokeWidth="1.4" strokeLinecap="round" fill="none" />
+            <path d="M17 24 C16 22, 18 19, 21 19 C23 19, 24 21, 22 24" stroke="rgba(255,255,255,0.55)" strokeWidth="1.4" strokeLinecap="round" fill="none" />
             {/* Palm arc */}
-            <path d="M14 36 C10 38, 8 42, 12 44" stroke="rgba(255,255,255,0.25)" strokeWidth="1.8" strokeLinecap="round" fill="none" />
+            <path d="M14 36 C10 38, 8 42, 12 44" stroke="rgba(255,255,255,0.4)" strokeWidth="1.8" strokeLinecap="round" fill="none" />
         </svg>
     )
 }
@@ -403,6 +403,17 @@ export default function HomePage({ go }) {
             </span>
                     ))}
                     <HandPen mobile={m} />
+                </div>
+                {/* University label — adds depth to the right side */}
+                <div style={{
+                    fontFamily: "'DM Sans', sans-serif",
+                    fontSize: m ? 6 : 8, fontWeight: 600,
+                    letterSpacing: m ? 1.5 : 2.5, textTransform: 'uppercase',
+                    color: 'rgba(255,255,255,0.3)',
+                    textAlign: m ? 'left' : 'right',
+                    marginTop: m ? 6 : 10,
+                }}>
+                    Northeastern University · MS Computer Science
                 </div>
             </div>
 

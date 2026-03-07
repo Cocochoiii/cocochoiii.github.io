@@ -2,17 +2,13 @@ import { memo } from 'react'
 import { EYE } from '../../constants/theme'
 import useIsMobile from '../../hooks/useIsMobile'
 
-// 关键：在组件外层定义样式，确保字体生效并开启抗锯齿
-const CARD_STYLE_FIX = `
-  @import url('https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap');
-  .patrick-font {
-    font-family: 'Patrick Hand', cursive !important;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    text-rendering: optimizeLegibility;
-  }
-`
-
+/**
+ * Inner content for experience cards.
+ *
+ * Font strategy:
+ *   Patrick Hand  → company title (20px+, handwritten warmth)
+ *   DM Sans       → period, role, highlights (functional, crisp at small sizes)
+ */
 function CardInner({ exp, isHover, hovered }) {
   const m = useIsMobile()
 
@@ -30,53 +26,51 @@ function CardInner({ exp, isHover, hovered }) {
         padding: m ? '3px 3px' : '11px 12px',
         pointerEvents: 'none',
       }}>
-        <style>{CARD_STYLE_FIX}</style>
-
-        {/* Period */}
-        <div className="patrick-font" style={{
-          fontSize: m ? 9 : 12,
-          fontWeight: 400,
-          letterSpacing: 0,
-          textTransform: 'uppercase',
-          color: periodCol, marginBottom: m ? 1 : 4,
+        {/* Period — DM Sans label */}
+        <div style={{
+          fontFamily: "'DM Sans', sans-serif",
+          fontSize: m ? 5 : 8, fontWeight: 700,
+          letterSpacing: m ? 0.8 : 1.5, textTransform: 'uppercase',
+          color: periodCol, marginBottom: m ? 1 : 5,
         }}>
           {exp.period}
         </div>
 
-        {/* Title */}
-        <h3 className="patrick-font" style={{
-          fontSize: m ? 18 : 'clamp(24px, 3.5vw, 44px)',
+        {/* Title — Patrick Hand (large, readable) */}
+        <h3 style={{
+          fontFamily: "'Patrick Hand', cursive",
+          fontSize: m ? 16 : 'clamp(24px, 3.5vw, 42px)',
           fontWeight: 400, color: titleCol,
-          lineHeight: 0.9, // 调低行高，匹配 About 页面的紧凑感
-          letterSpacing: 0,
-          margin: 0, marginBottom: m ? 2 : 5,
+          lineHeight: 1, letterSpacing: 0,
+          margin: 0, marginBottom: m ? 2 : 4,
           transform: isHover && hovered ? 'translateY(-1px)' : 'none',
           transition: 'transform 0.4s cubic-bezier(0.25,0,0,1)',
         }}>
           {exp.title}
         </h3>
 
-        {/* Role */}
-        <div className="patrick-font" style={{
-          fontSize: m ? 11 : 18,
-          fontWeight: 400,
-          color: subCol, marginBottom: m ? 2 : 10,
+        {/* Role — DM Sans (medium, clean) */}
+        <div style={{
+          fontFamily: "'DM Sans', sans-serif",
+          fontSize: m ? 7 : 15, fontWeight: 500,
+          color: subCol, marginBottom: m ? 2 : 8,
         }}>
           {exp.role}
         </div>
 
-        {/* Highlights */}
+        {/* Highlights — DM Sans (small, must be crisp) */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: m ? 1 : 3, alignItems: 'center' }}>
           {exp.highlights.map((h, i) => (
-              <div key={i} className="patrick-font" style={{
-                fontSize: m ? 9 : 13, color: hlCol,
-                lineHeight: 1.2,
-                display: 'flex', alignItems: 'center', gap: m ? 2 : 5,
+              <div key={i} style={{
+                fontFamily: "'DM Sans', sans-serif",
+                fontSize: m ? 5 : 11, color: hlCol,
+                lineHeight: 1.5,
+                display: 'flex', alignItems: 'center', gap: m ? 2 : 4,
               }}>
-                <span style={{
-                  width: 3, height: 3, borderRadius: '50%',
-                  background: dotCol, opacity: 0.6, flexShrink: 0,
-                }} />
+            <span style={{
+              width: 2, height: 2, borderRadius: '50%',
+              background: dotCol, opacity: 0.5, flexShrink: 0,
+            }} />
                 {h}
               </div>
           ))}
@@ -84,9 +78,9 @@ function CardInner({ exp, isHover, hovered }) {
 
         {/* Decorative line */}
         <div style={{
-          width: isHover && hovered ? (m ? 15 : 30) : (m ? 8 : 16),
-          height: 1.5, background: dotCol, opacity: 0.3,
-          borderRadius: 1, marginTop: m ? 6 : 12,
+          width: isHover && hovered ? (m ? 13 : 25) : (m ? 7 : 14),
+          height: 1, background: dotCol, opacity: 0.25,
+          borderRadius: 1, marginTop: m ? 4 : 8,
           transition: 'width 0.5s cubic-bezier(0.25,0,0,1)',
         }} />
       </div>

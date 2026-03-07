@@ -83,6 +83,11 @@ export default function LoadingScreen({ onComplete }) {
                               if (noteIdx >= 0) {
                                   try { playNote(NOTES[noteIdx], 0.6) } catch (_) { /* silent */ }
                               }
+                              /* Glow pulse — rose light blooms then fades */
+                              gsap.fromTo(el,
+                                          { boxShadow: `0 0 12px 4px ${EYE.rose}30, inset 0 0 8px ${EYE.rose}15` },
+                                          { boxShadow: '0 0 0px 0px transparent, inset 0 0 0px transparent', duration: 0.6, ease: 'power2.out' },
+                              )
                           },
                       },
                       0.55 + i * 0.11,
