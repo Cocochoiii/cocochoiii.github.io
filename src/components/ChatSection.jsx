@@ -4,13 +4,13 @@ import useIsMobile from '../hooks/useIsMobile'
 import { EYE } from '../constants/theme'
 
 /*
- * ChatSection — shared AI chat panel.
+ * ChatSection — shared AI chat panel with per-page visual cohesion.
  *
- * Extended config props for visual cohesion:
- *   config.bg        — section background color
- *   config.parentBg  — color of the page above (for gradient transition)
- *   config.theme     — 'light' | 'dark' (flips text/ui colors)
- *   config.cardStyle — 'default' | 'gallery' | 'popart'
+ * config.bg         — section background color
+ * config.parentBg   — page above (gradient transition)
+ * config.theme      — 'light' | 'dark' — controls chat window interior
+ * config.titleColor — header/footer text color (null = auto from theme)
+ * config.cardStyle  — 'default' | 'gallery' | 'popart'
  */
 
 const CSS = `
@@ -28,75 +28,67 @@ const CSS = `
 .think-pulse{animation:thinkPulse 1.5s ease-in-out infinite}
 `
 
-/* ─── Grain overlay (matches App.jsx film grain) ─── */
 const GRAIN_SVG = `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E")`
 
-/* ─── Theme helpers ─── */
-function t(theme) {
+/* ─── Window theme: controls chat interior colors ─── */
+function wTheme(theme) {
     const dark = theme === 'dark'
     return {
-        text:        dark ? EYE.cream         : EYE.shadow,
-        textSoft:    dark ? 'rgba(240,232,220,0.5)' : 'rgba(61,47,42,0.5)',
-        textMuted:   dark ? 'rgba(240,232,220,0.12)': 'rgba(61,47,42,0.12)',
-        textFaint:   dark ? 'rgba(240,232,220,0.06)': 'rgba(61,47,42,0.06)',
-        bubbleAssist:dark ? 'rgba(255,255,255,0.06)' : 'rgba(255,255,255,0.7)',
-        bubbleBorder:dark ? 'rgba(255,255,255,0.06)' : 'rgba(61,47,42,0.06)',
-        winBg:       dark ? 'rgba(0,0,0,0.2)'        : 'rgba(255,255,255,0.45)',
-        winBorder:   dark ? 'rgba(255,255,255,0.04)' : 'rgba(61,47,42,0.06)',
-        winShadow:   dark ? '0 8px 40px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.02)' : '0 4px 30px rgba(61,47,42,0.06), 0 1px 0 rgba(255,255,255,0.6) inset',
-        inputBg:     dark ? 'rgba(255,255,255,0.04)' : 'rgba(61,47,42,0.03)',
-        inputBorder: dark ? 'rgba(255,255,255,0.06)' : 'rgba(61,47,42,0.08)',
-        placeholder: dark ? 'rgba(240,232,220,0.2)'  : 'rgba(61,47,42,0.25)',
-        pillColor:   dark ? 'rgba(240,232,220,0.4)'  : `${EYE.shadow}90`,
-        divider:     dark ? 'rgba(255,255,255,0.03)' : 'rgba(61,47,42,0.04)',
-        grainOpacity: dark ? 0.04 : 0.025,
-        grainBlend:   dark ? 'overlay' : 'multiply',
+        dark,
+        text:         dark ? EYE.cream : EYE.shadow,
+        textSub:      dark ? 'rgba(240,232,220,0.55)' : 'rgba(61,47,42,0.55)',
+        textMuted:    dark ? 'rgba(240,232,220,0.2)' : 'rgba(61,47,42,0.2)',
+        bubbleAssist: dark ? 'rgba(255,255,255,0.08)' : 'rgba(255,255,255,0.85)',
+        bubbleBorder: dark ? 'rgba(255,255,255,0.08)' : 'rgba(61,47,42,0.08)',
+        bubbleShadow: dark ? 'none' : '0 1px 4px rgba(61,47,42,0.06)',
+        winBg:        dark ? 'rgba(0,0,0,0.25)' : 'rgba(255,255,255,0.65)',
+        winBorder:    dark ? 'rgba(255,255,255,0.06)' : 'rgba(61,47,42,0.08)',
+        winShadow:    dark
+                      ? '0 8px 40px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.03)'
+                      : '0 4px 30px rgba(61,47,42,0.08), inset 0 1px 0 rgba(255,255,255,0.7)',
+        inputBg:      dark ? 'rgba(255,255,255,0.05)' : 'rgba(61,47,42,0.04)',
+        inputBorder:  dark ? 'rgba(255,255,255,0.08)' : 'rgba(61,47,42,0.1)',
+        placeholder:  dark ? 'rgba(240,232,220,0.2)' : 'rgba(61,47,42,0.3)',
+        pillText:     dark ? 'rgba(240,232,220,0.5)' : `${EYE.shadow}80`,
+        pillHover:    dark ? EYE.cream : EYE.shadow,
+        divider:      dark ? 'rgba(255,255,255,0.04)' : 'rgba(61,47,42,0.06)',
+        sendDisabled: dark ? 'rgba(255,255,255,0.05)' : 'rgba(61,47,42,0.05)',
+        sendDisColor: dark ? 'rgba(255,255,255,0.12)' : 'rgba(61,47,42,0.2)',
     }
 }
 
-/* ─── Gallery frame corners (Experience style) ─── */
+/* ─── Gallery frame corners ─── */
 function FrameCorner({ pos, color, mobile }) {
-    const len = mobile ? 10 : 16; const thick = mobile ? 1 : 1.5; const gap = mobile ? 2 : 4; const o = 0.35
+    const len = mobile ? 10 : 16; const thick = mobile ? 1 : 1.5; const gap = mobile ? 3 : 5
     const isTop = pos[0] === 't'; const isLeft = pos[1] === 'l'
     return (
         <div style={{ position: 'absolute', top: isTop ? gap : 'auto', bottom: isTop ? 'auto' : gap, left: isLeft ? gap : 'auto', right: isLeft ? 'auto' : gap, pointerEvents: 'none', zIndex: 4 }}>
-            <div style={{ position: 'absolute', top: 0, [isLeft ? 'left' : 'right']: 0, width: len, height: thick, background: color, opacity: o, borderRadius: 0.5 }} />
-            <div style={{ position: 'absolute', top: 0, [isLeft ? 'left' : 'right']: 0, width: thick, height: len, background: color, opacity: o, borderRadius: 0.5 }} />
+            <div style={{ position: 'absolute', top: 0, [isLeft ? 'left' : 'right']: 0, width: len, height: thick, background: color, opacity: 0.3, borderRadius: 0.5 }} />
+            <div style={{ position: 'absolute', top: 0, [isLeft ? 'left' : 'right']: 0, width: thick, height: len, background: color, opacity: 0.3, borderRadius: 0.5 }} />
         </div>
     )
 }
 
 /* ─── Thinking block ─── */
 function SparkleIcon({ size = 14, color }) {
-    return (
-        <svg className="think-spinner" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M12 3v1m0 16v1m-8-9H3m18 0h-1m-2.636-6.364l-.707.707M6.343 17.657l-.707.707m12.728 0l-.707-.707M6.343 6.343l-.707-.707" />
-            <circle cx="12" cy="12" r="3" strokeWidth="1.2" />
-        </svg>
-    )
+    return (<svg className="think-spinner" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 3v1m0 16v1m-8-9H3m18 0h-1m-2.636-6.364l-.707.707M6.343 17.657l-.707.707m12.728 0l-.707-.707M6.343 6.343l-.707-.707"/><circle cx="12" cy="12" r="3" strokeWidth="1.2"/></svg>)
 }
 
-function ThinkDots() {
-    const [dots, setDots] = useState('')
-    useEffect(() => { const id = setInterval(() => setDots((d) => d.length >= 3 ? '' : d + '.'), 400); return () => clearInterval(id) }, [])
-    return <span style={{ width: 16, display: 'inline-block' }}>{dots}</span>
-}
-
-function ThinkingBlock({ accent, mobile, elapsed, th }) {
+function ThinkingBlock({ accent, mobile, elapsed, w }) {
     return (
         <div className="msg-in" style={{ display: 'flex', marginBottom: 8 }}>
-            <div style={{ width: mobile ? 22 : 26, height: mobile ? 22 : 26, borderRadius: '50%', flexShrink: 0, background: `linear-gradient(135deg, ${accent}18, ${EYE.skin}12)`, border: `1px solid ${accent}20`, display: 'flex', alignItems: 'center', justifyContent: 'center', marginRight: mobile ? 6 : 8, marginTop: 2, fontFamily: "'Patrick Hand', cursive", fontSize: mobile ? 10 : 12, color: th.text }}>C</div>
-            <div style={{ maxWidth: mobile ? '80%' : '65%', borderRadius: '16px 16px 16px 4px', background: th.bubbleAssist, border: `1px solid ${th.bubbleBorder}`, overflow: 'hidden' }}>
+            <div style={{ width: mobile ? 22 : 26, height: mobile ? 22 : 26, borderRadius: '50%', flexShrink: 0, background: `linear-gradient(135deg, ${accent}18, ${EYE.skin}12)`, border: `1px solid ${accent}20`, display: 'flex', alignItems: 'center', justifyContent: 'center', marginRight: mobile ? 6 : 8, marginTop: 2, fontFamily: "'Patrick Hand', cursive", fontSize: mobile ? 10 : 12, color: w.text }}>C</div>
+            <div style={{ maxWidth: mobile ? '80%' : '65%', borderRadius: '16px 16px 16px 4px', background: w.bubbleAssist, border: `1px solid ${w.bubbleBorder}`, overflow: 'hidden' }}>
                 <div style={{ height: 2, background: `linear-gradient(90deg, transparent, ${accent}40, ${accent}60, ${accent}40, transparent)`, backgroundSize: '200% 100%', animation: 'shimmer 1.8s ease-in-out infinite' }} />
                 <div style={{ padding: mobile ? '10px 12px' : '12px 16px', display: 'flex', alignItems: 'center', gap: mobile ? 8 : 10 }}>
                     <SparkleIcon size={mobile ? 13 : 15} color={accent} />
                     <div>
-                        <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: mobile ? 11 : 12.5, fontWeight: 500, color: th.text, opacity: 0.7 }}>Thinking</div>
-                        <div className="think-pulse" style={{ fontFamily: "'DM Sans', sans-serif", fontSize: mobile ? 9 : 10, color: th.textSoft, marginTop: 2 }}>
+                        <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: mobile ? 11 : 12.5, fontWeight: 500, color: w.text, opacity: 0.7 }}>Thinking</div>
+                        <div className="think-pulse" style={{ fontFamily: "'DM Sans', sans-serif", fontSize: mobile ? 9 : 10, color: w.textSub, marginTop: 2 }}>
                             {elapsed < 1 ? 'Analyzing your question...' : elapsed < 2 ? 'Looking through my experience...' : 'Preparing a thoughtful response...'}
                         </div>
                     </div>
-                    <div style={{ marginLeft: 'auto', fontFamily: "'DM Sans', sans-serif", fontSize: mobile ? 9 : 10, color: th.textMuted, fontVariantNumeric: 'tabular-nums', flexShrink: 0 }}>{elapsed.toFixed(0)}s</div>
+                    <div style={{ marginLeft: 'auto', fontFamily: "'DM Sans', sans-serif", fontSize: mobile ? 9 : 10, color: w.textMuted, fontVariantNumeric: 'tabular-nums', flexShrink: 0 }}>{elapsed.toFixed(0)}s</div>
                 </div>
             </div>
         </div>
@@ -104,34 +96,18 @@ function ThinkingBlock({ accent, mobile, elapsed, th }) {
 }
 
 function useElapsed(running) {
-    const [elapsed, setElapsed] = useState(0)
-    const startRef = useRef(null); const rafRef = useRef(null)
-    useEffect(() => {
-        if (running) { startRef.current = Date.now(); const tick = () => { setElapsed((Date.now() - startRef.current) / 1000); rafRef.current = requestAnimationFrame(tick) }; rafRef.current = requestAnimationFrame(tick) }
-        else { setElapsed(0); if (rafRef.current) cancelAnimationFrame(rafRef.current) }
-        return () => { if (rafRef.current) cancelAnimationFrame(rafRef.current) }
-    }, [running])
+    const [elapsed, setElapsed] = useState(0); const startRef = useRef(null); const rafRef = useRef(null)
+    useEffect(() => { if (running) { startRef.current = Date.now(); const tick = () => { setElapsed((Date.now() - startRef.current) / 1000); rafRef.current = requestAnimationFrame(tick) }; rafRef.current = requestAnimationFrame(tick) } else { setElapsed(0); if (rafRef.current) cancelAnimationFrame(rafRef.current) }; return () => { if (rafRef.current) cancelAnimationFrame(rafRef.current) } }, [running])
     return elapsed
 }
 
 /* ─── Bubble ─── */
-const Bubble = memo(function Bubble({ msg, mobile, accent, streaming, th }) {
+const Bubble = memo(function Bubble({ msg, mobile, accent, streaming, w }) {
     const isUser = msg.role === 'user'
     return (
         <div className="msg-in" style={{ display: 'flex', justifyContent: isUser ? 'flex-end' : 'flex-start', marginBottom: mobile ? 8 : 12, padding: '0 2px' }}>
-            {!isUser && (
-                <div style={{ width: mobile ? 22 : 26, height: mobile ? 22 : 26, borderRadius: '50%', flexShrink: 0, background: `linear-gradient(135deg, ${accent}18, ${EYE.skin}12)`, border: `1px solid ${accent}20`, display: 'flex', alignItems: 'center', justifyContent: 'center', marginRight: mobile ? 6 : 8, marginTop: 2, fontFamily: "'Patrick Hand', cursive", fontSize: mobile ? 10 : 12, color: th.text }}>C</div>
-            )}
-            <div style={{
-                maxWidth: mobile ? '84%' : '72%', padding: mobile ? '10px 13px' : '12px 16px',
-                borderRadius: isUser ? '16px 16px 4px 16px' : '16px 16px 16px 4px',
-                background: isUser ? `linear-gradient(135deg, ${accent}, ${accent}dd)` : th.bubbleAssist,
-                border: isUser ? 'none' : `1px solid ${th.bubbleBorder}`,
-                color: isUser ? '#fff' : th.text,
-                fontFamily: "'DM Sans', sans-serif", fontSize: mobile ? 12 : 13.5, lineHeight: 1.65,
-                fontWeight: isUser ? 600 : 400, whiteSpace: 'pre-line',
-                boxShadow: isUser ? `0 3px 12px ${accent}25` : 'none',
-            }}>
+            {!isUser && (<div style={{ width: mobile ? 22 : 26, height: mobile ? 22 : 26, borderRadius: '50%', flexShrink: 0, background: `linear-gradient(135deg, ${accent}18, ${EYE.skin}12)`, border: `1px solid ${accent}20`, display: 'flex', alignItems: 'center', justifyContent: 'center', marginRight: mobile ? 6 : 8, marginTop: 2, fontFamily: "'Patrick Hand', cursive", fontSize: mobile ? 10 : 12, color: w.text }}>C</div>)}
+            <div style={{ maxWidth: mobile ? '84%' : '72%', padding: mobile ? '10px 13px' : '12px 16px', borderRadius: isUser ? '16px 16px 4px 16px' : '16px 16px 16px 4px', background: isUser ? `linear-gradient(135deg, ${accent}, ${accent}dd)` : w.bubbleAssist, border: isUser ? 'none' : `1px solid ${w.bubbleBorder}`, color: isUser ? '#fff' : w.text, fontFamily: "'DM Sans', sans-serif", fontSize: mobile ? 12 : 13.5, lineHeight: 1.65, fontWeight: isUser ? 600 : 400, whiteSpace: 'pre-line', boxShadow: isUser ? `0 3px 12px ${accent}25` : w.bubbleShadow }}>
                 {msg.text}{streaming && <span className="stream-cursor" />}
             </div>
         </div>
@@ -139,18 +115,18 @@ const Bubble = memo(function Bubble({ msg, mobile, accent, streaming, th }) {
 })
 
 /* ─── Welcome ─── */
-function WelcomeScreen({ questions, accent, mobile, onAsk, th }) {
+function WelcomeScreen({ questions, accent, mobile, onAsk, w }) {
     return (
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', textAlign: 'center', padding: mobile ? '0 8px' : '0 20px' }}>
             <div style={{ width: mobile ? 40 : 50, height: mobile ? 40 : 50, borderRadius: '50%', background: `linear-gradient(135deg, ${accent}15, ${EYE.skin}10)`, border: `1.5px solid ${accent}20`, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: mobile ? 10 : 14 }}>
-                <span style={{ fontFamily: "'Patrick Hand', cursive", fontSize: mobile ? 18 : 22, color: th.text, opacity: 0.5 }}>C</span>
+                <span style={{ fontFamily: "'Patrick Hand', cursive", fontSize: mobile ? 18 : 22, color: w.text, opacity: 0.5 }}>C</span>
             </div>
-            <div style={{ fontFamily: "'Patrick Hand', cursive", fontSize: mobile ? 16 : 20, color: th.textMuted, lineHeight: 1.4, marginBottom: mobile ? 16 : 22 }}>What would you like to know?</div>
+            <div style={{ fontFamily: "'Patrick Hand', cursive", fontSize: mobile ? 16 : 20, color: w.textMuted, lineHeight: 1.4, marginBottom: mobile ? 16 : 22 }}>What would you like to know?</div>
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: mobile ? 6 : 8, justifyContent: 'center', maxWidth: mobile ? '100%' : 480 }}>
                 {questions.map((q) => (
-                    <button key={q.key} className="ch-pill" onClick={() => onAsk(q)} style={{ background: 'none', border: `1px solid ${accent}28`, borderRadius: 20, padding: mobile ? '6px 12px' : '7px 15px', fontFamily: "'DM Sans', sans-serif", fontSize: mobile ? 10 : 11.5, fontWeight: 500, color: th.pillColor, cursor: 'pointer', whiteSpace: 'nowrap', transition: 'all 0.3s cubic-bezier(0.25,0,0,1)' }}
-                            onMouseEnter={(e) => { e.currentTarget.style.background = `${accent}10`; e.currentTarget.style.borderColor = `${accent}50`; e.currentTarget.style.color = th.text }}
-                            onMouseLeave={(e) => { e.currentTarget.style.background = 'none'; e.currentTarget.style.borderColor = `${accent}28`; e.currentTarget.style.color = th.pillColor }}
+                    <button key={q.key} className="ch-pill" onClick={() => onAsk(q)} style={{ background: 'none', border: `1px solid ${accent}28`, borderRadius: 20, padding: mobile ? '6px 12px' : '7px 15px', fontFamily: "'DM Sans', sans-serif", fontSize: mobile ? 10 : 11.5, fontWeight: 500, color: w.pillText, cursor: 'pointer', whiteSpace: 'nowrap', transition: 'all 0.3s cubic-bezier(0.25,0,0,1)' }}
+                            onMouseEnter={(e) => { e.currentTarget.style.background = `${accent}10`; e.currentTarget.style.borderColor = `${accent}50`; e.currentTarget.style.color = w.pillHover }}
+                            onMouseLeave={(e) => { e.currentTarget.style.background = 'none'; e.currentTarget.style.borderColor = `${accent}28`; e.currentTarget.style.color = w.pillText }}
                     >{q.label}</button>
                 ))}
             </div>
@@ -159,45 +135,37 @@ function WelcomeScreen({ questions, accent, mobile, onAsk, th }) {
 }
 
 /* ─── Auto textarea ─── */
-function AutoTextarea({ value, onChange, onKeyDown, placeholder, accent, mobile, th }) {
+function AutoTextarea({ value, onChange, onKeyDown, placeholder, accent, mobile, w }) {
     const ref = useRef(null)
     useEffect(() => { const el = ref.current; if (!el) return; el.style.height = 'auto'; el.style.height = Math.min(el.scrollHeight, mobile ? 80 : 120) + 'px' }, [value, mobile])
     return (
         <textarea ref={ref} className="ch-input" rows={1} value={value} onChange={onChange} onKeyDown={onKeyDown} placeholder={placeholder}
-                  style={{ flex: 1, background: th.inputBg, border: `1px solid ${th.inputBorder}`, borderRadius: 12, padding: mobile ? '10px 13px' : '11px 16px', fontFamily: "'DM Sans', sans-serif", fontSize: mobile ? 12 : 13, color: th.text, transition: 'border-color 0.3s, box-shadow 0.3s', lineHeight: 1.5 }}
+                  style={{ flex: 1, background: w.inputBg, border: `1px solid ${w.inputBorder}`, borderRadius: 12, padding: mobile ? '10px 13px' : '11px 16px', fontFamily: "'DM Sans', sans-serif", fontSize: mobile ? 12 : 13, color: w.text, transition: 'border-color 0.3s, box-shadow 0.3s', lineHeight: 1.5 }}
                   onFocus={(e) => { e.target.style.borderColor = `${accent}40`; e.target.style.boxShadow = `0 0 0 2px ${accent}0a` }}
-                  onBlur={(e) => { e.target.style.borderColor = th.inputBorder; e.target.style.boxShadow = 'none' }}
+                  onBlur={(e) => { e.target.style.borderColor = w.inputBorder; e.target.style.boxShadow = 'none' }}
         />
     )
 }
 
-/* ═══════════════════════════════════════
- *  ChatSection
- * ═══════════════════════════════════════ */
+/* ═══════════════════════════════════════ */
 export default function ChatSection({ config }) {
     const {
-        questions, responses,
-        accent = EYE.rose,
-        title = 'Ask me anything',
-        subtitle = 'Conversation',
-        bg = EYE.cream,
-        parentBg = '#E37B88',
-        theme = 'light',
-        cardStyle = 'default',
+        questions, responses, accent = EYE.rose,
+        title = 'Ask me anything', subtitle = 'Conversation',
+        bg = EYE.cream, parentBg = null, theme = 'light',
+        titleColor = null, cardStyle = 'default',
     } = config
-
     const m = useIsMobile()
-    const th = t(theme)
+    const w = wTheme(theme)
+    const hdr = titleColor || (w.dark ? EYE.cream : EYE.shadow)
+    const hdrSub = titleColor || accent
+
     const [messages, setMessages] = useState([])
     const [input, setInput] = useState('')
     const [phase, setPhase] = useState('idle')
     const [streamText, setStreamText] = useState('')
     const [revealed, setRevealed] = useState(false)
-    const chatBodyRef = useRef(null)
-    const sectionRef = useRef(null)
-    const lastUserRef = useRef(null)
-    const streamRef = useRef(null)
-    const pendingRef = useRef(null)
+    const chatBodyRef = useRef(null); const sectionRef = useRef(null); const lastUserRef = useRef(null); const streamRef = useRef(null); const pendingRef = useRef(null)
     const hasMessages = messages.length > 0
     const thinkElapsed = useElapsed(phase === 'thinking')
 
@@ -207,20 +175,8 @@ export default function ChatSection({ config }) {
     useEffect(() => { if (!revealed) return; const tl = gsap.timeline({ defaults: { ease: 'power3.out' } }); tl.fromTo('.ch-label', { opacity: 0, y: 15 }, { opacity: 1, y: 0, duration: 0.5, delay: 0.1 }); tl.fromTo('.ch-win', { opacity: 0, y: 20, scale: 0.98 }, { opacity: 1, y: 0, scale: 1, duration: 0.7 }, '-=0.3'); tl.fromTo('.ch-pill', { opacity: 0, y: 8 }, { opacity: 1, y: 0, duration: 0.3, stagger: 0.03 }, '-=0.3'); return () => tl.kill() }, [revealed])
     useEffect(() => { return () => { if (streamRef.current) clearInterval(streamRef.current); if (pendingRef.current) clearTimeout(pendingRef.current) } }, [])
 
-    const streamResponse = useCallback((fullText) => {
-        let i = 0; setStreamText(''); setPhase('streaming')
-        streamRef.current = setInterval(() => { i++; if (i >= fullText.length) { clearInterval(streamRef.current); streamRef.current = null; setMessages((prev) => [...prev, { role: 'assistant', text: fullText }]); setStreamText(''); setPhase('idle') } else { setStreamText(fullText.slice(0, i)) } }, 18)
-    }, [])
-
-    const send = useCallback((question, key) => {
-        if (streamRef.current) { clearInterval(streamRef.current); streamRef.current = null }
-        if (pendingRef.current) { clearTimeout(pendingRef.current); pendingRef.current = null }
-        setMessages((prev) => [...prev, { role: 'user', text: question }]); setPhase('thinking'); setStreamText('')
-        const answer = key ? (responses[key] || responses.fallback) : matchResponse(question, responses)
-        const thinkTime = 2000 + Math.min(answer.length * 2, 1500)
-        pendingRef.current = setTimeout(() => { pendingRef.current = null; streamResponse(answer) }, thinkTime)
-    }, [responses, streamResponse])
-
+    const streamResponse = useCallback((fullText) => { let i = 0; setStreamText(''); setPhase('streaming'); streamRef.current = setInterval(() => { i++; if (i >= fullText.length) { clearInterval(streamRef.current); streamRef.current = null; setMessages((prev) => [...prev, { role: 'assistant', text: fullText }]); setStreamText(''); setPhase('idle') } else { setStreamText(fullText.slice(0, i)) } }, 18) }, [])
+    const send = useCallback((question, key) => { if (streamRef.current) { clearInterval(streamRef.current); streamRef.current = null }; if (pendingRef.current) { clearTimeout(pendingRef.current); pendingRef.current = null }; setMessages((prev) => [...prev, { role: 'user', text: question }]); setPhase('thinking'); setStreamText(''); const answer = key ? (responses[key] || responses.fallback) : matchResponse(question, responses); const thinkTime = 2000 + Math.min(answer.length * 2, 1500); pendingRef.current = setTimeout(() => { pendingRef.current = null; streamResponse(answer) }, thinkTime) }, [responses, streamResponse])
     const handlePill = useCallback((q) => send(q.label, q.key), [send])
     const handleSubmit = useCallback(() => { const txt = input.trim(); if (!txt || phase !== 'idle') return; setInput(''); send(txt, null) }, [input, phase, send])
     const handleKey = useCallback((e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSubmit() } }, [handleSubmit])
@@ -230,87 +186,59 @@ export default function ChatSection({ config }) {
     const pills = questions.filter((q) => !asked.has(q.key))
     let lastUserIdx = -1; for (let i = messages.length - 1; i >= 0; i--) { if (messages[i].role === 'user') { lastUserIdx = i; break } }
     const isBusy = phase !== 'idle'
-
-    /* ── Card style decorations ── */
-    const isGallery = cardStyle === 'gallery'
-    const isPopart = cardStyle === 'popart'
+    const isGallery = cardStyle === 'gallery'; const isPopart = cardStyle === 'popart'
 
     return (
         <section ref={sectionRef} style={{ width: '100%', height: '100vh', minHeight: '100vh', scrollSnapAlign: 'start', background: bg, position: 'relative', overflow: 'hidden', display: 'flex', flexDirection: 'column', alignItems: 'center', padding: m ? '10px 8px 8px' : '14px 20px 10px' }}>
-            <style>{CSS}{`.ch-input::placeholder{color:${th.placeholder}}`}</style>
+            <style>{CSS}{`.ch-input::placeholder{color:${w.placeholder}}`}</style>
 
-            {/* ── Gradient transition from parent page ── */}
-            <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: m ? 80 : 120, background: `linear-gradient(180deg, ${parentBg} 0%, ${parentBg}80 30%, transparent 100%)`, pointerEvents: 'none', zIndex: 1 }} />
-
-            {/* ── Film grain overlay ── */}
-            <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none', opacity: th.grainOpacity, mixBlendMode: th.grainBlend, backgroundImage: GRAIN_SVG, backgroundSize: '120px 120px' }} />
-
+            {/* Gradient transition from parent page */}
+            {parentBg && <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: m ? 80 : 120, background: `linear-gradient(180deg, ${parentBg} 0%, ${parentBg}80 30%, transparent 100%)`, pointerEvents: 'none', zIndex: 1 }} />}
+            {/* Film grain */}
+            <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none', opacity: w.dark ? 0.04 : 0.025, mixBlendMode: w.dark ? 'overlay' : 'multiply', backgroundImage: GRAIN_SVG, backgroundSize: '120px 120px' }} />
             {/* Decorative radial */}
             <div style={{ position: 'absolute', top: '30%', left: '50%', transform: 'translateX(-50%)', width: m ? 280 : 450, height: m ? 280 : 450, borderRadius: '50%', background: `radial-gradient(circle, ${accent}06 0%, transparent 65%)`, pointerEvents: 'none' }} />
 
-            {/* Header — pushed below gradient */}
-            <div className="ch-label" style={{ textAlign: 'center', marginTop: m ? 50 : 70, marginBottom: m ? 6 : 10, opacity: 0, flexShrink: 0, position: 'relative', zIndex: 2 }}>
-                <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: m ? 7 : 8, fontWeight: 600, letterSpacing: m ? 2 : 3, textTransform: 'uppercase', color: accent, opacity: 0.6, marginBottom: m ? 3 : 5 }}>{subtitle}</div>
-                <h2 style={{ fontFamily: "'Patrick Hand', cursive", fontSize: m ? 20 : 28, fontWeight: 400, color: th.text, lineHeight: 1.15 }}>
-                    {title.split(/(\S+)$/).map((part, i) => i === 1 ? <span key={i} style={{ color: accent, fontStyle: 'italic' }}>{part}</span> : part)}
+            {/* Header */}
+            <div className="ch-label" style={{ textAlign: 'center', marginTop: parentBg ? (m ? 50 : 70) : 0, marginBottom: m ? 6 : 10, opacity: 0, flexShrink: 0, position: 'relative', zIndex: 2 }}>
+                <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: m ? 7 : 8, fontWeight: 600, letterSpacing: m ? 2 : 3, textTransform: 'uppercase', color: hdrSub, opacity: titleColor ? 0.8 : 0.6, marginBottom: m ? 3 : 5 }}>{subtitle}</div>
+                <h2 style={{ fontFamily: "'Patrick Hand', cursive", fontSize: m ? 20 : 28, fontWeight: 400, color: hdr, lineHeight: 1.15 }}>
+                    {title.split(/(\S+)$/).map((part, i) => i === 1 ? <span key={i} style={{ color: hdrSub, fontStyle: 'italic', opacity: titleColor ? 0.8 : 1 }}>{part}</span> : part)}
                 </h2>
             </div>
 
-            {/* ── Chat window ── */}
-            <div className="ch-win" style={{
-                width: '100%', maxWidth: m ? '100%' : 720,
-                flex: 1, minHeight: 0, position: 'relative',
-                background: th.winBg,
-                border: `1px solid ${th.winBorder}`,
-                borderRadius: m ? 14 : 18,
-                display: 'flex', flexDirection: 'column',
-                overflow: 'hidden', opacity: 0, zIndex: 2,
-                boxShadow: th.winShadow,
-                backdropFilter: 'blur(12px)',
-                /* Popart: bold left accent border */
-                ...(isPopart ? { borderLeft: `3px solid ${accent}` } : {}),
-            }}>
-                {/* Top accent line */}
+            {/* Chat window */}
+            <div className="ch-win" style={{ width: '100%', maxWidth: m ? '100%' : 720, flex: 1, minHeight: 0, position: 'relative', background: w.winBg, border: `1px solid ${w.winBorder}`, borderRadius: m ? 14 : 18, display: 'flex', flexDirection: 'column', overflow: 'hidden', opacity: 0, zIndex: 2, boxShadow: w.winShadow, backdropFilter: 'blur(16px)', ...(isPopart ? { borderLeft: `3px solid ${accent}` } : {}) }}>
                 <div style={{ height: isGallery ? 2 : 1.5, flexShrink: 0, background: `linear-gradient(90deg, transparent, ${accent}${isGallery ? '40' : '25'}, ${EYE.skin}${isGallery ? '30' : '18'}, transparent)` }} />
+                {isGallery && <><FrameCorner pos="tl" color={accent} mobile={m} /><FrameCorner pos="tr" color={accent} mobile={m} /><FrameCorner pos="bl" color={accent} mobile={m} /><FrameCorner pos="br" color={accent} mobile={m} /></>}
 
-                {/* Gallery frame corners */}
-                {isGallery && <>
-                    <FrameCorner pos="tl" color={accent} mobile={m} />
-                    <FrameCorner pos="tr" color={accent} mobile={m} />
-                    <FrameCorner pos="bl" color={accent} mobile={m} />
-                    <FrameCorner pos="br" color={accent} mobile={m} />
-                </>}
-
-                {/* Messages */}
                 <div ref={chatBodyRef} onWheel={trapWheel} style={{ flex: 1, overflowY: 'auto', overflowX: 'hidden', padding: m ? '14px 10px 6px' : '22px 22px 10px', WebkitOverflowScrolling: 'touch' }}>
-                    {!hasMessages && phase === 'idle' && <WelcomeScreen questions={questions} accent={accent} mobile={m} onAsk={handlePill} th={th} />}
-                    {messages.map((msg, i) => (<div key={i} ref={i === lastUserIdx ? lastUserRef : null}><Bubble msg={msg} mobile={m} accent={accent} streaming={false} th={th} /></div>))}
-                    {phase === 'thinking' && <ThinkingBlock accent={accent} mobile={m} elapsed={thinkElapsed} th={th} />}
-                    {phase === 'streaming' && streamText && <Bubble msg={{ role: 'assistant', text: streamText }} mobile={m} accent={accent} streaming={true} th={th} />}
+                    {!hasMessages && phase === 'idle' && <WelcomeScreen questions={questions} accent={accent} mobile={m} onAsk={handlePill} w={w} />}
+                    {messages.map((msg, i) => (<div key={i} ref={i === lastUserIdx ? lastUserRef : null}><Bubble msg={msg} mobile={m} accent={accent} streaming={false} w={w} /></div>))}
+                    {phase === 'thinking' && <ThinkingBlock accent={accent} mobile={m} elapsed={thinkElapsed} w={w} />}
+                    {phase === 'streaming' && streamText && <Bubble msg={{ role: 'assistant', text: streamText }} mobile={m} accent={accent} streaming={true} w={w} />}
                 </div>
 
-                {/* Pills */}
                 {hasMessages && pills.length > 0 && phase === 'idle' && (
-                    <div style={{ padding: m ? '6px 6px' : '8px 14px', display: 'flex', flexWrap: 'wrap', gap: m ? 4 : 6, justifyContent: 'center', borderTop: `1px solid ${th.divider}`, flexShrink: 0 }}>
+                    <div style={{ padding: m ? '6px 6px' : '8px 14px', display: 'flex', flexWrap: 'wrap', gap: m ? 4 : 6, justifyContent: 'center', borderTop: `1px solid ${w.divider}`, flexShrink: 0 }}>
                         {pills.map((q) => (
-                            <button key={q.key} className="ch-pill" onClick={() => handlePill(q)} style={{ background: 'none', border: `1px solid ${accent}28`, borderRadius: 20, padding: m ? '4px 9px' : '5px 12px', fontFamily: "'DM Sans', sans-serif", fontSize: m ? 9 : 10.5, fontWeight: 500, color: th.pillColor, cursor: 'pointer', whiteSpace: 'nowrap', transition: 'all 0.3s cubic-bezier(0.25,0,0,1)' }}
-                                    onMouseEnter={(e) => { e.currentTarget.style.background = `${accent}10`; e.currentTarget.style.borderColor = `${accent}50`; e.currentTarget.style.color = th.text }}
-                                    onMouseLeave={(e) => { e.currentTarget.style.background = 'none'; e.currentTarget.style.borderColor = `${accent}28`; e.currentTarget.style.color = th.pillColor }}
+                            <button key={q.key} className="ch-pill" onClick={() => handlePill(q)} style={{ background: 'none', border: `1px solid ${accent}28`, borderRadius: 20, padding: m ? '4px 9px' : '5px 12px', fontFamily: "'DM Sans', sans-serif", fontSize: m ? 9 : 10.5, fontWeight: 500, color: w.pillText, cursor: 'pointer', whiteSpace: 'nowrap', transition: 'all 0.3s cubic-bezier(0.25,0,0,1)' }}
+                                    onMouseEnter={(e) => { e.currentTarget.style.background = `${accent}10`; e.currentTarget.style.borderColor = `${accent}50`; e.currentTarget.style.color = w.pillHover }}
+                                    onMouseLeave={(e) => { e.currentTarget.style.background = 'none'; e.currentTarget.style.borderColor = `${accent}28`; e.currentTarget.style.color = w.pillText }}
                             >{q.label}</button>
                         ))}
                     </div>
                 )}
 
-                {/* Input */}
-                <div style={{ padding: m ? '6px 8px 8px' : '8px 14px 10px', borderTop: `1px solid ${th.divider}`, display: 'flex', gap: m ? 6 : 8, alignItems: 'flex-end', flexShrink: 0 }}>
-                    <AutoTextarea value={input} onChange={(e) => setInput(e.target.value)} onKeyDown={handleKey} placeholder="Type your question..." accent={accent} mobile={m} th={th} />
-                    <button onClick={handleSubmit} disabled={!input.trim() || isBusy} style={{ width: m ? 36 : 40, height: m ? 36 : 40, borderRadius: 12, border: 'none', flexShrink: 0, background: input.trim() && !isBusy ? `linear-gradient(135deg, ${accent}, ${accent}cc)` : th.inputBg, color: input.trim() && !isBusy ? '#fff' : `${th.text}30`, cursor: input.trim() && !isBusy ? 'pointer' : 'default', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.3s', marginBottom: 1 }}>
+                <div style={{ padding: m ? '6px 8px 8px' : '8px 14px 10px', borderTop: `1px solid ${w.divider}`, display: 'flex', gap: m ? 6 : 8, alignItems: 'flex-end', flexShrink: 0 }}>
+                    <AutoTextarea value={input} onChange={(e) => setInput(e.target.value)} onKeyDown={handleKey} placeholder="Type your question..." accent={accent} mobile={m} w={w} />
+                    <button onClick={handleSubmit} disabled={!input.trim() || isBusy} style={{ width: m ? 36 : 40, height: m ? 36 : 40, borderRadius: 12, border: 'none', flexShrink: 0, background: input.trim() && !isBusy ? `linear-gradient(135deg, ${accent}, ${accent}cc)` : w.sendDisabled, color: input.trim() && !isBusy ? '#fff' : w.sendDisColor, cursor: input.trim() && !isBusy ? 'pointer' : 'default', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.3s', marginBottom: 1 }}>
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
                     </button>
                 </div>
             </div>
 
-            <div style={{ marginTop: m ? 4 : 8, flexShrink: 0, fontFamily: "'DM Sans', sans-serif", fontSize: m ? 6 : 7, color: th.textFaint, letterSpacing: 2, textTransform: 'uppercase', position: 'relative', zIndex: 2 }}>Coco Choi · 2025</div>
+            <div style={{ marginTop: m ? 4 : 8, flexShrink: 0, fontFamily: "'DM Sans', sans-serif", fontSize: m ? 6 : 7, color: titleColor ? `${titleColor}20` : (w.dark ? 'rgba(240,232,220,0.06)' : 'rgba(61,47,42,0.1)'), letterSpacing: 2, textTransform: 'uppercase', position: 'relative', zIndex: 2 }}>Coco Choi · 2025</div>
         </section>
     )
 }
