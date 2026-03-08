@@ -15,7 +15,7 @@ export default function ProjectsPage({ go }) {
 
     useEffect(() => { if (scrollRef.current) scrollRef.current.scrollTop = 0 }, [])
 
-    const SCROLL_HINT_CSS = `@keyframes scrollPulse{0%,100%{transform:translateY(0);opacity:.6}50%{transform:translateY(5px);opacity:1}}.scroll-hint-bounce{animation:scrollPulse 2s ease-in-out infinite}`
+    const SCROLL_HINT_CSS = `@keyframes chatBubblePulse{0%,100%{transform:scale(1);box-shadow:0 2px 10px rgba(0,0,0,.12)}50%{transform:scale(1.08);box-shadow:0 4px 18px rgba(0,0,0,.18)}}.chat-whisper{animation:chatBubblePulse 3s ease-in-out infinite;transition:opacity .4s}.chat-whisper:hover{animation:none;transform:scale(1.12);box-shadow:0 6px 22px rgba(0,0,0,.2)}`
 
     /* Rive — Warhol animation (plays on both mobile & desktop) */
     useEffect(() => {
@@ -73,9 +73,8 @@ export default function ProjectsPage({ go }) {
                         </div>
                     </div>
                     <button className="page-back" onClick={() => go('home')} style={{ background: 'rgba(255,255,255,0.08)', borderColor: 'rgba(255,255,255,0.12)', zIndex: 100 }}>←</button>
-                    <div className="proj-scroll-hint" style={{ position: 'absolute', bottom: 0, left: 0, right: 0, zIndex: 30, display: 'flex', flexDirection: 'column', alignItems: 'center', paddingBottom: 4, opacity: 0, cursor: 'pointer', background: 'linear-gradient(0deg, rgba(0,0,0,0.3) 0%, transparent 100%)' }} onClick={() => scrollRef.current?.scrollTo({ top: window.innerHeight, behavior: 'smooth' })}>
-                        <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 6, fontWeight: 600, letterSpacing: 2, textTransform: 'uppercase', color: 'rgba(255,255,255,0.45)', marginBottom: 2 }}>Ask about my projects</div>
-                        <svg className="scroll-hint-bounce" width="12" height="7" viewBox="0 0 14 8" fill="none" stroke="rgba(255,255,255,0.35)" strokeWidth="1.2" strokeLinecap="round"><path d="M1 1 L7 6 L13 1"/></svg>
+                    <div className="proj-scroll-hint chat-whisper" style={{ position: 'absolute', bottom: 12, right: 12, zIndex: 30, width: 32, height: 32, borderRadius: '50%', background: 'rgba(240,232,220,0.85)', backdropFilter: 'blur(8px)', border: '1px solid rgba(255,255,255,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', opacity: 0 }} onClick={() => scrollRef.current?.scrollTo({ top: window.innerHeight, behavior: 'smooth' })}>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#3d2f2a" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" style={{ opacity: 0.5 }}><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
                     </div>
                     <NavOverlay go={go} current="projects" dark />
                 </section>
@@ -110,9 +109,8 @@ export default function ProjectsPage({ go }) {
                     </div>
                 </div>
                 <button className="page-back" onClick={() => go('home')} style={{ background: 'rgba(255,255,255,0.08)', borderColor: 'rgba(255,255,255,0.12)', zIndex: 100 }}>←</button>
-                <div className="proj-scroll-hint" style={{ position: 'absolute', bottom: 0, left: 0, right: 0, zIndex: 30, display: 'flex', flexDirection: 'column', alignItems: 'center', paddingBottom: 6, opacity: 0, cursor: 'pointer', background: 'linear-gradient(0deg, rgba(0,0,0,0.3) 0%, transparent 100%)' }} onClick={() => scrollRef.current?.scrollTo({ top: window.innerHeight, behavior: 'smooth' })}>
-                    <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 7, fontWeight: 600, letterSpacing: 2, textTransform: 'uppercase', color: 'rgba(255,255,255,0.45)', marginBottom: 3 }}>Ask about my projects</div>
-                    <svg className="scroll-hint-bounce" width="14" height="8" viewBox="0 0 14 8" fill="none" stroke="rgba(255,255,255,0.35)" strokeWidth="1.2" strokeLinecap="round"><path d="M1 1 L7 6 L13 1"/></svg>
+                <div className="proj-scroll-hint chat-whisper" style={{ position: 'absolute', bottom: 18, right: 18, zIndex: 30, width: 38, height: 38, borderRadius: '50%', background: 'rgba(240,232,220,0.85)', backdropFilter: 'blur(8px)', border: '1px solid rgba(255,255,255,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', opacity: 0 }} onClick={() => scrollRef.current?.scrollTo({ top: window.innerHeight, behavior: 'smooth' })}>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3d2f2a" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" style={{ opacity: 0.5 }}><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
                 </div>
                 <NavOverlay go={go} current="projects" dark />
             </section>

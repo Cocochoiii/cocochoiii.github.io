@@ -293,9 +293,6 @@ export default function HomePage({ go }) {
           backdrop-filter: blur(8px); text-decoration: none; filter: url(#sketchy-sm);
         }
         .social-icon:hover { background: rgba(255,255,255,1); color: #E37B88; transform: translateY(-3px) scale(1.1); }
-        .sketchy-btn { filter: url(#sketchy-sm); transition: all 0.4s cubic-bezier(0.25,0,0,1); }
-        .sketchy-btn:hover { transform: translateY(-2px) scale(1.04); }
-        .sketchy-btn:active { transform: scale(0.97); }
 
         /* Pencil circle breathing — pen-pressure wobble when drawn */
         @keyframes pencilBreathe {
@@ -324,8 +321,12 @@ export default function HomePage({ go }) {
           display: inline-block;
           animation: inkAppear 0.3s ease-out forwards;
         }
-        @keyframes scrollPulse { 0%,100% { transform: translateY(0); opacity: 0.6; } 50% { transform: translateY(5px); opacity: 1; } }
-        .scroll-hint-bounce { animation: scrollPulse 2s ease-in-out infinite; }
+        @keyframes chatBubblePulse {
+          0%, 100% { transform: scale(1); box-shadow: 0 2px 10px rgba(0,0,0,0.12); }
+          50% { transform: scale(1.08); box-shadow: 0 4px 18px rgba(0,0,0,0.18); }
+        }
+        .chat-whisper { animation: chatBubblePulse 3s ease-in-out infinite; transition: opacity 0.4s; }
+        .chat-whisper:hover { animation: none; transform: scale(1.12); box-shadow: 0 6px 22px rgba(0,0,0,0.2); }
       `}</style>
 
                 {/* BG text spotlight — desktop only */}
@@ -478,34 +479,18 @@ export default function HomePage({ go }) {
                     ))}
                 </div>
 
-                {/* Mobile: bottom nav bar */}
-                {m && (
-                    <div style={{ position: 'absolute', bottom: 10, left: '75%', transform: 'translateX(-50%)', zIndex: 30, display: 'flex', gap: 5 }}>
-                        {[
-                            { label: 'Work', nav: 'experience' },
-                            { label: 'Projects', nav: 'projects' },
-                            { label: 'About', nav: 'about' },
-                        ].map((item) => (
-                            <button key={item.nav} className="sketchy-btn" onClick={() => { playNote(440, 0.2); go(item.nav) }} style={{
-                                background: 'rgba(255,255,255,0.2)', border: '1px solid rgba(255,255,255,0.3)',
-                                borderRadius: 14, padding: '5px 12px', color: 'white',
-                                fontFamily: "'DM Sans', sans-serif", fontSize: 7, fontWeight: 700,
-                                letterSpacing: 0.8, textTransform: 'uppercase', cursor: 'pointer',
-                                backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)',
-                            }}>{item.label}</button>
-                        ))}
-                    </div>
-                )}
-
-                {/* ── Scroll-to-chat — thin edge bar ── */}
-                <div className="scroll-chat-hint" style={{
-                    position: 'absolute', bottom: 0, left: 0, right: 0, zIndex: 30,
-                    display: 'flex', flexDirection: 'column', alignItems: 'center',
-                    paddingBottom: m ? 4 : 6, opacity: 0, cursor: 'pointer',
-                    background: 'linear-gradient(0deg, rgba(0,0,0,0.25) 0%, transparent 100%)',
+                {/* ── Corner chat whisper ── */}
+                <div className="scroll-chat-hint chat-whisper" style={{
+                    position: 'absolute', bottom: m ? 12 : 18, right: m ? 12 : 18, zIndex: 30,
+                    width: m ? 32 : 38, height: m ? 32 : 38, borderRadius: '50%',
+                    background: 'rgba(255,255,255,0.9)', backdropFilter: 'blur(8px)',
+                    border: '1px solid rgba(255,255,255,0.6)',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    cursor: 'pointer', opacity: 0,
                 }} onClick={() => scrollRef.current?.scrollTo({ top: window.innerHeight, behavior: 'smooth' })}>
-                    <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: m ? 6 : 7, fontWeight: 600, letterSpacing: 2, textTransform: 'uppercase', color: 'rgba(255,255,255,0.5)', marginBottom: 3 }}>Ask me anything</div>
-                    <svg className="scroll-hint-bounce" width="14" height="8" viewBox="0 0 14 8" fill="none" stroke="rgba(255,255,255,0.4)" strokeWidth="1.2" strokeLinecap="round"><path d="M1 1 L7 6 L13 1"/></svg>
+                    <svg width={m ? 14 : 16} height={m ? 14 : 16} viewBox="0 0 24 24" fill="none" stroke="#3d2f2a" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" style={{ opacity: 0.6 }}>
+                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+                    </svg>
                 </div>
 
                 <NavOverlay go={go} current="home" />
