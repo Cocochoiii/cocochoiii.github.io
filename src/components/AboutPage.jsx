@@ -6,6 +6,7 @@ import AnimatedNumber from './shared/AnimatedNumber'
 import useParallax from '../hooks/useParallax'
 import useScrollReveal from '../hooks/useScrollReveal'
 import useIsMobile from '../hooks/useIsMobile'
+import useSmoothScroll from '../hooks/useSmoothScroll'
 import { SKILLS, ABOUT_STATS, ABOUT_BIG_STATS, CONTACT_INFO, ABOUT_SOCIALS } from '../constants/data'
 
 /*
@@ -80,7 +81,6 @@ const PAGE_CSS = `
     50% { transform: translateY(10px); opacity: 0.6; }
     90% { opacity: 0; }
   }
-  /* Drop-cap — medieval illuminated manuscript style */
   .story-para::first-letter {
     font-family: 'Playfair Display', serif;
     font-size: 2.4em;
@@ -104,6 +104,7 @@ export default function AboutPage({ go }) {
 
   useParallax(textRef, { xFactor: -5, yFactor: -3, enabled: !m })
   useScrollReveal(scrollRef)
+  useSmoothScroll(scrollRef, { lerp: 0.08, wheelMultiplier: 1, enabled: !m })
 
   const a = ARTISTS[artistIdx]
 
