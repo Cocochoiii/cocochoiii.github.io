@@ -2,10 +2,11 @@ import { useEffect, useRef, useState, useCallback } from 'react'
 import gsap from 'gsap'
 
 import NavOverlay from './NavOverlay'
+import ChatSection from './ChatSection'
 import useTypewriter from '../hooks/useTypewriter'
 import useIsMobile from '../hooks/useIsMobile'
 import { playNote, bgMusic } from '../utils/audio'
-import { TYPEWRITER_TITLES, HOME_ZONES, SOCIALS } from '../constants/data'
+import { TYPEWRITER_TITLES, HOME_ZONES, SOCIALS, HOME_CHAT } from '../constants/data'
 
 const GitHubIcon = () => (<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"/></svg>)
 const LinkedInIcon = () => (<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>)
@@ -147,6 +148,9 @@ export default function HomePage({ go }) {
     const canvasRef   = useRef(null)
     const parallaxRef = useRef(null)
     const riveRef     = useRef(null)
+    const scrollRef   = useRef(null)
+
+    useEffect(() => { if (scrollRef.current) scrollRef.current.scrollTop = 0 }, [])
 
     const defaultMsg = m ? DEFAULT_MSG_MOBILE : DEFAULT_MSG_DESKTOP
     const [dialogue, setDialogue]       = useState(defaultMsg)
@@ -211,6 +215,7 @@ export default function HomePage({ go }) {
         tl.to('.hsub2', { opacity: 1, y: 0, duration: 0.9, onComplete: startTyping }, '-=0.5')
         tl.to('.dial', { opacity: 1, scale: 1, duration: 0.6 }, '-=0.3')
         tl.to('.hot', { opacity: 1, duration: 0.5, stagger: 0.1 }, '-=0.3')
+        tl.to('.scroll-chat-hint', { opacity: 1, duration: 0.8 }, '-=0.1')
         return () => tl.kill()
     }, [startTyping])
 
@@ -258,24 +263,25 @@ export default function HomePage({ go }) {
     const sketchyFilter = 'url(#sketchy)'
 
     return (
-        <div style={{ width: '100vw', height: '100vh', position: 'relative', overflow: 'hidden', background: '#E37B88' }}>
-            <div className="noise-overlay" />
+        <div ref={scrollRef} style={{ width: '100vw', height: '100vh', overflowX: 'hidden', overflowY: 'auto', scrollSnapType: 'y mandatory', WebkitOverflowScrolling: 'touch' }}>
+            <section style={{ width: '100%', height: '100vh', position: 'relative', overflow: 'hidden', background: '#E37B88', scrollSnapAlign: 'start' }}>
+                <div className="noise-overlay" />
 
-            {/* ── SVG filters ── */}
-            <svg style={{ position: 'absolute', width: 0, height: 0 }} aria-hidden="true">
-                <defs>
-                    <filter id="sketchy" x="-5%" y="-5%" width="110%" height="110%" filterUnits="objectBoundingBox">
-                        <feTurbulence type="turbulence" baseFrequency="0.04" numOctaves="4" seed="2" result="turbulence" />
-                        <feDisplacementMap in="SourceGraphic" in2="turbulence" scale="1.5" xChannelSelector="R" yChannelSelector="G" />
-                    </filter>
-                    <filter id="sketchy-sm" x="-8%" y="-8%" width="116%" height="116%" filterUnits="objectBoundingBox">
-                        <feTurbulence type="turbulence" baseFrequency="0.06" numOctaves="3" seed="7" result="turbulence" />
-                        <feDisplacementMap in="SourceGraphic" in2="turbulence" scale="1.0" xChannelSelector="R" yChannelSelector="G" />
-                    </filter>
-                </defs>
-            </svg>
+                {/* ── SVG filters ── */}
+                <svg style={{ position: 'absolute', width: 0, height: 0 }} aria-hidden="true">
+                    <defs>
+                        <filter id="sketchy" x="-5%" y="-5%" width="110%" height="110%" filterUnits="objectBoundingBox">
+                            <feTurbulence type="turbulence" baseFrequency="0.04" numOctaves="4" seed="2" result="turbulence" />
+                            <feDisplacementMap in="SourceGraphic" in2="turbulence" scale="1.5" xChannelSelector="R" yChannelSelector="G" />
+                        </filter>
+                        <filter id="sketchy-sm" x="-8%" y="-8%" width="116%" height="116%" filterUnits="objectBoundingBox">
+                            <feTurbulence type="turbulence" baseFrequency="0.06" numOctaves="3" seed="7" result="turbulence" />
+                            <feDisplacementMap in="SourceGraphic" in2="turbulence" scale="1.0" xChannelSelector="R" yChannelSelector="G" />
+                        </filter>
+                    </defs>
+                </svg>
 
-            <style>{`
+                <style>{`
         @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
         .noise-overlay { position: fixed; inset: 0; z-index: 99; pointer-events: none; opacity: 0.045; background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E"); }
         .social-icon {
@@ -318,178 +324,194 @@ export default function HomePage({ go }) {
           display: inline-block;
           animation: inkAppear 0.3s ease-out forwards;
         }
+        @keyframes scrollPulse { 0%,100% { transform: translateY(0); opacity: 0.6; } 50% { transform: translateY(5px); opacity: 1; } }
+        .scroll-hint-bounce { animation: scrollPulse 2s ease-in-out infinite; }
       `}</style>
 
-            {/* BG text spotlight — desktop only */}
-            {!m && (
-                <div className="reveal-mask" style={{ position: 'absolute', inset: 0, zIndex: 0, pointerEvents: 'none', opacity: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', transform: 'translateY(-5vh)', WebkitMaskImage: `radial-gradient(circle 110px at ${mouse.x}px ${mouse.y}px, black 15%, transparent 100%)`, maskImage: `radial-gradient(circle 110px at ${mouse.x}px ${mouse.y}px, black 15%, transparent 100%)` }}>
-                    <div style={{ fontFamily: "'Playfair Display', serif", fontSize: 'clamp(30px, 12vw, 85px)', fontWeight: 900, color: '#c4606c', textAlign: 'center', whiteSpace: 'nowrap', letterSpacing: -2 }}>
-                        <div>CREATIVE</div><div>SOFTWARE</div><div>ENGINEER</div>
-                    </div>
-                </div>
-            )}
-
-            {/* Piano Rive wrapper */}
-            <div ref={parallaxRef} style={wrapperStyle}>
-                <canvas ref={canvasRef} style={{ position: 'absolute', top: 0, left: 0, display: 'block', outline: '4px solid #E37B88' }} />
-
-                {/* ── Hot zones ── */}
-                {zones.map((z, zi) => {
-                    const isActive = hovered === z.id
-                    const zoneW = m ? Math.max(z.w, 44) : z.w
-                    const zoneH = m ? Math.max(z.h, 44) : z.h
-                    return (
-                        <div key={z.id} className="hot" style={{
-                            position: 'absolute', top: z.top, left: z.left, transform: 'translate(-50%, -50%)',
-                            width: zoneW, height: zoneH, borderRadius: z.r, cursor: 'pointer', zIndex: 10, opacity: 0,
-                            display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        }}
-                             onMouseEnter={() => handleZoneEnter(z)} onMouseLeave={handleZoneLeave}
-                             onClick={() => handleZoneClick(z)}>
-                            <PencilCircle active={isActive} w={zoneW} h={zoneH} mobile={m} />
-                            <FloatingNote visible={hintVisible && !isActive} seed={zi} spread={Math.min(zoneW, zoneH) * 0.8} />
-                            {!m && (
-                                <div style={{
-                                    position: 'absolute', bottom: -34, left: '50%',
-                                    transform: `translateX(-50%) ${isActive ? 'translateY(0)' : 'translateY(4px)'}`,
-                                    fontFamily: "'Patrick Hand', cursive", fontSize: 20, fontWeight: 400, color: 'white',
-                                    textShadow: '0 2px 6px rgba(0,0,0,0.35)',
-                                    opacity: isActive ? 1 : 0, transition: 'all 0.35s cubic-bezier(0.25,0,0,1)',
-                                    whiteSpace: 'nowrap',
-                                }}>{z.label}</div>
-                            )}
-                            {m && isActive && (
-                                <div style={{
-                                    position: 'absolute', top: -26, left: '50%', transform: 'translateX(-50%)',
-                                    fontFamily: "'Patrick Hand', cursive", fontSize: 15, fontWeight: 400,
-                                    color: 'white', textShadow: '0 2px 4px rgba(0,0,0,0.35)',
-                                    background: 'rgba(0,0,0,0.3)', padding: '4px 12px', borderRadius: 12,
-                                    whiteSpace: 'nowrap',
-                                }}>{z.label}</div>
-                            )}
-                        </div>
-                    )
-                })}
-
-                {/* Dialogue bubble — desktop */}
+                {/* BG text spotlight — desktop only */}
                 {!m && (
-                    <div className="dial" style={{
-                        position: 'absolute', bottom: '18%', right: '30%',
-                        background: 'rgba(255,255,255,0.96)', backdropFilter: 'blur(10px)',
-                        borderRadius: 14, padding: '14px 20px', zIndex: 20, opacity: 0, transform: 'scale(0.9)',
-                        boxShadow: '0 6px 20px rgba(0,0,0,0.12)', filter: sketchyFilter,
-                    }}>
-                        <div className="dial-text" style={{ fontFamily: "'Patrick Hand', cursive", fontSize: 18, color: '#2a2020', textAlign: 'center', whiteSpace: 'pre-line', lineHeight: 1.4 }}>{dialogue}</div>
-                        <BubbleTail />
+                    <div className="reveal-mask" style={{ position: 'absolute', inset: 0, zIndex: 0, pointerEvents: 'none', opacity: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', transform: 'translateY(-5vh)', WebkitMaskImage: `radial-gradient(circle 110px at ${mouse.x}px ${mouse.y}px, black 15%, transparent 100%)`, maskImage: `radial-gradient(circle 110px at ${mouse.x}px ${mouse.y}px, black 15%, transparent 100%)` }}>
+                        <div style={{ fontFamily: "'Playfair Display', serif", fontSize: 'clamp(30px, 12vw, 85px)', fontWeight: 900, color: '#c4606c', textAlign: 'center', whiteSpace: 'nowrap', letterSpacing: -2 }}>
+                            <div>CREATIVE</div><div>SOFTWARE</div><div>ENGINEER</div>
+                        </div>
                     </div>
                 )}
-            </div>
 
-            {/* Mobile dialogue bubble */}
-            {m && (
-                <div className="dial" style={{
-                    position: 'absolute', top: '37%', left: '30%',
-                    background: 'rgba(255,255,255,0.93)', backdropFilter: 'blur(10px)',
-                    borderRadius: 12, padding: '10px 14px', zIndex: 20, opacity: 0, transform: 'scale(0.9)',
-                    boxShadow: '0 5px 16px rgba(0,0,0,0.15)', filter: sketchyFilter,
-                }}>
-                    <div className="dial-text" style={{ fontFamily: "'Patrick Hand', cursive", fontSize: 12, color: '#2a2020', textAlign: 'center', whiteSpace: 'pre-line', maxWidth: 140, lineHeight: 1.4 }}>{dialogue}</div>
-                    <BubbleTail color="rgba(255,255,255,0.93)" size="mobile" />
+                {/* Piano Rive wrapper */}
+                <div ref={parallaxRef} style={wrapperStyle}>
+                    <canvas ref={canvasRef} style={{ position: 'absolute', top: 0, left: 0, display: 'block', outline: '4px solid #E37B88' }} />
+
+                    {/* ── Hot zones ── */}
+                    {zones.map((z, zi) => {
+                        const isActive = hovered === z.id
+                        const zoneW = m ? Math.max(z.w, 44) : z.w
+                        const zoneH = m ? Math.max(z.h, 44) : z.h
+                        return (
+                            <div key={z.id} className="hot" style={{
+                                position: 'absolute', top: z.top, left: z.left, transform: 'translate(-50%, -50%)',
+                                width: zoneW, height: zoneH, borderRadius: z.r, cursor: 'pointer', zIndex: 10, opacity: 0,
+                                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                            }}
+                                 onMouseEnter={() => handleZoneEnter(z)} onMouseLeave={handleZoneLeave}
+                                 onClick={() => handleZoneClick(z)}>
+                                <PencilCircle active={isActive} w={zoneW} h={zoneH} mobile={m} />
+                                <FloatingNote visible={hintVisible && !isActive} seed={zi} spread={Math.min(zoneW, zoneH) * 0.8} />
+                                {!m && (
+                                    <div style={{
+                                        position: 'absolute', bottom: -34, left: '50%',
+                                        transform: `translateX(-50%) ${isActive ? 'translateY(0)' : 'translateY(4px)'}`,
+                                        fontFamily: "'Patrick Hand', cursive", fontSize: 20, fontWeight: 400, color: 'white',
+                                        textShadow: '0 2px 6px rgba(0,0,0,0.35)',
+                                        opacity: isActive ? 1 : 0, transition: 'all 0.35s cubic-bezier(0.25,0,0,1)',
+                                        whiteSpace: 'nowrap',
+                                    }}>{z.label}</div>
+                                )}
+                                {m && isActive && (
+                                    <div style={{
+                                        position: 'absolute', top: -26, left: '50%', transform: 'translateX(-50%)',
+                                        fontFamily: "'Patrick Hand', cursive", fontSize: 15, fontWeight: 400,
+                                        color: 'white', textShadow: '0 2px 4px rgba(0,0,0,0.35)',
+                                        background: 'rgba(0,0,0,0.3)', padding: '4px 12px', borderRadius: 12,
+                                        whiteSpace: 'nowrap',
+                                    }}>{z.label}</div>
+                                )}
+                            </div>
+                        )
+                    })}
+
+                    {/* Dialogue bubble — desktop */}
+                    {!m && (
+                        <div className="dial" style={{
+                            position: 'absolute', bottom: '18%', right: '30%',
+                            background: 'rgba(255,255,255,0.96)', backdropFilter: 'blur(10px)',
+                            borderRadius: 14, padding: '14px 20px', zIndex: 20, opacity: 0, transform: 'scale(0.9)',
+                            boxShadow: '0 6px 20px rgba(0,0,0,0.12)', filter: sketchyFilter,
+                        }}>
+                            <div className="dial-text" style={{ fontFamily: "'Patrick Hand', cursive", fontSize: 18, color: '#2a2020', textAlign: 'center', whiteSpace: 'pre-line', lineHeight: 1.4 }}>{dialogue}</div>
+                            <BubbleTail />
+                        </div>
+                    )}
                 </div>
-            )}
 
-            {/* ── Name — hand-drawn style ── */}
-            <div className="hname" style={{
-                position: 'absolute', top: m ? '3%' : '20%', left: m ? 10 : 30, zIndex: 30, opacity: 0, transform: 'translateY(20px)',
-                filter: 'url(#sketchy)',
-            }}>
-                {'Coco Choi'.split('').map((ch, i) => (
-                    <span key={i} className="piano-key-letter" style={{
-                        fontFamily: "'Playfair Display', serif", fontStyle: 'italic',
-                        fontSize: m ? 'clamp(30px, 10vw, 44px)' : 'clamp(40px, 9vw, 75px)',
-                        fontWeight: 900, color: 'white', display: 'inline-block',
-                        transform: `rotate(${charWobble(i)}deg) translateY(${charShiftY(i)}px)`,
-                    }}
-                          onMouseEnter={(e) => handleLetterHover(e, i)}
-                          onClick={(e) => m && handleLetterHover(e, i)}>
+                {/* Mobile dialogue bubble */}
+                {m && (
+                    <div className="dial" style={{
+                        position: 'absolute', top: '37%', left: '30%',
+                        background: 'rgba(255,255,255,0.93)', backdropFilter: 'blur(10px)',
+                        borderRadius: 12, padding: '10px 14px', zIndex: 20, opacity: 0, transform: 'scale(0.9)',
+                        boxShadow: '0 5px 16px rgba(0,0,0,0.15)', filter: sketchyFilter,
+                    }}>
+                        <div className="dial-text" style={{ fontFamily: "'Patrick Hand', cursive", fontSize: 12, color: '#2a2020', textAlign: 'center', whiteSpace: 'pre-line', maxWidth: 140, lineHeight: 1.4 }}>{dialogue}</div>
+                        <BubbleTail color="rgba(255,255,255,0.93)" size="mobile" />
+                    </div>
+                )}
+
+                {/* ── Name — hand-drawn style ── */}
+                <div className="hname" style={{
+                    position: 'absolute', top: m ? '3%' : '20%', left: m ? 10 : 30, zIndex: 30, opacity: 0, transform: 'translateY(20px)',
+                    filter: 'url(#sketchy)',
+                }}>
+                    {'Coco Choi'.split('').map((ch, i) => (
+                        <span key={i} className="piano-key-letter" style={{
+                            fontFamily: "'Playfair Display', serif", fontStyle: 'italic',
+                            fontSize: m ? 'clamp(30px, 10vw, 44px)' : 'clamp(40px, 9vw, 75px)',
+                            fontWeight: 900, color: 'white', display: 'inline-block',
+                            transform: `rotate(${charWobble(i)}deg) translateY(${charShiftY(i)}px)`,
+                        }}
+                              onMouseEnter={(e) => handleLetterHover(e, i)}
+                              onClick={(e) => m && handleLetterHover(e, i)}>
             {ch === ' ' ? '\u00A0' : ch}
           </span>
-                ))}
-            </div>
+                    ))}
+                </div>
 
-            {/* ── Handwritten typewriter + hand-with-pen ── */}
-            <div className="hsub2" style={{
-                position: 'absolute', top: m ? '13%' : '34%',
-                right: m ? 10 : 40, left: m ? 10 : 'auto', zIndex: 30, opacity: 0,
-            }}>
-                <div style={{
-                    fontFamily: "'Playfair Display', serif", fontStyle: 'italic',
-                    fontSize: m ? 'clamp(24px, 4.5vw, 28px)' : 'clamp(16px, 6vw, 32px)',
-                    fontWeight: 800, color: 'white', letterSpacing: 0.5,
-                    textAlign: m ? 'left' : 'right',
-                    filter: 'url(#sketchy-sm)',
+                {/* ── Handwritten typewriter + hand-with-pen ── */}
+                <div className="hsub2" style={{
+                    position: 'absolute', top: m ? '13%' : '34%',
+                    right: m ? 10 : 40, left: m ? 10 : 'auto', zIndex: 30, opacity: 0,
                 }}>
-                    {/*
+                    <div style={{
+                        fontFamily: "'Playfair Display', serif", fontStyle: 'italic',
+                        fontSize: m ? 'clamp(24px, 4.5vw, 28px)' : 'clamp(16px, 6vw, 32px)',
+                        fontWeight: 800, color: 'white', letterSpacing: 0.5,
+                        textAlign: m ? 'left' : 'right',
+                        filter: 'url(#sketchy-sm)',
+                    }}>
+                        {/*
            * Each character is its own span with:
            *   - Unique wobble rotation + vertical jitter (via CSS vars)
            *   - inkAppear animation that plays on mount (from below + blurred → settled)
            *   - Key includes string index to force remount on new chars → re-trigger animation
            */}
-                    {displayed.split('').map((ch, i) => (
-                        <span
-                            key={`${displayed.length}-${i}`}
-                            className={i === displayed.length - 1 ? 'ink-char' : undefined}
-                            style={{
-                                display: 'inline-block',
-                                '--wobble': `${charWobble(i)}deg`,
-                                transform: `rotate(${charWobble(i)}deg) translateY(${charShiftY(i)}px)`,
-                            }}
-                        >
+                        {displayed.split('').map((ch, i) => (
+                            <span
+                                key={`${displayed.length}-${i}`}
+                                className={i === displayed.length - 1 ? 'ink-char' : undefined}
+                                style={{
+                                    display: 'inline-block',
+                                    '--wobble': `${charWobble(i)}deg`,
+                                    transform: `rotate(${charWobble(i)}deg) translateY(${charShiftY(i)}px)`,
+                                }}
+                            >
               {ch === ' ' ? '\u00A0' : ch}
             </span>
-                    ))}
-                    <HandPen mobile={m} />
+                        ))}
+                        <HandPen mobile={m} />
+                    </div>
+                    {/* University label — adds depth to the right side */}
+                    <div style={{
+                        fontFamily: "'DM Sans', sans-serif",
+                        fontSize: m ? 6 : 8, fontWeight: 600,
+                        letterSpacing: m ? 1.5 : 2.5, textTransform: 'uppercase',
+                        color: 'rgba(255,255,255,0.3)',
+                        textAlign: m ? 'left' : 'right',
+                        marginTop: m ? 6 : 10,
+                    }}>
+                        Northeastern University · MS Computer Science
+                    </div>
                 </div>
-                {/* University label — adds depth to the right side */}
-                <div style={{
-                    fontFamily: "'DM Sans', sans-serif",
-                    fontSize: m ? 6 : 8, fontWeight: 600,
-                    letterSpacing: m ? 1.5 : 2.5, textTransform: 'uppercase',
-                    color: 'rgba(255,255,255,0.3)',
-                    textAlign: m ? 'left' : 'right',
-                    marginTop: m ? 6 : 10,
-                }}>
-                    Northeastern University · MS Computer Science
-                </div>
-            </div>
 
-            {/* Social icons */}
-            <div className="hsocials" style={{ position: 'absolute', bottom: m ? 10 : 40, left: m ? 10 : 30, zIndex: 30, display: 'flex', gap: m ? 5 : 8, opacity: 0 }}>
-                {SOCIALS.map((s, i) => (
-                    <a key={i} className="social-icon" href={s.href} target="_blank" rel="noreferrer" onMouseEnter={() => playNote(880, 0.1)}>{SOCIAL_ICONS[i]}</a>
-                ))}
-            </div>
-
-            {/* Mobile: bottom nav bar */}
-            {m && (
-                <div style={{ position: 'absolute', bottom: 10, left: '75%', transform: 'translateX(-50%)', zIndex: 30, display: 'flex', gap: 5 }}>
-                    {[
-                        { label: 'Work', nav: 'experience' },
-                        { label: 'Projects', nav: 'projects' },
-                        { label: 'About', nav: 'about' },
-                    ].map((item) => (
-                        <button key={item.nav} className="sketchy-btn" onClick={() => { playNote(440, 0.2); go(item.nav) }} style={{
-                            background: 'rgba(255,255,255,0.2)', border: '1px solid rgba(255,255,255,0.3)',
-                            borderRadius: 14, padding: '5px 12px', color: 'white',
-                            fontFamily: "'DM Sans', sans-serif", fontSize: 7, fontWeight: 700,
-                            letterSpacing: 0.8, textTransform: 'uppercase', cursor: 'pointer',
-                            backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)',
-                        }}>{item.label}</button>
+                {/* Social icons */}
+                <div className="hsocials" style={{ position: 'absolute', bottom: m ? 10 : 40, left: m ? 10 : 30, zIndex: 30, display: 'flex', gap: m ? 5 : 8, opacity: 0 }}>
+                    {SOCIALS.map((s, i) => (
+                        <a key={i} className="social-icon" href={s.href} target="_blank" rel="noreferrer" onMouseEnter={() => playNote(880, 0.1)}>{SOCIAL_ICONS[i]}</a>
                     ))}
                 </div>
-            )}
 
-            <NavOverlay go={go} current="home" />
+                {/* Mobile: bottom nav bar */}
+                {m && (
+                    <div style={{ position: 'absolute', bottom: 10, left: '75%', transform: 'translateX(-50%)', zIndex: 30, display: 'flex', gap: 5 }}>
+                        {[
+                            { label: 'Work', nav: 'experience' },
+                            { label: 'Projects', nav: 'projects' },
+                            { label: 'About', nav: 'about' },
+                        ].map((item) => (
+                            <button key={item.nav} className="sketchy-btn" onClick={() => { playNote(440, 0.2); go(item.nav) }} style={{
+                                background: 'rgba(255,255,255,0.2)', border: '1px solid rgba(255,255,255,0.3)',
+                                borderRadius: 14, padding: '5px 12px', color: 'white',
+                                fontFamily: "'DM Sans', sans-serif", fontSize: 7, fontWeight: 700,
+                                letterSpacing: 0.8, textTransform: 'uppercase', cursor: 'pointer',
+                                backdropFilter: 'blur(10px)', WebkitBackdropFilter: 'blur(10px)',
+                            }}>{item.label}</button>
+                        ))}
+                    </div>
+                )}
+
+                {/* ── Scroll-to-chat — thin edge bar ── */}
+                <div className="scroll-chat-hint" style={{
+                    position: 'absolute', bottom: 0, left: 0, right: 0, zIndex: 30,
+                    display: 'flex', flexDirection: 'column', alignItems: 'center',
+                    paddingBottom: m ? 4 : 6, opacity: 0, cursor: 'pointer',
+                    background: 'linear-gradient(0deg, rgba(0,0,0,0.25) 0%, transparent 100%)',
+                }} onClick={() => scrollRef.current?.scrollTo({ top: window.innerHeight, behavior: 'smooth' })}>
+                    <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: m ? 6 : 7, fontWeight: 600, letterSpacing: 2, textTransform: 'uppercase', color: 'rgba(255,255,255,0.5)', marginBottom: 3 }}>Ask me anything</div>
+                    <svg className="scroll-hint-bounce" width="14" height="8" viewBox="0 0 14 8" fill="none" stroke="rgba(255,255,255,0.4)" strokeWidth="1.2" strokeLinecap="round"><path d="M1 1 L7 6 L13 1"/></svg>
+                </div>
+
+                <NavOverlay go={go} current="home" />
+            </section>
+
+            <ChatSection config={{ ...HOME_CHAT, accent: '#c47a6e', title: 'Ask me anything', subtitle: 'Conversation' }} />
         </div>
     )
 }
