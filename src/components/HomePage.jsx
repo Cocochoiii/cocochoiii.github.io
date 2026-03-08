@@ -34,7 +34,7 @@ const PENCIL_PATH = 'M 50 5 C 72 3, 97 18, 96 45 C 95 72, 75 97, 48 96 C 22 95, 
 const PENCIL_LEN = 310
 
 function PencilCircle({ active, w, h, mobile }) {
-    const pad = mobile ? 14 : 22
+    const pad = mobile ? 4 : 22
     const pathRef = useRef(null)
     const dotRef = useRef(null)
     const prevActive = useRef(false)

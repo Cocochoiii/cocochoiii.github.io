@@ -1,17 +1,7 @@
-import { useState, useRef, useEffect, useCallback, memo } from 'react'
+import { useState, useRef, useEffect, useCallback, memo, useMemo } from 'react'
 import gsap from 'gsap'
 import useIsMobile from '../hooks/useIsMobile'
 import { EYE } from '../constants/theme'
-
-/*
- * ChatSection — shared AI chat panel with per-page visual cohesion.
- *
- * config.bg         — section background color
- * config.parentBg   — page above (gradient transition)
- * config.theme      — 'light' | 'dark' — controls chat window interior
- * config.titleColor — header/footer text color (null = auto from theme)
- * config.cardStyle  — 'default' | 'gallery' | 'popart'
- */
 
 const CSS = `
 @keyframes chatDot{0%,80%,100%{transform:translateY(0);opacity:.3}40%{transform:translateY(-4px);opacity:.7}}
@@ -26,11 +16,13 @@ const CSS = `
 @keyframes thinkPulse{0%,100%{opacity:0.4}50%{opacity:0.8}}
 .think-spinner{animation:sparkleRotate 3s linear infinite}
 .think-pulse{animation:thinkPulse 1.5s ease-in-out infinite}
+@keyframes avatarFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-3px)}}
+.ch-avatar-float{animation:avatarFloat 3s ease-in-out infinite}
 `
 
 const GRAIN_SVG = `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E")`
 
-/* ─── Window theme: controls chat interior colors ─── */
+/* ─── Window theme ─── */
 function wTheme(theme) {
     const dark = theme === 'dark'
     return {
@@ -43,9 +35,7 @@ function wTheme(theme) {
         bubbleShadow: dark ? 'none' : '0 1px 4px rgba(61,47,42,0.06)',
         winBg:        dark ? 'rgba(0,0,0,0.25)' : 'rgba(255,255,255,0.65)',
         winBorder:    dark ? 'rgba(255,255,255,0.06)' : 'rgba(61,47,42,0.08)',
-        winShadow:    dark
-                      ? '0 8px 40px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.03)'
-                      : '0 4px 30px rgba(61,47,42,0.08), inset 0 1px 0 rgba(255,255,255,0.7)',
+        winShadow:    dark ? '0 8px 40px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.03)' : '0 4px 30px rgba(61,47,42,0.08), inset 0 1px 0 rgba(255,255,255,0.7)',
         inputBg:      dark ? 'rgba(255,255,255,0.05)' : 'rgba(61,47,42,0.04)',
         inputBorder:  dark ? 'rgba(255,255,255,0.08)' : 'rgba(61,47,42,0.1)',
         placeholder:  dark ? 'rgba(240,232,220,0.2)' : 'rgba(61,47,42,0.3)',
@@ -54,6 +44,13 @@ function wTheme(theme) {
         divider:      dark ? 'rgba(255,255,255,0.04)' : 'rgba(61,47,42,0.06)',
         sendDisabled: dark ? 'rgba(255,255,255,0.05)' : 'rgba(61,47,42,0.05)',
         sendDisColor: dark ? 'rgba(255,255,255,0.12)' : 'rgba(61,47,42,0.2)',
+        timestamp:    dark ? 'rgba(240,232,220,0.15)' : 'rgba(61,47,42,0.15)',
+        scrollThumb:  dark ? 'rgba(240,232,220,0.08)' : 'rgba(61,47,42,0.08)',
+        scrollHover:  dark ? 'rgba(240,232,220,0.15)' : 'rgba(61,47,42,0.15)',
+        acBg:         dark ? 'rgba(255,255,255,0.06)' : 'rgba(255,255,255,0.9)',
+        acBorder:     dark ? 'rgba(255,255,255,0.08)' : 'rgba(61,47,42,0.08)',
+        acText:       dark ? 'rgba(240,232,220,0.6)' : `${EYE.shadow}80`,
+        acHoverBg:    dark ? 'rgba(255,255,255,0.1)' : 'rgba(61,47,42,0.04)',
     }
 }
 
@@ -66,6 +63,110 @@ function FrameCorner({ pos, color, mobile }) {
             <div style={{ position: 'absolute', top: 0, [isLeft ? 'left' : 'right']: 0, width: len, height: thick, background: color, opacity: 0.3, borderRadius: 0.5 }} />
             <div style={{ position: 'absolute', top: 0, [isLeft ? 'left' : 'right']: 0, width: thick, height: len, background: color, opacity: 0.3, borderRadius: 0.5 }} />
         </div>
+    )
+}
+
+/* ═══════════════════════════════════════
+ *  FormattedText — rich assistant messages
+ *
+ *  Highlights:
+ *    **bold**           → accent color bold
+ *    \n\n               → paragraph spacing
+ *    — CompanyName      → accent bold (em-dash entities)
+ *    Tech skills        → accent semi-bold
+ *    Metrics/data       → bold (numbers with %, K, M, GB, etc.)
+ * ═══════════════════════════════════════ */
+
+const TECH_WORDS = new Set([
+                               'react', 'typescript', 'python', 'swift', 'swiftui', 'django', 'fastapi', 'node.js',
+                               'next.js', 'graphql', 'kafka', 'spark', 'redis', 'mongodb', 'postgresql', 'docker',
+                               'kubernetes', 'k8s', 'aws', 'terraform', 'airflow', 'snowflake', 'dbt', 'pyspark',
+                               'tensorflow', 'tensorflow.js', 'pytorch', 'bert', 'sagemaker', 'socket.io',
+                               'rabbitmq', 'timescaledb', 'celery', 'prometheus', 'grafana', 'stripe',
+                               'mapkit', 'core data', 'xctest', 'jest', 'rive', 'gsap', 'framer motion',
+                               'zustand', 'tanstack query', 'apollo client', 'd3.js', 'plotly', 'opentelemetry',
+                               'react native', 'express', 'express.js', 'spring boot', 'git', 'figma',
+                               'vite', 'webpack', 'ci/cd', 'github actions', 'grpc', 'jwt',
+                           ])
+
+/* Match metrics: $2M, 500GB/day, 99.9%, 50K, 2.5M+, 10K, p95, 3.8/4.0, ↓42%, ↑60% */
+const METRIC_RE = /(\$[\d.]+[KMB]?(?:\/\w+)?|[\d,.]+(?:\.\d+)?[%+]?(?:\s*(?:GB|MB|TB|ms|s|hr?|events?|points?|users?|DAU))?(?:\/\w+)?|↓\d+%|↑\d+%|p\d{2,3}|\d+(?:\.\d+)?\/\d+(?:\.\d+)?)/gi
+
+function FormattedText({ text, accent }) {
+    /* Step 1: split on explicit **bold** and \n\n */
+    const blocks = text.split(/(\*\*[^*]+\*\*|\n\n)/g)
+
+    return blocks.map((block, bi) => {
+        if (block === '\n\n') return <div key={bi} style={{ height: 8 }} />
+        if (block.startsWith('**') && block.endsWith('**')) {
+            return <strong key={bi} style={{ fontWeight: 700, color: accent }}>{block.slice(2, -2)}</strong>
+        }
+
+        /* Step 2: within each text block, highlight em-dash entities, tech, and metrics */
+        return <HighlightSpan key={bi} text={block} accent={accent} />
+    })
+}
+
+function HighlightSpan({ text, accent }) {
+    /* Build a combined regex: em-dash phrases | tech words | metrics */
+    const techPattern = Array.from(TECH_WORDS)
+        .sort((a, b) => b.length - a.length) /* longest first to avoid partial matches */
+        .map((w) => w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'))
+        .join('|')
+
+    const combined = new RegExp(
+        `(—\\s*[^,\\n.]+)|(\\b(?:${techPattern})\\b)|(${METRIC_RE.source})`,
+        'gi',
+    )
+
+    const parts = []
+    let last = 0
+    let match
+
+    /* Reset lastIndex for global regex */
+    combined.lastIndex = 0
+    while ((match = combined.exec(text)) !== null) {
+        /* Push plain text before match */
+        if (match.index > last) {
+            parts.push({ type: 'plain', value: text.slice(last, match.index) })
+        }
+
+        if (match[1]) {
+            /* Em-dash company/entity name */
+            parts.push({ type: 'company', value: match[0] })
+        } else if (match[2]) {
+            /* Tech keyword */
+            parts.push({ type: 'tech', value: match[0] })
+        } else if (match[3]) {
+            /* Metric/number */
+            parts.push({ type: 'metric', value: match[0] })
+        }
+        last = match.index + match[0].length
+    }
+
+    /* Remaining plain text */
+    if (last < text.length) {
+        parts.push({ type: 'plain', value: text.slice(last) })
+    }
+
+    /* If no highlights found, return plain text */
+    if (parts.length === 0) return <>{text}</>
+
+    return (
+        <>
+            {parts.map((p, i) => {
+                switch (p.type) {
+                    case 'company':
+                        return <span key={i} style={{ color: accent, fontWeight: 600 }}>{p.value}</span>
+                    case 'tech':
+                        return <span key={i} style={{ color: accent, fontWeight: 600, opacity: 0.85 }}>{p.value}</span>
+                    case 'metric':
+                        return <span key={i} style={{ fontWeight: 700 }}>{p.value}</span>
+                    default:
+                        return <span key={i}>{p.value}</span>
+                }
+            })}
+        </>
     )
 }
 
@@ -101,14 +202,33 @@ function useElapsed(running) {
     return elapsed
 }
 
+/* ─── Timestamp ─── */
+function TimeAgo({ ts, color }) {
+    const [label, setLabel] = useState('just now')
+    useEffect(() => {
+        const update = () => {
+            const s = Math.floor((Date.now() - ts) / 1000)
+            if (s < 5) setLabel('just now')
+            else if (s < 60) setLabel(`${s}s ago`)
+            else setLabel(`${Math.floor(s / 60)}m ago`)
+        }
+        update(); const id = setInterval(update, 10000); return () => clearInterval(id)
+    }, [ts])
+    return <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 9, color, marginTop: 3, display: 'block', textAlign: 'right' }}>{label}</span>
+}
+
 /* ─── Bubble ─── */
 const Bubble = memo(function Bubble({ msg, mobile, accent, streaming, w }) {
     const isUser = msg.role === 'user'
     return (
         <div className="msg-in" style={{ display: 'flex', justifyContent: isUser ? 'flex-end' : 'flex-start', marginBottom: mobile ? 8 : 12, padding: '0 2px' }}>
             {!isUser && (<div style={{ width: mobile ? 22 : 26, height: mobile ? 22 : 26, borderRadius: '50%', flexShrink: 0, background: `linear-gradient(135deg, ${accent}18, ${EYE.skin}12)`, border: `1px solid ${accent}20`, display: 'flex', alignItems: 'center', justifyContent: 'center', marginRight: mobile ? 6 : 8, marginTop: 2, fontFamily: "'Patrick Hand', cursive", fontSize: mobile ? 10 : 12, color: w.text }}>C</div>)}
-            <div style={{ maxWidth: mobile ? '84%' : '72%', padding: mobile ? '10px 13px' : '12px 16px', borderRadius: isUser ? '16px 16px 4px 16px' : '16px 16px 16px 4px', background: isUser ? `linear-gradient(135deg, ${accent}, ${accent}dd)` : w.bubbleAssist, border: isUser ? 'none' : `1px solid ${w.bubbleBorder}`, color: isUser ? '#fff' : w.text, fontFamily: "'DM Sans', sans-serif", fontSize: mobile ? 12 : 13.5, lineHeight: 1.65, fontWeight: isUser ? 600 : 400, whiteSpace: 'pre-line', boxShadow: isUser ? `0 3px 12px ${accent}25` : w.bubbleShadow }}>
-                {msg.text}{streaming && <span className="stream-cursor" />}
+            <div style={{ maxWidth: mobile ? '84%' : '72%' }}>
+                <div style={{ padding: mobile ? '10px 13px' : '12px 16px', borderRadius: isUser ? '16px 16px 4px 16px' : '16px 16px 16px 4px', background: isUser ? `linear-gradient(135deg, ${accent}, ${accent}dd)` : w.bubbleAssist, border: isUser ? 'none' : `1px solid ${w.bubbleBorder}`, color: isUser ? '#fff' : w.text, fontFamily: "'DM Sans', sans-serif", fontSize: mobile ? 12 : 13.5, lineHeight: 1.65, fontWeight: isUser ? 600 : 400, whiteSpace: 'pre-line', boxShadow: isUser ? `0 3px 12px ${accent}25` : w.bubbleShadow }}>
+                    {isUser ? msg.text : <FormattedText text={msg.text} accent={accent} />}
+                    {streaming && <span className="stream-cursor" />}
+                </div>
+                {msg.ts && <TimeAgo ts={msg.ts} color={w.timestamp} />}
             </div>
         </div>
     )
@@ -118,7 +238,7 @@ const Bubble = memo(function Bubble({ msg, mobile, accent, streaming, w }) {
 function WelcomeScreen({ questions, accent, mobile, onAsk, w }) {
     return (
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', textAlign: 'center', padding: mobile ? '0 8px' : '0 20px' }}>
-            <div style={{ width: mobile ? 40 : 50, height: mobile ? 40 : 50, borderRadius: '50%', background: `linear-gradient(135deg, ${accent}15, ${EYE.skin}10)`, border: `1.5px solid ${accent}20`, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: mobile ? 10 : 14 }}>
+            <div className="ch-avatar-float" style={{ width: mobile ? 40 : 50, height: mobile ? 40 : 50, borderRadius: '50%', background: `linear-gradient(135deg, ${accent}15, ${EYE.skin}10)`, border: `1.5px solid ${accent}20`, display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: mobile ? 10 : 14 }}>
                 <span style={{ fontFamily: "'Patrick Hand', cursive", fontSize: mobile ? 18 : 22, color: w.text, opacity: 0.5 }}>C</span>
             </div>
             <div style={{ fontFamily: "'Patrick Hand', cursive", fontSize: mobile ? 16 : 20, color: w.textMuted, lineHeight: 1.4, marginBottom: mobile ? 16 : 22 }}>What would you like to know?</div>
@@ -134,20 +254,60 @@ function WelcomeScreen({ questions, accent, mobile, onAsk, w }) {
     )
 }
 
+/* ─── Autocomplete ─── */
+function Autocomplete({ input, questions, asked, onPick, mobile, w, accent }) {
+    const q = input.toLowerCase().trim()
+    const suggestions = useMemo(() => {
+        if (q.length < 2) return []
+        return questions.filter((item) => !asked.has(item.key) && item.label.toLowerCase().includes(q)).slice(0, 3)
+    }, [q, questions, asked])
+    if (suggestions.length === 0) return null
+    return (
+        <div style={{ position: 'absolute', bottom: '100%', left: 0, right: mobile ? 50 : 56, marginBottom: 4, borderRadius: 10, overflow: 'hidden', background: w.acBg, border: `1px solid ${w.acBorder}`, boxShadow: '0 -4px 16px rgba(0,0,0,0.08)', backdropFilter: 'blur(12px)', zIndex: 5 }}>
+            {suggestions.map((s) => (
+                <div key={s.key} onClick={() => onPick(s)} style={{ padding: mobile ? '8px 12px' : '9px 14px', fontFamily: "'DM Sans', sans-serif", fontSize: mobile ? 11 : 12, color: w.acText, cursor: 'pointer', transition: 'background 0.2s', borderBottom: `1px solid ${w.divider}` }}
+                     onMouseEnter={(e) => { e.currentTarget.style.background = w.acHoverBg; e.currentTarget.style.color = accent }}
+                     onMouseLeave={(e) => { e.currentTarget.style.background = 'transparent'; e.currentTarget.style.color = w.acText }}
+                >{s.label}</div>
+            ))}
+        </div>
+    )
+}
+
 /* ─── Auto textarea ─── */
-function AutoTextarea({ value, onChange, onKeyDown, placeholder, accent, mobile, w }) {
+function AutoTextarea({ value, onChange, onKeyDown, placeholder, accent, mobile, w, disabled }) {
     const ref = useRef(null)
     useEffect(() => { const el = ref.current; if (!el) return; el.style.height = 'auto'; el.style.height = Math.min(el.scrollHeight, mobile ? 80 : 120) + 'px' }, [value, mobile])
     return (
-        <textarea ref={ref} className="ch-input" rows={1} value={value} onChange={onChange} onKeyDown={onKeyDown} placeholder={placeholder}
-                  style={{ flex: 1, background: w.inputBg, border: `1px solid ${w.inputBorder}`, borderRadius: 12, padding: mobile ? '10px 13px' : '11px 16px', fontFamily: "'DM Sans', sans-serif", fontSize: mobile ? 12 : 13, color: w.text, transition: 'border-color 0.3s, box-shadow 0.3s', lineHeight: 1.5 }}
-                  onFocus={(e) => { e.target.style.borderColor = `${accent}40`; e.target.style.boxShadow = `0 0 0 2px ${accent}0a` }}
+        <textarea ref={ref} className="ch-input" rows={1} value={value} onChange={onChange} onKeyDown={onKeyDown} placeholder={placeholder} disabled={disabled}
+                  style={{ flex: 1, background: w.inputBg, border: `1px solid ${w.inputBorder}`, borderRadius: 12, padding: mobile ? '10px 13px' : '11px 16px', fontFamily: "'DM Sans', sans-serif", fontSize: mobile ? 12 : 13, color: w.text, transition: 'border-color 0.3s, box-shadow 0.3s, opacity 0.3s', lineHeight: 1.5, opacity: disabled ? 0.4 : 1 }}
+                  onFocus={(e) => { if (!disabled) { e.target.style.borderColor = `${accent}40`; e.target.style.boxShadow = `0 0 0 2px ${accent}0a` } }}
                   onBlur={(e) => { e.target.style.borderColor = w.inputBorder; e.target.style.boxShadow = 'none' }}
         />
     )
 }
 
-/* ═══════════════════════════════════════ */
+/* ─── Scroll-to-top button ─── */
+function ScrollTopBtn({ visible, onClick, w, mobile }) {
+    return (
+        <button onClick={onClick} style={{
+            position: 'absolute', top: mobile ? 8 : 12, right: mobile ? 8 : 14, zIndex: 5,
+            width: mobile ? 24 : 28, height: mobile ? 24 : 28, borderRadius: '50%',
+            background: w.bubbleAssist, border: `1px solid ${w.bubbleBorder}`,
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            cursor: 'pointer', transition: 'all 0.3s',
+            opacity: visible ? 0.7 : 0, pointerEvents: visible ? 'auto' : 'none',
+            transform: visible ? 'translateY(0)' : 'translateY(-6px)',
+            backdropFilter: 'blur(8px)',
+        }}>
+            <svg width={mobile ? 10 : 12} height={mobile ? 10 : 12} viewBox="0 0 24 24" fill="none" stroke={w.text} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ opacity: 0.5 }}><path d="M18 15l-6-6-6 6" /></svg>
+        </button>
+    )
+}
+
+/* ═══════════════════════════════════════
+ *  ChatSection
+ * ═══════════════════════════════════════ */
 export default function ChatSection({ config }) {
     const {
         questions, responses, accent = EYE.rose,
@@ -165,41 +325,43 @@ export default function ChatSection({ config }) {
     const [phase, setPhase] = useState('idle')
     const [streamText, setStreamText] = useState('')
     const [revealed, setRevealed] = useState(false)
+    const [showScrollTop, setShowScrollTop] = useState(false)
     const chatBodyRef = useRef(null); const sectionRef = useRef(null); const lastUserRef = useRef(null); const streamRef = useRef(null); const pendingRef = useRef(null)
     const hasMessages = messages.length > 0
     const thinkElapsed = useElapsed(phase === 'thinking')
+    const isBusy = phase !== 'idle'
 
     useEffect(() => { if (messages.length === 0) return; requestAnimationFrame(() => { if (lastUserRef.current) lastUserRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' }) }) }, [messages])
     useEffect(() => { if ((phase === 'streaming' || phase === 'thinking') && chatBodyRef.current) chatBodyRef.current.scrollTo({ top: chatBodyRef.current.scrollHeight, behavior: 'smooth' }) }, [streamText, phase, thinkElapsed])
+    useEffect(() => { const el = chatBodyRef.current; if (!el) return; const onScroll = () => setShowScrollTop(el.scrollTop > 200); el.addEventListener('scroll', onScroll, { passive: true }); return () => el.removeEventListener('scroll', onScroll) }, [])
     useEffect(() => { const el = sectionRef.current; if (!el) return; const obs = new IntersectionObserver(([e]) => { if (e.isIntersecting && !revealed) setRevealed(true) }, { threshold: 0.08 }); obs.observe(el); return () => obs.disconnect() }, [revealed])
     useEffect(() => { if (!revealed) return; const tl = gsap.timeline({ defaults: { ease: 'power3.out' } }); tl.fromTo('.ch-label', { opacity: 0, y: 15 }, { opacity: 1, y: 0, duration: 0.5, delay: 0.1 }); tl.fromTo('.ch-win', { opacity: 0, y: 20, scale: 0.98 }, { opacity: 1, y: 0, scale: 1, duration: 0.7 }, '-=0.3'); tl.fromTo('.ch-pill', { opacity: 0, y: 8 }, { opacity: 1, y: 0, duration: 0.3, stagger: 0.03 }, '-=0.3'); return () => tl.kill() }, [revealed])
     useEffect(() => { return () => { if (streamRef.current) clearInterval(streamRef.current); if (pendingRef.current) clearTimeout(pendingRef.current) } }, [])
 
-    const streamResponse = useCallback((fullText) => { let i = 0; setStreamText(''); setPhase('streaming'); streamRef.current = setInterval(() => { i++; if (i >= fullText.length) { clearInterval(streamRef.current); streamRef.current = null; setMessages((prev) => [...prev, { role: 'assistant', text: fullText }]); setStreamText(''); setPhase('idle') } else { setStreamText(fullText.slice(0, i)) } }, 18) }, [])
-    const send = useCallback((question, key) => { if (streamRef.current) { clearInterval(streamRef.current); streamRef.current = null }; if (pendingRef.current) { clearTimeout(pendingRef.current); pendingRef.current = null }; setMessages((prev) => [...prev, { role: 'user', text: question }]); setPhase('thinking'); setStreamText(''); const answer = key ? (responses[key] || responses.fallback) : matchResponse(question, responses); const thinkTime = 2000 + Math.min(answer.length * 2, 1500); pendingRef.current = setTimeout(() => { pendingRef.current = null; streamResponse(answer) }, thinkTime) }, [responses, streamResponse])
-    const handlePill = useCallback((q) => send(q.label, q.key), [send])
-    const handleSubmit = useCallback(() => { const txt = input.trim(); if (!txt || phase !== 'idle') return; setInput(''); send(txt, null) }, [input, phase, send])
+    const streamResponse = useCallback((fullText) => { let i = 0; setStreamText(''); setPhase('streaming'); streamRef.current = setInterval(() => { i++; if (i >= fullText.length) { clearInterval(streamRef.current); streamRef.current = null; setMessages((prev) => [...prev, { role: 'assistant', text: fullText, ts: Date.now() }]); setStreamText(''); setPhase('idle') } else { setStreamText(fullText.slice(0, i)) } }, 18) }, [])
+    const send = useCallback((question, key) => { if (streamRef.current) { clearInterval(streamRef.current); streamRef.current = null }; if (pendingRef.current) { clearTimeout(pendingRef.current); pendingRef.current = null }; setMessages((prev) => [...prev, { role: 'user', text: question, ts: Date.now() }]); setPhase('thinking'); setStreamText(''); const answer = key ? (responses[key] || responses.fallback) : matchResponse(question, responses); const thinkTime = 2000 + Math.min(answer.length * 2, 1500); pendingRef.current = setTimeout(() => { pendingRef.current = null; streamResponse(answer) }, thinkTime) }, [responses, streamResponse])
+    const handlePill = useCallback((q) => { setInput(''); send(q.label, q.key) }, [send])
+    const handleSubmit = useCallback(() => { const txt = input.trim(); if (!txt || isBusy) return; setInput(''); send(txt, null) }, [input, isBusy, send])
     const handleKey = useCallback((e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSubmit() } }, [handleSubmit])
     const trapWheel = useCallback((e) => { const el = chatBodyRef.current; if (!el) return; const { scrollTop, scrollHeight, clientHeight } = el; if (!(scrollTop <= 0 && e.deltaY < 0) && !(scrollTop + clientHeight >= scrollHeight - 1 && e.deltaY > 0)) e.stopPropagation() }, [])
+    const scrollToTop = useCallback(() => { chatBodyRef.current?.scrollTo({ top: 0, behavior: 'smooth' }) }, [])
+    const handleAcPick = useCallback((q) => { setInput(''); send(q.label, q.key) }, [send])
 
     const asked = new Set(messages.filter((msg) => msg.role === 'user').map((msg) => { const match = questions.find((q) => q.label === msg.text); return match?.key }).filter(Boolean))
     const pills = questions.filter((q) => !asked.has(q.key))
     let lastUserIdx = -1; for (let i = messages.length - 1; i >= 0; i--) { if (messages[i].role === 'user') { lastUserIdx = i; break } }
-    const isBusy = phase !== 'idle'
     const isGallery = cardStyle === 'gallery'; const isPopart = cardStyle === 'popart'
+
+    const scrollbarCSS = `.ch-body::-webkit-scrollbar{width:3px}.ch-body::-webkit-scrollbar-track{background:transparent}.ch-body::-webkit-scrollbar-thumb{background:${w.scrollThumb};border-radius:3px}.ch-body::-webkit-scrollbar-thumb:hover{background:${w.scrollHover}}.ch-body{scrollbar-width:thin;scrollbar-color:${w.scrollThumb} transparent}`
 
     return (
         <section ref={sectionRef} style={{ width: '100%', height: '100vh', minHeight: '100vh', scrollSnapAlign: 'start', background: bg, position: 'relative', overflow: 'hidden', display: 'flex', flexDirection: 'column', alignItems: 'center', padding: m ? '10px 8px 8px' : '14px 20px 10px' }}>
-            <style>{CSS}{`.ch-input::placeholder{color:${w.placeholder}}`}</style>
+            <style>{CSS}{scrollbarCSS}{`.ch-input::placeholder{color:${w.placeholder}}`}</style>
 
-            {/* Gradient transition from parent page */}
             {parentBg && <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: m ? 80 : 120, background: `linear-gradient(180deg, ${parentBg} 0%, ${parentBg}80 30%, transparent 100%)`, pointerEvents: 'none', zIndex: 1 }} />}
-            {/* Film grain */}
             <div style={{ position: 'absolute', inset: 0, pointerEvents: 'none', opacity: w.dark ? 0.04 : 0.025, mixBlendMode: w.dark ? 'overlay' : 'multiply', backgroundImage: GRAIN_SVG, backgroundSize: '120px 120px' }} />
-            {/* Decorative radial */}
             <div style={{ position: 'absolute', top: '30%', left: '50%', transform: 'translateX(-50%)', width: m ? 280 : 450, height: m ? 280 : 450, borderRadius: '50%', background: `radial-gradient(circle, ${accent}06 0%, transparent 65%)`, pointerEvents: 'none' }} />
 
-            {/* Header */}
             <div className="ch-label" style={{ textAlign: 'center', marginTop: parentBg ? (m ? 50 : 70) : 0, marginBottom: m ? 6 : 10, opacity: 0, flexShrink: 0, position: 'relative', zIndex: 2 }}>
                 <div style={{ fontFamily: "'DM Sans', sans-serif", fontSize: m ? 7 : 8, fontWeight: 600, letterSpacing: m ? 2 : 3, textTransform: 'uppercase', color: hdrSub, opacity: titleColor ? 0.8 : 0.6, marginBottom: m ? 3 : 5 }}>{subtitle}</div>
                 <h2 style={{ fontFamily: "'Patrick Hand', cursive", fontSize: m ? 20 : 28, fontWeight: 400, color: hdr, lineHeight: 1.15 }}>
@@ -207,12 +369,12 @@ export default function ChatSection({ config }) {
                 </h2>
             </div>
 
-            {/* Chat window */}
             <div className="ch-win" style={{ width: '100%', maxWidth: m ? '100%' : 720, flex: 1, minHeight: 0, position: 'relative', background: w.winBg, border: `1px solid ${w.winBorder}`, borderRadius: m ? 14 : 18, display: 'flex', flexDirection: 'column', overflow: 'hidden', opacity: 0, zIndex: 2, boxShadow: w.winShadow, backdropFilter: 'blur(16px)', ...(isPopart ? { borderLeft: `3px solid ${accent}` } : {}) }}>
                 <div style={{ height: isGallery ? 2 : 1.5, flexShrink: 0, background: `linear-gradient(90deg, transparent, ${accent}${isGallery ? '40' : '25'}, ${EYE.skin}${isGallery ? '30' : '18'}, transparent)` }} />
                 {isGallery && <><FrameCorner pos="tl" color={accent} mobile={m} /><FrameCorner pos="tr" color={accent} mobile={m} /><FrameCorner pos="bl" color={accent} mobile={m} /><FrameCorner pos="br" color={accent} mobile={m} /></>}
+                <ScrollTopBtn visible={showScrollTop && hasMessages} onClick={scrollToTop} w={w} mobile={m} />
 
-                <div ref={chatBodyRef} onWheel={trapWheel} style={{ flex: 1, overflowY: 'auto', overflowX: 'hidden', padding: m ? '14px 10px 6px' : '22px 22px 10px', WebkitOverflowScrolling: 'touch' }}>
+                <div ref={chatBodyRef} className="ch-body" onWheel={trapWheel} style={{ flex: 1, overflowY: 'auto', overflowX: 'hidden', padding: m ? '14px 10px 6px' : '22px 22px 10px', WebkitOverflowScrolling: 'touch' }}>
                     {!hasMessages && phase === 'idle' && <WelcomeScreen questions={questions} accent={accent} mobile={m} onAsk={handlePill} w={w} />}
                     {messages.map((msg, i) => (<div key={i} ref={i === lastUserIdx ? lastUserRef : null}><Bubble msg={msg} mobile={m} accent={accent} streaming={false} w={w} /></div>))}
                     {phase === 'thinking' && <ThinkingBlock accent={accent} mobile={m} elapsed={thinkElapsed} w={w} />}
@@ -230,9 +392,10 @@ export default function ChatSection({ config }) {
                     </div>
                 )}
 
-                <div style={{ padding: m ? '6px 8px 8px' : '8px 14px 10px', borderTop: `1px solid ${w.divider}`, display: 'flex', gap: m ? 6 : 8, alignItems: 'flex-end', flexShrink: 0 }}>
-                    <AutoTextarea value={input} onChange={(e) => setInput(e.target.value)} onKeyDown={handleKey} placeholder="Type your question..." accent={accent} mobile={m} w={w} />
-                    <button onClick={handleSubmit} disabled={!input.trim() || isBusy} style={{ width: m ? 36 : 40, height: m ? 36 : 40, borderRadius: 12, border: 'none', flexShrink: 0, background: input.trim() && !isBusy ? `linear-gradient(135deg, ${accent}, ${accent}cc)` : w.sendDisabled, color: input.trim() && !isBusy ? '#fff' : w.sendDisColor, cursor: input.trim() && !isBusy ? 'pointer' : 'default', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.3s', marginBottom: 1 }}>
+                <div style={{ padding: m ? '6px 8px 8px' : '8px 14px 10px', borderTop: `1px solid ${w.divider}`, display: 'flex', gap: m ? 6 : 8, alignItems: 'flex-end', flexShrink: 0, position: 'relative' }}>
+                    {!isBusy && input.trim().length >= 2 && <Autocomplete input={input} questions={questions} asked={asked} onPick={handleAcPick} mobile={m} w={w} accent={accent} />}
+                    <AutoTextarea value={input} onChange={(e) => setInput(e.target.value)} onKeyDown={handleKey} placeholder={isBusy ? 'Thinking...' : 'Type your question...'} accent={accent} mobile={m} w={w} disabled={isBusy} />
+                    <button onClick={handleSubmit} disabled={!input.trim() || isBusy} style={{ width: m ? 36 : 40, height: m ? 36 : 40, borderRadius: 12, border: 'none', flexShrink: 0, background: input.trim() && !isBusy ? `linear-gradient(135deg, ${accent}, ${accent}cc)` : w.sendDisabled, color: input.trim() && !isBusy ? '#fff' : w.sendDisColor, cursor: input.trim() && !isBusy ? 'pointer' : 'default', display: 'flex', alignItems: 'center', justifyContent: 'center', transition: 'all 0.3s', marginBottom: 1, opacity: isBusy ? 0.4 : 1 }}>
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
                     </button>
                 </div>
@@ -291,7 +454,7 @@ function matchResponse(question, responses) {
         favorite: ['favorite', 'proud', 'best', 'most meaningful'],
     }
     for (const [key, words] of Object.entries(map)) {
-        if (words.some((w) => q.includes(w))) return responses[key] || responses.fallback
+        if (words.some((kw) => q.includes(kw))) return responses[key] || responses.fallback
     }
     return responses.fallback
 }
