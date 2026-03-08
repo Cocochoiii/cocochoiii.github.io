@@ -496,7 +496,7 @@ export default function HomePage({ go }) {
                 <NavOverlay go={go} current="home" />
             </section>
 
-            <ChatSection config={{ ...HOME_CHAT, accent: '#c47a6e', title: 'Ask me anything', subtitle: 'Conversation' }} />
+            <ChatSection config={{ ...HOME_CHAT, accent: '#c47a6e', title: 'Ask me anything', subtitle: 'Conversation', bg: '#E37B88', parentBg: '#E37B88', theme: 'light', cardStyle: 'default' }} />
         </div>
     )
 }

@@ -78,7 +78,7 @@ export default function ProjectsPage({ go }) {
                     </div>
                     <NavOverlay go={go} current="projects" dark />
                 </section>
-                <ChatSection config={{ ...PROJ_CHAT, accent: PAL.orange, title: 'Explore my projects', subtitle: 'Projects' }} />
+                <ChatSection config={{ ...PROJ_CHAT, accent: PAL.orange, title: 'Explore my projects', subtitle: 'Projects', bg: '#7d7876', parentBg: PAL.grey, theme: 'dark', cardStyle: 'popart' }} />
             </div>
         )
     }
@@ -114,7 +114,7 @@ export default function ProjectsPage({ go }) {
                 </div>
                 <NavOverlay go={go} current="projects" dark />
             </section>
-            <ChatSection config={{ ...PROJ_CHAT, accent: PAL.orange, title: 'Explore my projects', subtitle: 'Projects' }} />
+            <ChatSection config={{ ...PROJ_CHAT, accent: PAL.orange, title: 'Explore my projects', subtitle: 'Projects', bg: '#7d7876', parentBg: PAL.grey, theme: 'dark', cardStyle: 'popart' }} />
         </div>
     )
 }

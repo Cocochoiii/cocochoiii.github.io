@@ -124,7 +124,7 @@ export default function ExperiencePage({ go }) {
             </div>
             <NavOverlay go={go} current="experience" dark />
           </section>
-          <ChatSection config={{ ...EXP_CHAT, accent: EYE.skin, title: 'Deep dive into my experience', subtitle: 'Experience' }} />
+          <ChatSection config={{ ...EXP_CHAT, accent: EYE.skin, title: 'Deep dive into my experience', subtitle: 'Experience', bg: EYE.bg, parentBg: EYE.bg, theme: 'dark', cardStyle: 'gallery' }} />
         </div>
     )
   }
@@ -170,7 +170,7 @@ export default function ExperiencePage({ go }) {
           </div>
           <NavOverlay go={go} current="experience" dark />
         </section>
-        <ChatSection config={{ ...EXP_CHAT, accent: EYE.skin, title: 'Deep dive into my experience', subtitle: 'Experience' }} />
+        <ChatSection config={{ ...EXP_CHAT, accent: EYE.skin, title: 'Deep dive into my experience', subtitle: 'Experience', bg: EYE.bg, parentBg: EYE.bg, theme: 'dark', cardStyle: 'gallery' }} />
       </div>
   )
 }
