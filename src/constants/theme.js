@@ -28,8 +28,8 @@ export const PAL = {
 export const BG = {
   home:       '#E37B88',
   projects:   '#8a8685',
-  experience: '#313131',
-  about:      '#000000',
+  experience: '#2d2825',
+  about:      '#ffffff',
 }
 
 export const STRIP_COUNT = 5
